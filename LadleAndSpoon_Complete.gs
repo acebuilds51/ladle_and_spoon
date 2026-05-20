@@ -28,6 +28,8 @@ function doPost(e) {
     else if (data.type === "broadcast")             return handleBroadcast(data);
     else if (data.type === "publish_menu")          return handlePublishMenu(data);
     else if (data.type === "save_photo")            return handleSavePhoto(data);
+    else if (data.type === "save_subscriber")       return handleSaveSubscriber(data);
+    else if (data.type === "cancel_subscriber")     return handleCancelSubscriber(data);
     else if (data.type === "save_menu")             return handleSaveMenu(data);
     else if (data.type === "save_custom_item")      return handleSaveCustomItem(data);
     else if (data.type === "send_reengagement")     return sendReengagementOne(data);
@@ -130,8 +132,6 @@ function handleOrder(data) {
   var row     = buildOrderRow(data, headers);
   var lastRow = Math.max(sheet.getLastRow(), 4);
   sheet.getRange(lastRow + 1, 1, 1, row.length).setValues([row]);
-  Logger.log("Items: " + JSON.stringify(data.items || []));
-  Logger.log("Written to row " + (lastRow + 1));
 
   syncSingleCustomer(ss, data);
 
@@ -377,7 +377,6 @@ function sendSoupReminders(subject) {
         customerSheet.getRange(i + 1, lastEmailDateColIndex).setValue(new Date());
         emailsSentThisRun++;
       } catch(e) {
-        Logger.log("Error sending to " + email + ": " + e.toString());
       }
     }
   }
@@ -578,7 +577,6 @@ function sendPushForTuesday() {
 function testPushNotification() {
   try {
     var token = ScriptApp.getOAuthToken();
-    Logger.log("OAuth token obtained: " + token.substring(0,20) + "...");
   } catch(e) {
     return;
   }
@@ -607,8 +605,6 @@ function testPushNotification() {
       payload:            JSON.stringify(payload),
       muteHttpExceptions: true
     });
-    Logger.log("FCM response code: " + response.getResponseCode());
-    Logger.log("FCM response: " + response.getContentText());
   } catch(err) {
   }
 }
@@ -692,8 +688,6 @@ function handleSaveMenu(data) {
     PropertiesService.getScriptProperties().setProperty('current_menu', JSON.stringify({
       items: allItems, updated: new Date().toISOString()
     }));
-
-    Logger.log('Menu saved: ' + allItems.length + ' items (' + newItemHeaders.length + ' columns)');
     return jsonResponse({ success: true, items: allItems.length, columns: newItemHeaders.length });
   } catch(err) {
     return jsonResponse({ success: false, error: err.message });
@@ -1166,7 +1160,6 @@ function handleGetDashboard() {
       });
     });
     weekRevenue += weekOrders * 5;
-    Logger.log("weekRevenue (calculated): " + weekRevenue + " | weekOrders: " + weekOrders);
   }
   var allMonthly = getDashMonthly(ss);
   var yearlyRev  = allMonthly.reduce(function(sum, m){ return sum + (m.r||0); }, 0);
@@ -1570,8 +1563,6 @@ function generateLadleAndSpoonIntelligence() {
     if(cachedP) processedTabs = JSON.parse(cachedP);
   } catch(e) { Logger.log('Cache load error: ' + e); }
 
-  Logger.log('Intelligence starting — ' + sheets.length + ' sheets, ' + Object.keys(processedTabs).length + ' already cached');
-
   var newTabsProcessed = 0;
 
   sheets.forEach(sheet => {
@@ -1723,7 +1714,6 @@ function generateLadleAndSpoonIntelligence() {
     props.setProperty('intel_items',         JSON.stringify(intelData));
     props.setProperty('intel_processed_tabs', JSON.stringify(processedTabs));
   } catch(e) {
-    Logger.log('Cache save error (may be too large): ' + e);
   }
 
   writeMonthly(ss, monthlyData);
@@ -1801,7 +1791,6 @@ function testSheetHeaders() {
   if (!sheet) { Logger.log('Sheet not found'); return; }
   var lastCol = sheet.getLastColumn();
   var headers = sheet.getRange(4, 1, 1, lastCol).getValues()[0];
-  Logger.log('Row 4 headers (' + lastCol + ' cols):');
   headers.forEach(function(h, i){
     if(h) Logger.log('  Col ' + (i+1) + ' (' + String.fromCharCode(65+i) + '): ' + h);
   });
@@ -1815,7 +1804,6 @@ function testMenuSave() {
     ]
   };
   var result = handleSaveMenu(data);
-  Logger.log('testMenuSave result: ' + result.getContent());
   testSheetHeaders();
 }
 
@@ -1874,7 +1862,6 @@ function handleSendRatingRequests(data) {
         return d > now ? new Date(now.getFullYear()-1, p.month-1, p.day) : d;
       })();
       var daysDiff = Math.round((now - tabDate) / (1000*60*60*24));
-      Logger.log('Most recent archive tab: ' + candidate.getName() + ' (' + daysDiff + ' days ago)');
       if(daysDiff <= 14) {
         ordSheet   = candidate;
         sheetLabel = candidate.getName();
@@ -2109,7 +2096,6 @@ function sendSmsBlast(message) {
   var token       = props.getProperty('TWILIO_TOKEN');
   var fromNumber  = props.getProperty('TWILIO_FROM');
   if (!sid || !token || !fromNumber) {
-    Logger.log('Twilio credentials not set. Run setTwilioCredentials() first.');
     return { sent: 0, error: 'No Twilio credentials' };
   }
 
@@ -2159,7 +2145,6 @@ function testOrder() {
       { name: "Goat Cheese Blueberry Salad", size: "Single", qty: 1, price: 15 }
     ]
   });
-  Logger.log(result.getContent());
   SpreadsheetApp.getUi().alert("Test complete!\n\nCheck 'Soup orders' tab for a new row\nand your email for an HTML confirmation.");
 }
 
@@ -2178,7 +2163,6 @@ function testDoGet() {
   var fakeEvent = { parameter: { type: 'get_dashboard' } };
   var result    = doGet(fakeEvent);
   var content   = result.getContent();
-  Logger.log('First 200 chars: ' + content.substring(0, 200));
   if (content.includes('orders')) Logger.log(' SUCCESS — returning dashboard data');
   else Logger.log('FAIL — check parameter handling\nFull response: ' + content);
 }
@@ -2254,12 +2238,20 @@ function triggerFridaySubOrders() {
     return;
   }
 
-  var swapSheet = ss.getSheetByName('SwapLog');
+  var swapSheet = ss.getSheetByName('Subscriber Swaps');
   var swaps = {};
   if(swapSheet && swapSheet.getLastRow() > 1){
     var swapRows = swapSheet.getRange(2,1,swapSheet.getLastRow()-1,5).getValues();
+    // Columns: Timestamp(0), Email(1), Name(2), Soup(3), Salad(4)
+    // Only use swaps from this week
+    var weekStart = getStartOfWeek();
     swapRows.forEach(function(r){
-      if(r[0] && r[1]) swaps[r[1].toLowerCase()] = {soup: r[2], salad: r[3]};
+      var ts = r[0];
+      if(!r[1]) return;
+      // Use most recent swap this week
+      if(ts instanceof Date && ts >= weekStart){
+        swaps[r[1].toString().toLowerCase()] = {soup: r[3]||'', salad: r[4]||''};
+      }
     });
   }
 
@@ -2314,6 +2306,34 @@ function triggerFridaySubOrders() {
 
     ordSheet.appendRow(newRow);
     written++;
-    Logger.log('Sub order created for ' + name + ' (' + plan + ')');
   });
+}
+
+function handleSaveSubscriber(data) {
+  var ss    = SpreadsheetApp.getActiveSpreadsheet();
+  var sheet = ss.getSheetByName('Subscribers') || ss.insertSheet('Subscribers');
+  if(sheet.getLastRow() === 0){
+    sheet.getRange(1,1,1,7).setValues([['Name','Email','Phone','Plan','Since','Paused','Address']]);
+  }
+  var rows = sheet.getLastRow() > 1 ? sheet.getRange(2,1,sheet.getLastRow()-1,2).getValues() : [];
+  var found = -1;
+  for(var i=0;i<rows.length;i++){ if(rows[i][1]===data.email){ found=i+2; break; } }
+  var rowData = [data.name||'', data.email||'', data.phone||'', data.plan||'', new Date(), false, data.addr||''];
+  if(found>0) sheet.getRange(found,1,1,7).setValues([rowData]);
+  else sheet.appendRow(rowData);
+  return jsonResponse({success:true});
+}
+
+function handleCancelSubscriber(data) {
+  var ss    = SpreadsheetApp.getActiveSpreadsheet();
+  var sheet = ss.getSheetByName('Subscribers');
+  if(!sheet || sheet.getLastRow() < 2) return jsonResponse({success:false});
+  var rows = sheet.getRange(2,1,sheet.getLastRow()-1,4).getValues();
+  for(var i=0;i<rows.length;i++){
+    if(rows[i][1]===data.email){
+      sheet.getRange(i+2,4).setValue('cancelled');
+      return jsonResponse({success:true});
+    }
+  }
+  return jsonResponse({success:false});
 }
