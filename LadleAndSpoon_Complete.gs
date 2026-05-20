@@ -1,4 +1,3 @@
-// ════════════════════════════════════════════════════════════════
 const formSheetName     = "Soup orders";
 const customerSheetName = "Customers";
 const orderLink         = "https://tonyedmonds2003.github.io/ladle_and_spoon/";
@@ -37,7 +36,6 @@ function doPost(e) {
     else if (data.type === "submit_ratings")         return handleSubmitRatings(data);
     return jsonResponse({ success: false, error: "Unknown type: " + data.type });
   } catch(err) {
-    Logger.log("doPost error: " + err.message);
     return jsonResponse({ success: false, error: err.message });
   }
 }
@@ -90,8 +88,6 @@ function doGet(e) {
       var lastCol     = freshSheet.getLastColumn();
       if(!hasComments){ freshSheet.getRange(4, lastCol+1).setValue('Comments or Special Instructions'); lastCol++; }
       if(!hasPay)     { freshSheet.getRange(4, lastCol+1).setValue('How Will You be Paying?'); }
-
-      Logger.log('Archived to ' + tabName + ' | Fresh Soup orders created with blank item columns');
       return jsonResponse({success:true, archived: tabName});
     } catch(err) {
       return jsonResponse({success:false, error: err.message});
@@ -108,6 +104,7 @@ function doGet(e) {
   }
 
   if      (params.type === 'get_photos')           return handleGetPhotos();
+  else if (params.type === 'get_subscribers')      return handleGetSubscribers();
   else if (params.type === 'get_dashboard')        return handleGetDashboard();
   else if (params.type === 'get_order_for_rating') return handleGetOrderForRating(params);
   else if (params.type === 'get_custom_items')     return handleGetCustomItems();
@@ -133,22 +130,17 @@ function handleOrder(data) {
   var row     = buildOrderRow(data, headers);
   var lastRow = Math.max(sheet.getLastRow(), 4);
   sheet.getRange(lastRow + 1, 1, 1, row.length).setValues([row]);
-  Logger.log("Order received via " + source + " | " + data.name + " | " + data.email);
   Logger.log("Items: " + JSON.stringify(data.items || []));
-  Logger.log("Total: $" + data.total + " | Payment: " + data.payment);
   Logger.log("Written to row " + (lastRow + 1));
 
   syncSingleCustomer(ss, data);
 
   try {
     sendConfirmationEmail(data);
-    Logger.log('Confirmation email sent to: ' + data.email);
   } catch(emailErr) {
-    Logger.log('sendConfirmationEmail FAILED: ' + emailErr.message + ' | data.email=' + data.email + ' | data.total=' + data.total);
   }
 
   try { generateLadleAndSpoonIntelligence(); } catch(e) {
-    Logger.log("Intelligence refresh: " + e.message);
   }
 
   return jsonResponse({ success: true, orderId: data.id });
@@ -312,7 +304,6 @@ function sendReengagementAll(data) {
       sent++;
     } catch (err) {
       errors++;
-      Logger.log('Re-engage error for ' + c.name + ': ' + err.message);
     }
   });
 
@@ -390,7 +381,6 @@ function sendSoupReminders(subject) {
       }
     }
   }
-  Logger.log("Reminders sent: " + emailsSentThisRun);
 }
 
 function getStartOfWeek() {
@@ -413,16 +403,13 @@ function triggerFridayReminder() {
 }
 
 function triggerTuesdayAnnouncement() {
-  Logger.log("Manual menu announcement triggered by Lia");
   sendSoupReminders("This Week's Ladle & Spoon Menu is Live!");
   sendPushForTuesday();
-  Logger.log("Menu announcement complete — emails and push notifications sent");
 }
 
 function sendConfirmationEmail(data) {
   try {
     if (!data.email || !data.email.toString().includes('@')) {
-      Logger.log('sendConfirmationEmail: no valid email — skipping. email=' + data.email);
       return;
     }
 
@@ -485,7 +472,6 @@ function sendConfirmationEmail(data) {
       name:     SENDER_NAME
     });
   } catch(err) {
-    Logger.log("Confirmation email error: " + err.message);
   }
 }
 
@@ -533,7 +519,6 @@ function handleBroadcast(data) {
   var ss    = SpreadsheetApp.getActiveSpreadsheet();
   var sheet = ss.getSheetByName("Push Tokens");
   if (!sheet || sheet.getLastRow() < 2) {
-    Logger.log("No push tokens found");
     return jsonResponse({ success: false, error: "No subscribers" });
   }
   var tokens = sheet.getRange(2, 2, sheet.getLastRow() - 1, 1).getValues()
@@ -541,7 +526,6 @@ function handleBroadcast(data) {
     .filter(function(t) { return t && t.length > 10; });
   if (tokens.length === 0) return jsonResponse({ success: false, error: "No valid tokens" });
   var sent = sendFCMNotification(tokens, data.title || ' Ladle & Spoon', data.body || "Check this week's menu!");
-  Logger.log("Broadcast sent to " + sent + " devices");
   return jsonResponse({ success: true, sent: sent });
 }
 
@@ -573,7 +557,6 @@ function sendFCMNotification(tokens, title, body) {
       if (response.getResponseCode() === 200) sent++;
       else Logger.log("FCM error for token " + token.substring(0,20) + ": " + response.getContentText());
     } catch(err) {
-      Logger.log("FCM send error: " + err.message);
     }
     Utilities.sleep(50);
   });
@@ -589,28 +572,23 @@ function sendPushForTuesday() {
     .filter(function(t) { return t && t.length > 10; });
   if (tokens.length > 0) {
     var sent = sendFCMNotification(tokens, ' This week\'s Ladle & Spoon menu is live!', 'Order by Friday 6 PM for Monday delivery!');
-    Logger.log("Tuesday push sent to " + sent + " of " + tokens.length + " subscribers");
   }
 }
 
 function testPushNotification() {
-  Logger.log("=== testPushNotification START ===");
   try {
     var token = ScriptApp.getOAuthToken();
     Logger.log("OAuth token obtained: " + token.substring(0,20) + "...");
   } catch(e) {
-    Logger.log("FAILED to get OAuth token: " + e.message);
     return;
   }
   var ss    = SpreadsheetApp.getActiveSpreadsheet();
   var sheet = ss.getSheetByName("Push Tokens");
   if (!sheet || sheet.getLastRow() < 2) {
-    Logger.log("No Push Tokens sheet or no tokens");
     return;
   }
   var allRows = sheet.getRange(2, 1, sheet.getLastRow() - 1, 3).getValues();
   var tokens  = allRows.map(function(r) { return r[1]; }).filter(function(t) { return t && t.toString().length > 10; });
-  Logger.log("Valid tokens found: " + tokens.length);
   if (tokens.length === 0) { Logger.log("No valid tokens in Push Tokens sheet."); return; }
 
   var accessToken = ScriptApp.getOAuthToken();
@@ -632,20 +610,15 @@ function testPushNotification() {
     Logger.log("FCM response code: " + response.getResponseCode());
     Logger.log("FCM response: " + response.getContentText());
   } catch(err) {
-    Logger.log("UrlFetch error: " + err.message);
   }
-  Logger.log("=== testPushNotification END ===");
 }
 
 function handlePublishMenu(data) {
-  Logger.log("Menu publish triggered from app");
   try {
     triggerTuesdayAnnouncement();
     try { sendMenuPublishSms(); } catch(e) { Logger.log('Publish SMS error: ' + e.message); }
-    Logger.log("Menu announcement complete");
     return jsonResponse({ success: true, message: "Menu published — emails, SMS and push sent" });
   } catch(err) {
-    Logger.log("handlePublishMenu error: " + err.message);
     return jsonResponse({ success: false, error: err.message });
   }
 }
@@ -706,7 +679,6 @@ function handleSaveMenu(data) {
     fixedHeaders.forEach(function(h, i){
       sheet.getRange(4, i + 1).setValue(h);
     });
-    Logger.log('Fixed headers A-F restored');
     for (var cc = itemColStart; cc < itemColStart + 30; cc++) {
       sheet.getRange(4, cc + 1).setValue('');
     }
@@ -724,7 +696,6 @@ function handleSaveMenu(data) {
     Logger.log('Menu saved: ' + allItems.length + ' items (' + newItemHeaders.length + ' columns)');
     return jsonResponse({ success: true, items: allItems.length, columns: newItemHeaders.length });
   } catch(err) {
-    Logger.log('handleSaveMenu error: ' + err);
     return jsonResponse({ success: false, error: err.message });
   }
 }
@@ -758,7 +729,6 @@ function handleGetRetention() {
   var sheets  = ss.getSheets();
   var now     = new Date();
 
-  // Collect all M/D/YY tabs sorted newest first (max 50)
   var archiveTabs = sheets.filter(function(s){
     return /^\d+\/\d+\/\d+$/.test(s.getName());
   });
@@ -770,11 +740,10 @@ function handleGetRetention() {
     return bD - aD;
   });
 
-  var tabs = archiveTabs.slice(0, 49); // max 49 archived + current week = 50
+  var tabs = archiveTabs.slice(0, 49);
   var currentSheet = ss.getSheetByName(formSheetName);
   var allTabs = currentSheet ? [currentSheet].concat(tabs) : tabs;
 
-  // Week labels (newest first)
   var weekLabels = allTabs.map(function(s){
     var n = s.getName();
     if(n === formSheetName) return 'Current';
@@ -782,7 +751,6 @@ function handleGetRetention() {
     return p.month + '/' + p.day + '/' + (p.year||'');
   });
 
-  // Build customer → [week indices where they ordered]
   var customerMap = {};
 
   allTabs.forEach(function(sheet, wi){
@@ -800,7 +768,6 @@ function handleGetRetention() {
     rows.forEach(function(row){
       var email = row[emailCol] ? row[emailCol].toString().trim() : '';
       if(!email || !email.includes('@')) return;
-      // Check if they actually ordered something
       var hasOrder = itemCols.some(function(i){ return (parseFloat(row[i])||0) > 0; });
       if(!hasOrder) return;
       if(!customerMap[email]){
@@ -818,17 +785,13 @@ function handleGetRetention() {
 
   var customers = Object.values(customerMap);
 
-  // Deduplicate: merge entries with same normalized name (catches same person, different email)
   var merged = {};
   customers.forEach(function(c){
-    // Normalize name: lowercase, trim, collapse spaces
     var normName = c.name.toLowerCase().trim().replace(/\s+/g,' ');
     if(merged[normName]){
-      // Merge order weeks
       c.orderWeeks.forEach(function(w){
         if(merged[normName].orderWeeks.indexOf(w) < 0) merged[normName].orderWeeks.push(w);
       });
-      // Keep whichever email looks more complete
       if(c.email.includes('@') && merged[normName].email.split('@')[0].length < c.email.split('@')[0].length){
         merged[normName].email = c.email;
       }
@@ -980,7 +943,6 @@ function handleGetMonthlyDetail(params) {
           var emailVals = sheet.getRange(5, emailCol2+1, lastRow-4, 1).getValues();
           emailVals.forEach(function(r){ if(r[0] && r[0].toString().includes('@')) orderCount++; });
         }
-        // Get revenue from row 3 (fast single row read)
         var row3 = sheet.getRange(3, 7, 1, lastCol - 6).getValues()[0];
         row3.forEach(function(v){ var n = parseFloat(v); if(!isNaN(n) && n > 0) stubFood += n; });
         stubDel = orderCount * (tabYear >= 2026 ? 5 : 0);
@@ -1166,7 +1128,6 @@ function handleSavePhoto(data) {
   } else {
     sheet.appendRow([data.soupId, data.name || '', data.url]);
   }
-  Logger.log("Photo saved for " + data.soupId + ": " + data.url);
   return jsonResponse({ success: true });
 }
 
@@ -1562,7 +1523,6 @@ function onFormSubmit(e) {
       }
     }
   } catch(err) {
-    Logger.log('onFormSubmit error: ' + err);
   }
 }
 
@@ -1572,7 +1532,6 @@ function installFormSubmitTrigger() {
     if (t.getHandlerFunction() === 'onFormSubmit') ScriptApp.deleteTrigger(t);
   });
   ScriptApp.newTrigger('onFormSubmit').forSpreadsheet(ss).onFormSubmit().create();
-  Logger.log('onFormSubmit trigger installed');
 }
 
 function setupAll() {
@@ -1582,15 +1541,14 @@ function setupAll() {
   ScriptApp.newTrigger("triggerMondayRatingRequests").timeBased().onWeekDay(ScriptApp.WeekDay.MONDAY).atHour(9).create();
   ScriptApp.newTrigger("triggerThursdayReminder").timeBased().onWeekDay(ScriptApp.WeekDay.THURSDAY).atHour(10).create();
   ScriptApp.newTrigger("triggerFridayReminder").timeBased().onWeekDay(ScriptApp.WeekDay.FRIDAY).atHour(11).create();
+  ScriptApp.newTrigger("triggerFridaySubOrders").timeBased().onWeekDay(ScriptApp.WeekDay.FRIDAY).atHour(18).create();
   ScriptApp.newTrigger("triggerSundayIntelligence").timeBased().onWeekDay(ScriptApp.WeekDay.SUNDAY).atHour(23).create();
-  Logger.log("Triggers installed: Monday 9AM ratings, Thursday 10AM, Friday 11AM, Sunday 11PM intelligence. Tuesday is manual via app.");
 }
 
 function checkTriggers() {
   var triggers = ScriptApp.getProjectTriggers();
   var msg = "Current triggers (" + triggers.length + "):\n";
   triggers.forEach(function(t) { msg += "- " + t.getHandlerFunction() + " — " + t.getTriggerSource() + "\n"; });
-  Logger.log(msg);
   SpreadsheetApp.getUi().alert(msg);
 }
 
@@ -1621,7 +1579,6 @@ function generateLadleAndSpoonIntelligence() {
     if (!(/^\d+\/\d+(\/\d+)?$/.test(name)) && name !== "Soup orders") return;
     var isCurrentWeek = name === "Soup orders";
     if(!isCurrentWeek && processedTabs[name]) {
-      Logger.log('Skipping cached tab: ' + name);
       return;
     }
 
@@ -1754,21 +1711,17 @@ function generateLadleAndSpoonIntelligence() {
       }
     }
     } catch(e) {
-      Logger.log('ERROR on tab ' + name + ': ' + e.message + ' | line: ' + e.lineNumber);
     }
     if(name !== "Soup orders") {
       processedTabs[name] = new Date().toISOString();
       newTabsProcessed++;
     }
   });
-
-  Logger.log('New tabs processed: ' + newTabsProcessed);
   try {
     props.setProperty('intel_monthly',       JSON.stringify(monthlyData));
     props.setProperty('intel_customers',     JSON.stringify(customerData));
     props.setProperty('intel_items',         JSON.stringify(intelData));
     props.setProperty('intel_processed_tabs', JSON.stringify(processedTabs));
-    Logger.log('Cache saved successfully');
   } catch(e) {
     Logger.log('Cache save error (may be too large): ' + e);
   }
@@ -1875,12 +1828,9 @@ function corsResponse(obj) {
 }
 
 function triggerSundayIntelligence() {
-  Logger.log("Sunday intelligence rebuild starting...");
   try {
     generateLadleAndSpoonIntelligence();
-    Logger.log("Sunday intelligence rebuild complete.");
   } catch(e) {
-    Logger.log("Sunday intelligence rebuild error: " + e.message);
   }
 }
 
@@ -1929,10 +1879,8 @@ function handleSendRatingRequests(data) {
         ordSheet   = candidate;
         sheetLabel = candidate.getName();
       } else {
-        Logger.log('Most recent archive tab is ' + daysDiff + ' days old — too old, skipping');
       }
     } catch(e) {
-      Logger.log('Could not verify tab date: ' + e.message);
     }
   }
   if(!ordSheet || ordSheet.getLastRow() < 5) {
@@ -1941,11 +1889,8 @@ function handleSendRatingRequests(data) {
   }
 
   if (!ordSheet || ordSheet.getLastRow() < 5) {
-    Logger.log('Rating requests: no orders found in any tab');
     return jsonResponse({ success: true, sent: 0, msg: 'No orders found' });
   }
-
-  Logger.log('Sending rating requests for tab: ' + sheetLabel);
 
   var headers  = ordSheet.getRange(4, 1, 1, ordSheet.getLastColumn()).getValues()[0];
   var rows     = ordSheet.getRange(5, 1, ordSheet.getLastRow() - 4, ordSheet.getLastColumn()).getValues();
@@ -1998,11 +1943,8 @@ function handleSendRatingRequests(data) {
       sent++;
     } catch(err) {
       errors++;
-      Logger.log('Rating request error for ' + email + ': ' + err.message);
     }
   });
-
-  Logger.log('Rating requests sent: ' + sent + ', errors: ' + errors);
   return jsonResponse({ success: true, sent: sent, errors: errors });
 }
 
@@ -2127,8 +2069,6 @@ function handleSubmitRatings(data) {
       }
     }
   }
-
-  Logger.log('Ratings submitted for order ' + orderId + ': ' + ratings.length + ' items');
   return jsonResponse({ success: true, saved: ratings.length });
 }
 function setTwilioCredentials(sid, token, fromNumber) {
@@ -2136,7 +2076,6 @@ function setTwilioCredentials(sid, token, fromNumber) {
   props.setProperty('TWILIO_SID',   sid);
   props.setProperty('TWILIO_TOKEN', token);
   props.setProperty('TWILIO_FROM',  fromNumber);
-  Logger.log('Twilio credentials saved.');
 }
 
 function sendTwilioSms(sid, token, fromNumber, toNumber, message) {
@@ -2160,9 +2099,7 @@ function sendTwilioSms(sid, token, fromNumber, toNumber, message) {
   var code   = response.getResponseCode();
   var result = JSON.parse(response.getContentText());
   if (code === 201) {
-    Logger.log('SMS sent to ' + to + ' — SID: ' + result.sid);
   } else {
-    Logger.log('SMS error to ' + to + ': ' + result.message);
   }
   return code === 201;
 }
@@ -2192,8 +2129,6 @@ function sendSmsBlast(message) {
     if (ok) sent++; else errors++;
     Utilities.sleep(100);
   });
-
-  Logger.log('SMS blast: ' + sent + ' sent, ' + errors + ' errors');
   return { sent: sent, errors: errors };
 }
 function sendMenuPublishSms() {
@@ -2243,7 +2178,6 @@ function testDoGet() {
   var fakeEvent = { parameter: { type: 'get_dashboard' } };
   var result    = doGet(fakeEvent);
   var content   = result.getContent();
-  Logger.log('doGet test result length: ' + content.length);
   Logger.log('First 200 chars: ' + content.substring(0, 200));
   if (content.includes('orders')) Logger.log(' SUCCESS — returning dashboard data');
   else Logger.log('FAIL — check parameter handling\nFull response: ' + content);
@@ -2292,4 +2226,94 @@ function generateEmailBody(subject, name) {
     '</p>' +
     '</div>' +
     '</div></body></html>';
+}
+
+function handleGetSubscribers() {
+  var ss    = SpreadsheetApp.getActiveSpreadsheet();
+  var sheet = ss.getSheetByName('Subscribers');
+  if(!sheet || sheet.getLastRow() < 2) return jsonResponse({subscribers:[]});
+  var rows = sheet.getRange(2, 1, sheet.getLastRow()-1, 8).getValues();
+  var subs = rows.filter(function(r){ return r[0] && r[3] !== 'cancelled'; }).map(function(r){
+    return {name:r[0], email:r[1], phone:r[2], plan:r[3], since:r[4]?Utilities.formatDate(new Date(r[4]),ss.getSpreadsheetTimeZone(),'M/d/yy'):'', paused:r[5]===true||r[5]==='TRUE'};
+  });
+  return jsonResponse({subscribers: subs});
+}
+
+function triggerFridaySubOrders() {
+  var ss          = SpreadsheetApp.getActiveSpreadsheet();
+  var subSheet    = ss.getSheetByName('Subscribers');
+  var ordSheet    = ss.getSheetByName(formSheetName);
+  if(!subSheet || !ordSheet) return;
+
+  var menuProp = PropertiesService.getScriptProperties().getProperty('current_menu');
+  var menu     = menuProp ? JSON.parse(menuProp) : null;
+  var featured = PropertiesService.getScriptProperties().getProperty('featured_selections');
+  var feat     = featured ? JSON.parse(featured) : {};
+
+  if(!menu || !menu.items || !menu.items.length){
+    return;
+  }
+
+  var swapSheet = ss.getSheetByName('SwapLog');
+  var swaps = {};
+  if(swapSheet && swapSheet.getLastRow() > 1){
+    var swapRows = swapSheet.getRange(2,1,swapSheet.getLastRow()-1,5).getValues();
+    swapRows.forEach(function(r){
+      if(r[0] && r[1]) swaps[r[1].toLowerCase()] = {soup: r[2], salad: r[3]};
+    });
+  }
+
+  var ordHeaders = ordSheet.getRange(4, 1, 1, ordSheet.getLastColumn()).getValues()[0];
+  var subRows    = subSheet.getRange(2, 1, subSheet.getLastRow()-1, 8).getValues();
+  var now        = new Date();
+  var written    = 0;
+
+  subRows.forEach(function(row){
+    var name   = row[0], email = row[1], phone = row[2], plan = row[3];
+    var paused = row[5] === true || row[5] === 'TRUE';
+    if(!email || !plan || plan === 'cancelled' || paused) return;
+
+    var startOfWeek = getStartOfWeek();
+    var ordRows = ordSheet.getLastRow() > 4
+      ? ordSheet.getRange(5,1,ordSheet.getLastRow()-4,ordSheet.getLastColumn()).getValues()
+      : [];
+    var emailIdx = ordHeaders.findIndex(function(h){ return /email/i.test(h); });
+    var alreadyOrdered = ordRows.some(function(r){
+      return emailIdx >= 0 && r[emailIdx].toString().toLowerCase() === email.toLowerCase();
+    });
+    if(alreadyOrdered){ Logger.log('Skipping sub order for ' + email + ' — already has order'); return; }
+
+    var swap = swaps[email.toLowerCase()] || {};
+    var soupName   = swap.soup  || feat.soup1  || (menu.items.find(function(i){return i.cat==='soup';})||{}).n || '';
+    var saladName  = swap.salad || feat.salad1 || (menu.items.find(function(i){return i.cat==='salad';})||{}).n || '';
+
+    var newRow = new Array(ordHeaders.length).fill('');
+    ordHeaders.forEach(function(h, i){
+      if(i === 0) newRow[i] = now;
+      else if(/email/i.test(h)) newRow[i] = email;
+      else if(/new customer/i.test(h)) newRow[i] = 'No';
+      else if(/first.*last|^name/i.test(h)) newRow[i] = name;
+      else if(/phone/i.test(h)) newRow[i] = phone;
+      else if(/address/i.test(h)) newRow[i] = row[6] || '';
+      else if(/comment|special/i.test(h)) newRow[i] = '[Subscription Order - ' + plan + ']';
+      else if(/paying/i.test(h)) newRow[i] = 'Cash';
+      else {
+        var hLower = h.toLowerCase();
+        if(plan === 'ind'){
+          if(soupName && hLower.includes(soupName.toLowerCase()) && hLower.includes('pint')) newRow[i] = 2;
+        } else if(plan === 'fam'){
+          if(soupName && hLower.includes(soupName.toLowerCase()) && hLower.includes('quart')) newRow[i] = 2;
+        } else if(plan === 'ss'){
+          if(soupName && hLower.includes(soupName.toLowerCase()) && hLower.includes('pint')) newRow[i] = 2;
+          if(saladName && hLower.includes(saladName.toLowerCase())) newRow[i] = 1;
+        } else if(plan === 'sal'){
+          if(saladName && hLower.includes(saladName.toLowerCase())) newRow[i] = 2;
+        }
+      }
+    });
+
+    ordSheet.appendRow(newRow);
+    written++;
+    Logger.log('Sub order created for ' + name + ' (' + plan + ')');
+  });
 }
