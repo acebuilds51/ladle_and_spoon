@@ -1897,22 +1897,33 @@ function saveProfileForm(){
 
 function validateStreetAddress(addr){
   var a = addr.trim();
-  // Must have a street number
-  if(!/^\d/.test(a) && !/\b\d+\b/.test(a)){
-    return 'Address must start with a street number (e.g. 1247 Bielby St, Waterford)';
-  }
-  // Must have at least 2 words
-  if(a.split(/\s+/).filter(function(w){return w.length>0;}).length < 2){
-    return 'Please enter a full street address (e.g. 1247 Bielby St, Waterford)';
-  }
-  // Reject obviously fake entries
+  // Reject obviously fake/incomplete entries
   var fake = /^(yes|no|n\/a|na|none|same|home|house|here|local|waterford|mi|michigan|tbd|see above|will call|address|street)$/i;
   if(fake.test(a)){
-    return 'Please enter your full street address including street number and name';
+    return 'Please enter your full street address including street number, street name, and city';
   }
-  // Must have at least one real word (not just numbers/symbols)
-  if(!/[a-zA-Z]{2,}/.test(a)){
-    return 'Please include your street name (e.g. 1247 Bielby St, Waterford)';
+  // Must start with a street number
+  if(!/^\d+\s/.test(a)){
+    return 'Address must start with a street number — e.g. 1247 Bielby St, Waterford';
+  }
+  // Must have at least 3 words (number + street name + city minimum)
+  var words = a.split(/[\s,]+/).filter(function(w){return w.length > 0;});
+  if(words.length < 3){
+    return 'Please include your street number, street name, and city — e.g. 1247 Bielby St, Waterford';
+  }
+  // Must contain a comma (separating street from city)
+  if(a.indexOf(',') < 0){
+    return 'Please add a comma after your street address — e.g. 1247 Bielby St, Waterford';
+  }
+  // The part before the comma must have at least a number + one word
+  var streetPart = a.split(',')[0].trim();
+  if(!/^\d+\s+[a-zA-Z]/.test(streetPart)){
+    return 'Please enter your full street address — e.g. 1247 Bielby St, Waterford';
+  }
+  // The part after the comma must have something (the city)
+  var cityPart = a.split(',').slice(1).join(',').trim();
+  if(cityPart.length < 2){
+    return 'Please include your city after the comma — e.g. 1247 Bielby St, Waterford';
   }
   return null; // valid
 }
@@ -6636,8 +6647,8 @@ function markCouponUsed() {
       <div>
         <label style="font-size:11px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.5px">🏠 Home / Primary Address *</label>
         <input id="pf-addr" type="text" placeholder="1247 Bielby St, Waterford, MI" style="width:100%;padding:11px;border-radius:10px;border:2px solid #e5e7eb;font-size:15px;margin-top:4px;box-sizing:border-box" oninput="this.style.borderColor=''">
-        <div style="font-size:11px;color:var(--t3);margin-top:3px">Include street number, street name and city (e.g. 1247 Bielby St, Waterford)</div>
-        <p style="font-size:11px;color:var(--t3);margin:4px 0 0">Include street number, street name, and city (e.g. 1247 Bielby St, Waterford)</p>
+        <div style="font-size:11px;color:var(--t3);margin-top:3px">Street number, name, and city with a comma — e.g. 1247 Bielby St, Waterford</div>
+        <p style="font-size:11px;color:var(--t3);margin:4px 0 0">Street number, name, and city with a comma — e.g. 1247 Bielby St, Waterford</p>
       </div>
       <div>
         <label style="font-size:11px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.5px">🏢 Alternate Address (optional)</label>
