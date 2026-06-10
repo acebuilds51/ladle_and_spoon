@@ -472,7 +472,17 @@ header{background:var(--f);padding:10px 14px;min-height:72px;display:flex;align-
     </button>
   </div>
 
-  <!-- Push notification opt-in card -->
+  <!-- Profile update nudge — shown to existing users who need to re-enter address in new format -->
+  <div id="profile-update-nudge" class="nc" style="display:none;background:#fff8e1;border:1.5px solid #f59e0b;align-items:center;padding:14px 16px">
+    <div style="font-size:28px;margin-right:10px">✨</div>
+    <div class="nb" style="flex:1">
+      <strong style="color:#92400e">Quick profile update needed!</strong>
+      <span style="color:#78350f">We've improved the app! Please take a moment to update your delivery address — it only takes a few seconds.</span>
+    </div>
+    <button onclick="showProfile();$('profile-update-nudge').style.display='none'" style="white-space:nowrap;padding:8px 14px;border-radius:20px;border:none;background:#f59e0b;color:#fff;font-size:13px;font-weight:600;cursor:pointer;flex-shrink:0">
+      Update
+    </button>
+  </div>
   <div class="nc gold" id="notif-optin-card" style="align-items:center;padding:14px 16px">
     <div style="font-size:28px;margin-right:4px">🔔</div>
     <div class="nb" style="flex:1">
@@ -1424,7 +1434,7 @@ let ROUTE = [
 ];
 
 // ════ STATE ════
-const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyUGzi1wR9bNvzxI23oa8o0D2RlfikCcmqTsJhTK5t7FQWeJPsneH2I1ekvcFLsa8riQA/exec';
+const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbx8NgeREpfdQQ_rbZrY3HVGlXrB3z15kFV2y3VPtb3UW1TmKGbVlZXvZwRiFh66jn88Ew/exec';
 const CLOUDINARY_CLOUD = 'drcjmvjc9';
 const CLOUDINARY_PRESET = 'ladle-soup-photos';
 const CLOUDINARY_URL = 'https://api.cloudinary.com/v1_1/drcjmvjc9/image/upload';
@@ -1853,11 +1863,33 @@ function switchAddr(type){
 }
 function showProfile(){
   var prof=getProfile();
-  if($('pf-name'))  $('pf-name').value  = prof.name  || '';
-  if($('pf-email')) $('pf-email').value = prof.email || '';
-  if($('pf-phone')) $('pf-phone').value = prof.phone || '';
-  if($('pf-addr'))  $('pf-addr').value  = prof.addr  || '';
-  if($('pf-addr2')) $('pf-addr2').value = prof.addr2 || '';
+  if($('pf-name'))   $('pf-name').value   = prof.name   || '';
+  if($('pf-email'))  $('pf-email').value  = prof.email  || '';
+  if($('pf-phone'))  $('pf-phone').value  = prof.phone  || '';
+  // Migration: if old addr exists but new split fields don't, pre-parse it
+  if(prof.addr && !prof.street){
+    var parts = prof.addr.split(',').map(function(s){return s.trim();});
+    if($('pf-street')) $('pf-street').value = parts[0] || '';
+    if(parts[1]){
+      // parts[1] may be "City" or "City ST 48328"
+      var cityPart = parts[1].replace(/\s+[A-Z]{2}\s*\d{0,5}$/, '').trim();
+      var stateMatch = parts[1].match(/\b([A-Z]{2})\b/);
+      var zipMatch   = parts[2] ? parts[2].match(/\d{5}/) : (parts[1].match(/\d{5}/) || null);
+      if($('pf-city'))  $('pf-city').value  = cityPart || '';
+      if($('pf-state')) $('pf-state').value = stateMatch ? stateMatch[1] : '';
+      if($('pf-zip'))   $('pf-zip').value   = zipMatch  ? zipMatch[0]   : '';
+    }
+  } else {
+    if($('pf-street')) $('pf-street').value = prof.street || '';
+    if($('pf-city'))   $('pf-city').value   = prof.city   || '';
+    if($('pf-state'))  $('pf-state').value  = prof.state  || '';
+    if($('pf-zip'))    $('pf-zip').value    = prof.zip    || '';
+  }
+  if($('pf-zip'))    $('pf-zip').value    = prof.zip    || '';
+  if($('pf-street2'))$('pf-street2').value= prof.street2|| '';
+  if($('pf-city2'))  $('pf-city2').value  = prof.city2  || '';
+  if($('pf-state2')) $('pf-state2').value = prof.state2 || '';
+  if($('pf-zip2'))   $('pf-zip2').value   = prof.zip2   || '';
   if($('pf-pay'))   $('pf-pay').value   = prof.pay   || 'venmo';
   if($('pf-notes')) $('pf-notes').value = prof.notes || '';
   var m=$('profile-modal'); if(m){m.style.display='flex'; document.body.style.overflow='hidden';}
@@ -1866,29 +1898,39 @@ function hideProfile(){
   var m=$('profile-modal'); if(m){m.style.display='none'; document.body.style.overflow='';}
 }
 function saveProfileForm(){
-  var name  = ($('pf-name') ||{value:''}).value.trim();
-  var email = ($('pf-email')||{value:''}).value.trim();
-  var phone = ($('pf-phone')||{value:''}).value.trim();
-  var addr  = ($('pf-addr') ||{value:''}).value.trim();
-  var addr2 = ($('pf-addr2')||{value:''}).value.trim();
+  var name   = ($('pf-name') ||{value:''}).value.trim();
+  var email  = ($('pf-email')||{value:''}).value.trim();
+  var phone  = ($('pf-phone')||{value:''}).value.trim();
+  var street = ($('pf-street')||{value:''}).value.trim();
+  var city   = ($('pf-city')  ||{value:''}).value.trim();
+  var state  = ($('pf-state') ||{value:''}).value.trim();
+  var zip    = ($('pf-zip')   ||{value:''}).value.trim();
+  var street2= ($('pf-street2')||{value:''}).value.trim();
+  var city2  = ($('pf-city2') ||{value:''}).value.trim();
+  var state2 = ($('pf-state2')||{value:''}).value.trim();
+  var zip2   = ($('pf-zip2')  ||{value:''}).value.trim();
+  // Assemble full address strings for order submission
+  var addr  = street && city ? street + ', ' + city + (state ? ', ' + state : '') + (zip ? ' ' + zip : '') : '';
+  var addr2 = street2 && city2 ? street2 + ', ' + city2 + (state2 ? ', ' + state2 : '') + (zip2 ? ' ' + zip2 : '') : '';
   var pay   = ($('pf-pay')  ||{value:'venmo'}).value;
   var notes = ($('pf-notes')||{value:''}).value.trim();
 
   if(!name){ toast('Please enter your name'); $('pf-name').focus(); return; }
   if(!email||!email.includes('@')){ toast('Please enter a valid email'); $('pf-email').focus(); return; }
 
-  // Strict address validation
-  if(!addr){ $('pf-addr').style.borderColor='#e53e3e'; $('pf-addr').focus(); toast('A delivery address is required'); return; }
-  var addrErr = validateStreetAddress(addr);
-  if(addrErr){ $('pf-addr').style.borderColor='#e53e3e'; $('pf-addr').focus(); toast(addrErr); return; }
+  // Validate split address fields
+  if(!street){ $('pf-street').style.borderColor='#e53e3e'; $('pf-street').focus(); toast('Please enter your street address'); return; }
+  if(!/^\d+\s/.test(street)){ $('pf-street').style.borderColor='#e53e3e'; $('pf-street').focus(); toast('Street address must start with a house number — e.g. 1247 Bielby St'); return; }
+  if(!city){ $('pf-city').style.borderColor='#e53e3e'; $('pf-city').focus(); toast('Please enter your city'); return; }
+  if(!state){ $('pf-state').style.borderColor='#e53e3e'; $('pf-state').focus(); toast('Please enter your state abbreviation'); return; }
+  if(!zip||zip.length < 5){ $('pf-zip').style.borderColor='#e53e3e'; $('pf-zip').focus(); toast('Please enter a valid 5-digit zip code'); return; }
 
   // Validate alternate address if provided
-  if(addr2){
-    var addr2Err = validateStreetAddress(addr2);
-    if(addr2Err){ $('pf-addr2').style.borderColor='#e53e3e'; $('pf-addr2').focus(); toast('Alternate address: ' + addr2Err); return; }
+  if(addr2 && (!street2 || !city2)){
+    toast('Please complete the alternate address or leave all fields blank'); return;
   }
 
-  saveProfile({name,email,phone,addr,addr2,pay,notes});
+  saveProfile({name,email,phone,street,city,state,zip,street2,city2,state2,zip2,addr,addr2,pay,notes});
   hideProfile();
   var _nudge=$('profile-nudge-card'); if(_nudge) _nudge.style.display='none';
   toast('Profile saved! Your info will pre-fill every order.');
@@ -1930,7 +1972,7 @@ function validateStreetAddress(addr){
 function clearProfile(){
   if(!confirm('Clear your saved profile?')) return;
   try{localStorage.removeItem('customer_profile');}catch(e){}
-  ['pf-name','pf-email','pf-phone','pf-addr','pf-addr2','pf-notes'].forEach(function(id){var el=$(id);if(el)el.value='';});
+  ['pf-name','pf-email','pf-phone','pf-street','pf-city','pf-state','pf-zip','pf-street2','pf-city2','pf-state2','pf-zip2','pf-notes'].forEach(function(id){var el=$(id);if(el)el.value='';});
   toast('Profile cleared');
   var btn=$('pfb'); if(btn) btn.textContent='👤';
 }
@@ -2750,11 +2792,15 @@ window.onload = () => {
   if(_prof.name){
     var _pb=$("pfb"); if(_pb) _pb.textContent="👤 "+_prof.name.split(" ")[0];
     var _nudge=$('profile-nudge-card'); if(_nudge) _nudge.style.display='none';
+    // Show update nudge for existing users who have old addr but not new split fields
+    if(_prof.addr && !_prof.street){
+      var _unudge=$('profile-update-nudge'); if(_unudge) _unudge.style.display='flex';
+    }
   } else {
     var _nudge=$('profile-nudge-card'); if(_nudge) _nudge.style.display='flex';
   }
   // Prompt new visitors to set up profile
-  if(!_prof.addr){setTimeout(function(){toast("👤 Tap the profile button to save your address for faster ordering!");},3000);}
+  if(!_prof.addr && !_prof.street){setTimeout(function(){toast("👤 Tap the profile button to save your address for faster ordering!");},3000);}
 
   // Clear admin data cache on every fresh page load
   sessionStorage.removeItem('admin_data');
@@ -6645,14 +6691,31 @@ function markCouponUsed() {
         <input id="pf-phone" type="tel" placeholder="(248) 555-1234" style="width:100%;padding:11px;border-radius:10px;border:2px solid #e5e7eb;font-size:15px;margin-top:4px;box-sizing:border-box">
       </div>
       <div>
-        <label style="font-size:11px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.5px">🏠 Home / Primary Address *</label>
-        <input id="pf-addr" type="text" placeholder="1247 Bielby St, Waterford, MI" style="width:100%;padding:11px;border-radius:10px;border:2px solid #e5e7eb;font-size:15px;margin-top:4px;box-sizing:border-box" oninput="this.style.borderColor=''">
-        <div style="font-size:11px;color:var(--t3);margin-top:3px">Street number, name, and city with a comma — e.g. 1247 Bielby St, Waterford</div>
-        <p style="font-size:11px;color:var(--t3);margin:4px 0 0">Street number, name, and city with a comma — e.g. 1247 Bielby St, Waterford</p>
+        <label style="font-size:11px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.5px">🏠 Street Address *</label>
+        <input id="pf-street" type="text" placeholder="1247 Bielby St" style="width:100%;padding:11px;border-radius:10px;border:2px solid #e5e7eb;font-size:15px;margin-top:4px;box-sizing:border-box" oninput="this.style.borderColor=''">
+      </div>
+      <div style="display:flex;gap:8px">
+        <div style="flex:2">
+          <label style="font-size:11px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.5px">City *</label>
+          <input id="pf-city" type="text" placeholder="Waterford" style="width:100%;padding:11px;border-radius:10px;border:2px solid #e5e7eb;font-size:15px;margin-top:4px;box-sizing:border-box" oninput="this.style.borderColor=''">
+        </div>
+        <div style="flex:1">
+          <label style="font-size:11px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.5px">State *</label>
+          <input id="pf-state" type="text" placeholder="MI" maxlength="2" style="width:100%;padding:11px;border-radius:10px;border:2px solid #e5e7eb;font-size:15px;margin-top:4px;box-sizing:border-box;text-transform:uppercase" oninput="this.value=this.value.toUpperCase();this.style.borderColor=''">
+        </div>
+        <div style="flex:1">
+          <label style="font-size:11px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.5px">Zip *</label>
+          <input id="pf-zip" type="tel" placeholder="48328" maxlength="5" style="width:100%;padding:11px;border-radius:10px;border:2px solid #e5e7eb;font-size:15px;margin-top:4px;box-sizing:border-box" oninput="this.style.borderColor=''">
+        </div>
       </div>
       <div>
         <label style="font-size:11px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.5px">🏢 Alternate Address (optional)</label>
-        <input id="pf-addr2" type="text" placeholder="e.g. 123 Work Blvd, Auburn Hills, MI" style="width:100%;padding:11px;border-radius:10px;border:2px solid #e5e7eb;font-size:15px;margin-top:4px;box-sizing:border-box">
+        <input id="pf-street2" type="text" placeholder="123 Work Blvd" style="width:100%;padding:11px;border-radius:10px;border:2px solid #e5e7eb;font-size:15px;margin-top:4px;box-sizing:border-box">
+        <div style="display:flex;gap:8px;margin-top:6px">
+          <input id="pf-city2" type="text" placeholder="Auburn Hills" style="flex:2;padding:11px;border-radius:10px;border:2px solid #e5e7eb;font-size:15px;box-sizing:border-box">
+          <input id="pf-state2" type="text" placeholder="MI" maxlength="2" style="flex:1;padding:11px;border-radius:10px;border:2px solid #e5e7eb;font-size:15px;box-sizing:border-box;text-transform:uppercase" oninput="this.value=this.value.toUpperCase()">
+          <input id="pf-zip2" type="tel" placeholder="48326" maxlength="5" style="flex:1;padding:11px;border-radius:10px;border:2px solid #e5e7eb;font-size:15px;box-sizing:border-box">
+        </div>
         <p style="font-size:11px;color:var(--t3);margin:4px 0 0">Work, school, or any other delivery location</p>
       </div>
       <div>
