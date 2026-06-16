@@ -2271,9 +2271,15 @@ function initLoyaltyPage(){
     var refEl = $('loyalty-ref-code');
     if(refEl){
       var phone = (prof.phone||'').replace(/\D/g,'');
-      refEl.textContent = phone.length >= 10
-        ? phone.replace(/(\d{3})(\d{3})(\d{4})/,'($1) $2-$3')
-        : (prof.name ? 'Complete your profile to see your code' : 'Set up your profile to see your code');
+      if(phone.length >= 10){
+        refEl.textContent = phone.replace(/(\d{3})(\d{3})(\d{4})/,'($1) $2-$3');
+        refEl.style.fontSize = '32px';
+        refEl.style.letterSpacing = '3px';
+      } else {
+        refEl.textContent = 'Please update your profile including Name, Address, City, State, Zip, and Phone to get your referral code.';
+        refEl.style.fontSize = '12px';
+        refEl.style.letterSpacing = '0';
+      }
     }
     var statusEl = $('loyalty-status-body');
     if(statusEl && prof.name){
@@ -3739,10 +3745,10 @@ function sw(v, btn){
   var _cpb=$('cpb'); if(_cpb) _cpb.style.display = v==='admin' ? 'none' : 'flex';
   if(v === 'admin'){
     isAdmin = true;
-    // Fetch fresh data from Sheet when admin opens
     refreshAdminData();
     setTimeout(initMenuBuilder, 100);
   }
+  if(v === 'loyalty') initLoyaltyPage();
 }
 function toggleMode(){
   if(isAdmin){
