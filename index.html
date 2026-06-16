@@ -2224,7 +2224,7 @@ function _fetchAndApplyPhotos(){
           var sn = s.n.toLowerCase();
           return sn === cleanKey || sn === sid.toLowerCase();
         });
-        if(soup && !soup.photo){ soup.photo = url; SOUP_PHOTOS[soup.n.toLowerCase()] = url; }
+        if(soup){ soup.photo = url; SOUP_PHOTOS[soup.n.toLowerCase()] = url; }
       });
       buildMenu();
       setTimeout(buildMenu, 1000); // second pass — catches any race with MENU_ITEMS
@@ -2305,7 +2305,7 @@ function buildPhotoUploader(){
       +(needsSync?'<button onclick="syncPhotoToSheet(\''+s.n.replace(/'/g,"\\'")+'\',' +'\''+photo+'\')" style="background:orange;color:#fff;border:none;border-radius:8px;padding:6px 10px;font-size:11px;font-weight:700;cursor:pointer">Sync</button>':'')
       +'<label style="cursor:pointer;background:var(--f);color:#fff;border-radius:8px;padding:6px 12px;font-size:11px;font-weight:700">'
       +(hasPh?'Update':'+ Photo')
-      +'<input type="file" accept="image/*" style="display:none" data-name="'+s.n+'" onchange="handlePhotoUpload(this)">'
+      +'<input type="file" accept="image/*" style="display:none" data-sid="'+(s.id||'')+'" data-name="'+s.n+'" onchange="handlePhotoUpload(this)">'
       +'</label>'
       +'</div>';
   });
@@ -2351,7 +2351,7 @@ function handlePhotoUpload(input){
         var photos = JSON.parse(localStorage.getItem('soup_photos') || '{}');
         photos[photoKey] = url;
         photos[name.toLowerCase()] = url; // spaces version
-        photos[sid] = url;               // original id as well
+        if(sid) photos[sid] = url;       // original id (only if defined)
         localStorage.setItem('soup_photos', JSON.stringify(photos));
       }catch(e){}
 
@@ -2426,6 +2426,7 @@ function loadSavedPhotos(){
             SOUP_PHOTOS[soup.n.toLowerCase()] = url;
           }
           // Stamp directly on MENU_ITEMS
+          var sidNorm2 = sid.toLowerCase().replace(/-/g,' ');
           MENU_ITEMS.forEach(function(mi){
             if(mi.n.toLowerCase() === sid.toLowerCase() || mi.n.toLowerCase() === sidNorm2){
               mi.photo = url;
