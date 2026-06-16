@@ -559,28 +559,65 @@ header{background:var(--f);padding:10px 14px;min-height:72px;display:flex;align-
 
   <!-- PRE-LAUNCH TEASER (shown until loyaltyLaunchDate) -->
   <div id="loyalty-teaser" style="display:none">
-    <div class="ccrd" style="text-align:center;padding:28px 20px">
-      <div style="font-size:48px;margin-bottom:14px">🎉</div>
-      <h3 style="font-size:20px;margin-bottom:10px">Something exciting is coming!</h3>
-      <p style="font-size:14px;color:var(--t2);line-height:1.7;margin-bottom:16px">
-        Ladle &amp; Spoon is launching a brand new <strong>Loyalty &amp; Rewards program</strong>. First delivery July 20th — but ordering starts <strong>July 13th</strong>.
-      </p>
-      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:18px">
-        <div style="background:#f0faf0;border-radius:10px;padding:14px 8px;text-align:center">
-          <div style="font-size:24px;margin-bottom:6px">📉</div>
-          <div style="font-size:11px;font-weight:700;color:var(--f);line-height:1.3">Weekly Delivery Discounts</div>
+
+    <!-- Countdown card -->
+    <div style="background:linear-gradient(135deg,#1a3a1c,var(--f));border-radius:var(--r);padding:24px 16px;margin-bottom:14px;text-align:center;color:#fff">
+      <div style="font-size:11px;font-weight:700;letter-spacing:2px;color:rgba(255,255,255,.6);margin-bottom:8px;text-transform:uppercase">Launching In</div>
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:14px">
+        <div style="background:rgba(0,0,0,.3);border-radius:10px;padding:12px 4px">
+          <div style="font-size:30px;font-weight:700;color:#7FFF00;line-height:1" id="lc-days">—</div>
+          <div style="font-size:9px;font-weight:700;letter-spacing:1px;color:rgba(255,255,255,.5);margin-top:4px">DAYS</div>
         </div>
-        <div style="background:#fff8e1;border-radius:10px;padding:14px 8px;text-align:center">
-          <div style="font-size:24px;margin-bottom:6px">🔒</div>
-          <div style="font-size:11px;font-weight:700;color:var(--am);line-height:1.3">Streak Freeze Credits</div>
+        <div style="background:rgba(0,0,0,.3);border-radius:10px;padding:12px 4px">
+          <div style="font-size:30px;font-weight:700;color:#7FFF00;line-height:1" id="lc-hours">—</div>
+          <div style="font-size:9px;font-weight:700;letter-spacing:1px;color:rgba(255,255,255,.5);margin-top:4px">HOURS</div>
         </div>
-        <div style="background:#f9f5f0;border-radius:10px;padding:14px 8px;text-align:center">
-          <div style="font-size:24px;margin-bottom:6px">🤝</div>
-          <div style="font-size:11px;font-weight:700;color:var(--f);line-height:1.3">Referral Rewards</div>
+        <div style="background:rgba(0,0,0,.3);border-radius:10px;padding:12px 4px">
+          <div style="font-size:30px;font-weight:700;color:#7FFF00;line-height:1" id="lc-mins">—</div>
+          <div style="font-size:9px;font-weight:700;letter-spacing:1px;color:rgba(255,255,255,.5);margin-top:4px">MINS</div>
+        </div>
+        <div style="background:rgba(0,0,0,.3);border-radius:10px;padding:12px 4px">
+          <div style="font-size:30px;font-weight:700;color:#7FFF00;line-height:1" id="lc-secs">—</div>
+          <div style="font-size:9px;font-weight:700;letter-spacing:1px;color:rgba(255,255,255,.5);margin-top:4px">SECS</div>
         </div>
       </div>
-      <p style="font-size:12px;color:var(--t3);line-height:1.6">Full details go live July 13th when the return menu is announced.<br>Any order placed July 13th or later counts toward your streak.</p>
+      <div style="font-size:22px;font-weight:700;margin-bottom:4px">Loyalty &amp; Rewards</div>
+      <div style="font-size:13px;color:rgba(255,255,255,.7)">Goes live Sunday, July 13th</div>
     </div>
+
+    <!-- Sneak peek -->
+    <div class="ccrd">
+      <h3 style="margin-bottom:6px">Here's a sneak peek 👀</h3>
+      <p style="font-size:13px;color:var(--t3);margin-bottom:14px">Lia is rolling out an all-new rewards program just for you. Here's what's coming:</p>
+      <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:16px">
+        <div style="display:flex;align-items:center;gap:14px;background:#f0faf0;border-radius:10px;padding:14px">
+          <div style="font-size:26px;flex-shrink:0">📉</div>
+          <div>
+            <div style="font-size:14px;font-weight:700;color:var(--f);margin-bottom:2px">Weekly delivery discounts</div>
+            <div style="font-size:12px;color:var(--t3)">Order every week and watch your delivery fee drop — all the way to free.</div>
+          </div>
+        </div>
+        <div style="display:flex;align-items:center;gap:14px;background:#fff8e1;border-radius:10px;padding:14px">
+          <div style="font-size:26px;flex-shrink:0">🔒</div>
+          <div>
+            <div style="font-size:14px;font-weight:700;color:#92400e;margin-bottom:2px">Streak freeze credits</div>
+            <div style="font-size:12px;color:var(--t3)">Need to skip a week? Earn credits to protect your discount streak.</div>
+          </div>
+        </div>
+        <div style="display:flex;align-items:center;gap:14px;background:#f9f5f0;border-radius:10px;padding:14px">
+          <div style="font-size:26px;flex-shrink:0">🤝</div>
+          <div>
+            <div style="font-size:14px;font-weight:700;color:var(--f);margin-bottom:2px">Refer friends, earn rewards</div>
+            <div style="font-size:12px;color:var(--t3)">Share Ladle &amp; Spoon and earn credits every time a new customer places their first order.</div>
+          </div>
+        </div>
+      </div>
+      <div style="background:#f0faf0;border-radius:10px;padding:14px;text-align:center">
+        <div style="font-size:13px;font-weight:700;color:var(--f);margin-bottom:4px">Get ready now</div>
+        <div style="font-size:12px;color:var(--t2);line-height:1.6">Make sure your profile has your full name, address, and phone number. Your phone number becomes your referral code the moment this launches.</div>
+      </div>
+    </div>
+
   </div>
 
   <!-- FULL PROGRAM CONTENT (shown on/after loyaltyLaunchDate) -->
@@ -2259,15 +2296,47 @@ function initScheduleDisplay(){
 }
 
 // ════ LOYALTY PAGE ════
+var _loyCountdown = null;
+
+function startLoyaltyCountdown(launchDate){
+  if(_loyCountdown) clearInterval(_loyCountdown);
+  function tick(){
+    var now = new Date();
+    var target = new Date(launchDate + 'T00:00:00');
+    var diff = target - now;
+    if(diff <= 0){
+      clearInterval(_loyCountdown);
+      _loyCountdown = null;
+      initLoyaltyPage();
+      return;
+    }
+    var d = Math.floor(diff / 86400000);
+    var h = Math.floor((diff % 86400000) / 3600000);
+    var m = Math.floor((diff % 3600000) / 60000);
+    var s = Math.floor((diff % 60000) / 1000);
+    var pad = function(n){ return String(n).padStart(2,'0'); };
+    if($('lc-days'))  $('lc-days').textContent  = d;
+    if($('lc-hours')) $('lc-hours').textContent = pad(h);
+    if($('lc-mins'))  $('lc-mins').textContent  = pad(m);
+    if($('lc-secs'))  $('lc-secs').textContent  = pad(s);
+  }
+  tick();
+  _loyCountdown = setInterval(tick, 1000);
+}
+
 function initLoyaltyPage(){
   var prof = getProfile();
   var today = new Date().toISOString().slice(0,10);
-  var launched = !SCHEDULE.loyaltyLaunchDate || today >= SCHEDULE.loyaltyLaunchDate;
+  var launchDate = SCHEDULE.loyaltyLaunchDate || '2026-07-13';
+  var launched = today >= launchDate;
   var fullEl = $('loyalty-full-content');
   var teaserEl = $('loyalty-teaser');
   if(fullEl) fullEl.style.display = launched ? '' : 'none';
   if(teaserEl) teaserEl.style.display = launched ? 'none' : '';
-  if(launched){
+  if(!launched){
+    startLoyaltyCountdown(launchDate);
+  } else {
+    if(_loyCountdown){ clearInterval(_loyCountdown); _loyCountdown = null; }
     var refEl = $('loyalty-ref-code');
     if(refEl){
       var phone = (prof.phone||'').replace(/\D/g,'');
