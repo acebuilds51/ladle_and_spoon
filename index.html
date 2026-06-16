@@ -2322,6 +2322,19 @@ function initLoyaltyPage(){
 }
 
 // ── FEATURE 6: PUSH NOTIFICATIONS ──
+function testMyNotification(){
+  if(!('Notification' in window)){ toast('Notifications not supported on this browser'); return; }
+  if(Notification.permission !== 'granted'){ toast('Notifications not enabled on this device yet — tap the bell icon first'); return; }
+  try{
+    new Notification('Ladle & Spoon 🍲', {
+      body: 'Test successful! Notifications are working on this device.',
+      icon: 'https://res.cloudinary.com/drcjmvjc9/image/upload/v1/ladle-soup-photos/logo'
+    });
+    toast('✅ Test notification sent — check your device!');
+  }catch(e){
+    toast('Could not send test: ' + e.message);
+  }
+}
 function requestNotifPermission(){
   if(!('Notification' in window)){toast('Notifications not supported on this device');return;}
   Notification.requestPermission().then(p=>{
