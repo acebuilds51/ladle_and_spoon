@@ -3010,7 +3010,9 @@ function copyAllAddresses(btn){
   });
 }
 window.onload = () => {
-  console.log("APP VERSION: 2026-06-16-v153-loyalty");
+  console.log("APP VERSION: 2026-06-16-v154-loyalty");
+  // One-time cleanup: remove legacy subscription data from localStorage
+  try{ localStorage.removeItem('my_sub'); localStorage.removeItem('my_swap'); }catch(e){}
   loadCustomItems();
   // Load any edited descriptions from localStorage
   try{
@@ -3846,7 +3848,7 @@ function showItem(id){
       <div class="srow" id="sr-${id}" data-sid="${id}">
         ${it.sz.map((sz,i)=>`<div class="so ${szi[id]===i?'active':''} ${it.soldout?'soldout':''}" onclick="${it.soldout?'':'selSzEl(this,'+i+')'}">
           <strong>${sz.l}</strong><span>${sz.o}</span>
-          <span style="font-weight:700;margin-top:3px;">$${sz.p}</span>
+          <span style="font-weight:700;margin-top:3px;">$${Number(sz.p).toFixed(2)}</span>
         </div>`).join('')}
       </div>
       <div class="qrow">
@@ -3856,7 +3858,7 @@ function showItem(id){
         <span style="font-size:12px;color:var(--t3)">qty</span>
       </div>
       <button class="bp" id="abtn${id}" onclick="addToCart('${id}')" ${it.soldout?'disabled style="opacity:.5"':''}>
-        ${it.soldout?'Sold Out':'Add to Order — $'+it.sz[szi[id]].p}
+        ${it.soldout?'Sold Out':'Add to Order — $'+Number(it.sz[szi[id]].p).toFixed(2)}
       </button>
       <div class="rev-section">
         <h4>⭐ Ratings &amp; Reviews${s.rating>0?' · '+s.rating+' avg ('+s.reviews.length+')':''}</h4>
@@ -3885,7 +3887,7 @@ function selSz(id,idx,el){
   szi[id]=idx;
   document.querySelectorAll(`#sr-${id} .so`).forEach((o,i)=>o.classList.toggle('active',i===idx));
   const it=MENU_ITEMS.find(i=>i.id===id);
-  $('abtn'+id).textContent='Add to Order — $'+it.sz[idx].p;
+  $('abtn'+id).textContent='Add to Order — $'+Number(it.sz[idx].p).toFixed(2);
 }
 function chgQ(d,elId){const el=$(elId);let v=parseInt(el.textContent)+d;if(v<1)v=1;el.textContent=v;}
 function addToCart(id){
