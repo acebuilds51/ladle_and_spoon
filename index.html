@@ -584,7 +584,7 @@ header{background:var(--f);padding:10px 14px;min-height:72px;display:flex;align-
   </div>
 
   <!-- FULL PROGRAM CONTENT (shown on/after loyaltyLaunchDate) -->
-  <div id="loyalty-full-content" style="display:none">
+  <div id="loyalty-full-content">
 
     <!-- Streak ladder -->
     <div class="ccrd">
@@ -665,8 +665,6 @@ header{background:var(--f);padding:10px 14px;min-height:72px;display:flex;align-
 
   </div><!-- end loyalty-full-content -->
 
-  <!-- Legacy subscription management (shown only if active sub exists) -->
-  <div id="my-sub-status"></div>
 </div>
 
 <!-- ── RECIPES ── -->
@@ -4260,6 +4258,7 @@ function confirmSub(){
 }
 function updateSubStatus(){
   const el = $('my-sub-status');
+  if(!el) return;
   if(!mySub){el.innerHTML='<p style="font-size:13px;color:var(--t3)">No active subscription.</p>';return;}
   const p=mySub.plan;
   el.innerHTML=`<div class="my-sub">
