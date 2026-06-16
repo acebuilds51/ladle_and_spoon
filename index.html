@@ -543,95 +543,122 @@ header{background:var(--f);padding:10px 14px;min-height:72px;display:flex;align-
 
 <!-- ── PLANS ── -->
 <div class="view" id="v-loyalty">
-  <!-- Hero -->
+  <!-- Hero (always visible) -->
   <div style="background:linear-gradient(135deg,var(--f),#2E6B30);border-radius:var(--r);padding:24px 20px;margin-bottom:16px;color:#fff;text-align:center">
     <div style="font-size:40px;margin-bottom:8px">🏆</div>
     <h2 style="font-family:'Cormorant Garamond',serif;font-size:26px;margin-bottom:6px">Loyalty &amp; Rewards</h2>
     <p style="font-size:13px;opacity:.85;line-height:1.5">Order consistently, refer friends, and earn real savings on every delivery.</p>
   </div>
 
-  <!-- Streak ladder -->
-  <div class="ccrd">
-    <h3>Consecutive Delivery Discount</h3>
-    <p style="font-size:13px;color:var(--t3);margin-bottom:14px">Order week after week and your delivery fee keeps dropping. Keep the streak alive!</p>
-    <div style="display:grid;grid-template-columns:repeat(6,1fr);gap:4px;margin-bottom:14px">
-      <div class="loy-step" style="background:#f9f5f0"><div class="loy-amt" style="color:var(--t2)">$5</div><div class="loy-wk">WK 1</div></div>
-      <div class="loy-step" style="background:#e8f5e9"><div class="loy-amt" style="color:#2E7D32">$4</div><div class="loy-wk">WK 2</div></div>
-      <div class="loy-step" style="background:#c8e6c9"><div class="loy-amt" style="color:#2E7D32">$3</div><div class="loy-wk">WK 3</div></div>
-      <div class="loy-step" style="background:#a5d6a7"><div class="loy-amt" style="color:var(--f)">$2</div><div class="loy-wk">WK 4</div></div>
-      <div class="loy-step" style="background:#81c784"><div class="loy-amt" style="color:var(--f)">$1</div><div class="loy-wk">WK 5</div></div>
-      <div class="loy-step" style="background:linear-gradient(135deg,var(--f),#2E6B30)"><div class="loy-amt" style="color:#7FFF00">FREE</div><div class="loy-wk" style="color:rgba(255,255,255,.7)">WK 6+</div></div>
-    </div>
-    <div style="background:#f9f5f0;border-radius:10px;padding:12px;font-size:12px;color:var(--t2);line-height:1.6">
-      <strong>Miss a week?</strong> Your streak resets. But if you have a credit, you can use it to freeze your streak position — or take free delivery instead. You need one credit per week skipped to fully restore your streak.
-    </div>
-  </div>
-
-  <!-- Credits -->
-  <div class="ccrd">
-    <h3>Streak Freeze Credits</h3>
-    <p style="font-size:13px;color:var(--t3);margin-bottom:12px">Earn credits by referring friends. Each credit covers one of the following:</p>
-    <div class="loy-duo">
-      <div class="loy-tile" style="background:#f0faf0">
-        <div class="loy-tile-icon">🔒</div>
-        <div class="loy-tile-label">Freeze Your Streak</div>
-        <div class="loy-tile-desc">Skip a week without losing your streak position</div>
-      </div>
-      <div class="loy-tile" style="background:#fff8e1">
-        <div class="loy-tile-icon">🚚</div>
-        <div class="loy-tile-label" style="color:var(--am)">Free Delivery</div>
-        <div class="loy-tile-desc">Free delivery on any upcoming order</div>
-      </div>
-    </div>
-    <div style="font-size:12px;color:var(--t3);line-height:1.6">
-      You choose at checkout. If you have no streak to protect, credits auto-apply as free delivery. If you skipped 2 weeks, you need 2 credits to restore — otherwise take the free delivery and start fresh.
-    </div>
-  </div>
-
-  <!-- Referral -->
-  <div class="ccrd">
-    <h3>Refer a Friend</h3>
-    <p style="font-size:13px;color:var(--t3);margin-bottom:12px">Tell a friend about Ladle &amp; Spoon. When they enter your phone number at checkout as a new customer, you both win.</p>
-    <div class="loy-duo">
-      <div class="loy-tile" style="background:#f9f5f0">
-        <div class="loy-tile-icon">🤝</div>
-        <div class="loy-tile-label">You earn</div>
-        <div class="loy-tile-desc">1 credit — use it for free delivery or streak protection</div>
-      </div>
-      <div class="loy-tile" style="background:#f0faf0">
-        <div class="loy-tile-icon">🆕</div>
-        <div class="loy-tile-label">They get</div>
-        <div class="loy-tile-desc">Free delivery on their very first order</div>
-      </div>
-    </div>
-    <div style="background:var(--f);border-radius:10px;padding:16px;text-align:center">
-      <div style="font-size:11px;color:rgba(255,255,255,.7);font-weight:700;letter-spacing:.5px;margin-bottom:6px">YOUR REFERRAL CODE</div>
-      <div style="font-size:20px;font-weight:700;color:#7FFF00;letter-spacing:1px;margin-bottom:6px" id="loyalty-ref-code">—</div>
-      <div style="font-size:11px;color:rgba(255,255,255,.65);line-height:1.5">Tell friends: "Enter my phone number at checkout when you order for the first time."</div>
-    </div>
-  </div>
-
-  <!-- Vacation notice (shown when schedule says so) -->
+  <!-- Vacation notice (always visible when set) -->
   <div id="loyalty-vac-notice" style="display:none;background:#fff8e1;border:1.5px solid var(--am);border-radius:var(--r);padding:16px;margin-bottom:12px">
     <div style="font-size:13px;font-weight:700;color:#92400e;margin-bottom:6px" id="loyalty-vac-title">Upcoming Vacation</div>
     <div style="font-size:13px;color:var(--t2);line-height:1.6" id="loyalty-vac-body"></div>
-    <div style="font-size:12px;color:var(--t3);margin-top:8px">Your streak is automatically frozen during vacation weeks — no credits needed.</div>
+    <div style="font-size:12px;color:var(--t3);margin-top:8px">Streaks are automatically frozen during vacation weeks — no credits needed.</div>
   </div>
 
-  <!-- Your status -->
-  <div class="ccrd">
-    <h3>Your Loyalty Status</h3>
-    <div id="loyalty-status-body">
-      <p style="font-size:13px;color:var(--t3)">Set up your profile and place your first order to see your streak and credit balance here.</p>
+  <!-- PRE-LAUNCH TEASER (shown until loyaltyLaunchDate) -->
+  <div id="loyalty-teaser" style="display:none">
+    <div class="ccrd" style="text-align:center;padding:28px 20px">
+      <div style="font-size:48px;margin-bottom:14px">🎉</div>
+      <h3 style="font-size:20px;margin-bottom:10px">Something exciting is coming!</h3>
+      <p style="font-size:14px;color:var(--t2);line-height:1.7;margin-bottom:16px">
+        Ladle &amp; Spoon is launching a brand new <strong>Loyalty &amp; Rewards program</strong> on <strong>July 20th</strong>.
+      </p>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:18px">
+        <div style="background:#f0faf0;border-radius:10px;padding:14px 8px;text-align:center">
+          <div style="font-size:24px;margin-bottom:6px">📉</div>
+          <div style="font-size:11px;font-weight:700;color:var(--f);line-height:1.3">Weekly Delivery Discounts</div>
+        </div>
+        <div style="background:#fff8e1;border-radius:10px;padding:14px 8px;text-align:center">
+          <div style="font-size:24px;margin-bottom:6px">🔒</div>
+          <div style="font-size:11px;font-weight:700;color:var(--am);line-height:1.3">Streak Freeze Credits</div>
+        </div>
+        <div style="background:#f9f5f0;border-radius:10px;padding:14px 8px;text-align:center">
+          <div style="font-size:24px;margin-bottom:6px">🤝</div>
+          <div style="font-size:11px;font-weight:700;color:var(--f);line-height:1.3">Referral Rewards</div>
+        </div>
+      </div>
+      <p style="font-size:12px;color:var(--t3);line-height:1.6">Full details go live when the July 20th menu is announced.<br>Your streak starts counting from your very first order after launch.</p>
     </div>
   </div>
 
+  <!-- FULL PROGRAM CONTENT (shown on/after loyaltyLaunchDate) -->
+  <div id="loyalty-full-content" style="display:none">
+
+    <!-- Streak ladder -->
+    <div class="ccrd">
+      <h3>Consecutive Delivery Discount</h3>
+      <p style="font-size:13px;color:var(--t3);margin-bottom:14px">Order week after week and your delivery fee keeps dropping. Keep the streak alive!</p>
+      <div style="display:grid;grid-template-columns:repeat(6,1fr);gap:4px;margin-bottom:14px">
+        <div class="loy-step" style="background:#f9f5f0"><div class="loy-amt" style="color:var(--t2)">$5</div><div class="loy-wk">WK 1</div></div>
+        <div class="loy-step" style="background:#e8f5e9"><div class="loy-amt" style="color:#2E7D32">$4</div><div class="loy-wk">WK 2</div></div>
+        <div class="loy-step" style="background:#c8e6c9"><div class="loy-amt" style="color:#2E7D32">$3</div><div class="loy-wk">WK 3</div></div>
+        <div class="loy-step" style="background:#a5d6a7"><div class="loy-amt" style="color:var(--f)">$2</div><div class="loy-wk">WK 4</div></div>
+        <div class="loy-step" style="background:#81c784"><div class="loy-amt" style="color:var(--f)">$1</div><div class="loy-wk">WK 5</div></div>
+        <div class="loy-step" style="background:linear-gradient(135deg,var(--f),#2E6B30)"><div class="loy-amt" style="color:#7FFF00">FREE</div><div class="loy-wk" style="color:rgba(255,255,255,.7)">WK 6+</div></div>
+      </div>
+      <div style="background:#f9f5f0;border-radius:10px;padding:12px;font-size:12px;color:var(--t2);line-height:1.6">
+        <strong>Miss a week?</strong> Your streak resets. But if you have a credit, you can use it to freeze your streak position — or take free delivery instead. You need one credit per week skipped to fully restore your streak.
+      </div>
+    </div>
+
+    <!-- Credits -->
+    <div class="ccrd">
+      <h3>Streak Freeze Credits</h3>
+      <p style="font-size:13px;color:var(--t3);margin-bottom:12px">Earn credits by referring friends. Each credit covers one of the following:</p>
+      <div class="loy-duo">
+        <div class="loy-tile" style="background:#f0faf0">
+          <div class="loy-tile-icon">🔒</div>
+          <div class="loy-tile-label">Freeze Your Streak</div>
+          <div class="loy-tile-desc">Skip a week without losing your streak position</div>
+        </div>
+        <div class="loy-tile" style="background:#fff8e1">
+          <div class="loy-tile-icon">🚚</div>
+          <div class="loy-tile-label" style="color:var(--am)">Free Delivery</div>
+          <div class="loy-tile-desc">Free delivery on any upcoming order</div>
+        </div>
+      </div>
+      <div style="font-size:12px;color:var(--t3);line-height:1.6">
+        You choose at checkout. If you have no streak to protect, credits auto-apply as free delivery. Need 2 credits to cover a 2-week skip — otherwise take the free delivery and start fresh.
+      </div>
+    </div>
+
+    <!-- Referral -->
+    <div class="ccrd">
+      <h3>Refer a Friend</h3>
+      <p style="font-size:13px;color:var(--t3);margin-bottom:12px">Tell a friend about Ladle &amp; Spoon. When they enter your phone number at checkout as a new customer, you both win.</p>
+      <div class="loy-duo">
+        <div class="loy-tile" style="background:#f9f5f0">
+          <div class="loy-tile-icon">🤝</div>
+          <div class="loy-tile-label">You earn</div>
+          <div class="loy-tile-desc">1 credit — use it for free delivery or streak protection</div>
+        </div>
+        <div class="loy-tile" style="background:#f0faf0">
+          <div class="loy-tile-icon">🆕</div>
+          <div class="loy-tile-label">They get</div>
+          <div class="loy-tile-desc">Free delivery on their very first order</div>
+        </div>
+      </div>
+      <div style="background:var(--f);border-radius:10px;padding:16px;text-align:center">
+        <div style="font-size:11px;color:rgba(255,255,255,.7);font-weight:700;letter-spacing:.5px;margin-bottom:6px">YOUR REFERRAL CODE</div>
+        <div style="font-size:20px;font-weight:700;color:#7FFF00;letter-spacing:1px;margin-bottom:6px" id="loyalty-ref-code">—</div>
+        <div style="font-size:11px;color:rgba(255,255,255,.65);line-height:1.5">Tell friends: "Enter my phone number at checkout when you order for the first time."</div>
+      </div>
+    </div>
+
+    <!-- Your status -->
+    <div class="ccrd">
+      <h3>Your Loyalty Status</h3>
+      <div id="loyalty-status-body">
+        <p style="font-size:13px;color:var(--t3)">Set up your profile and place your first order to see your streak and credit balance here.</p>
+      </div>
+    </div>
+
+  </div><!-- end loyalty-full-content -->
+
   <!-- Legacy subscription management (shown only if active sub exists) -->
   <div id="my-sub-status"></div>
-
-  <div style="text-align:center;padding:8px 0 20px">
-    <p style="font-size:11px;color:var(--t3);line-height:1.6">Loyalty &amp; Rewards program launches <strong>July 20, 2026</strong>.<br>Streak tracking begins with your next order after launch.</p>
-  </div>
 </div>
 
 <!-- ── RECIPES ── -->
@@ -845,6 +872,15 @@ header{background:var(--f);padding:10px 14px;min-height:72px;display:flex;align-
         <label style="font-size:11px;font-weight:700;color:var(--t2);display:block;margin-bottom:4px">Delivery Label (shown to customers)</label>
         <input type="text" id="sch-delivery-label" class="fi-sel" placeholder="e.g. Thursday, July 3rd" style="width:100%" oninput="scheduleChanged()">
       </div>
+    </div>
+
+    <!-- Loyalty launch date -->
+    <div class="ccrd">
+      <h3>🏆 Loyalty Program Launch</h3>
+      <p style="font-size:13px;color:var(--t3);margin-bottom:12px">Full program details are hidden on the Loyalty page until this date. Before launch, customers see a teaser only.</p>
+      <label style="font-size:11px;font-weight:700;color:var(--t2);display:block;margin-bottom:4px">Reveal Full Loyalty Page On</label>
+      <input type="date" id="sch-loyalty-launch" class="fi-sel" style="max-width:200px" oninput="scheduleChanged()">
+      <div style="font-size:11px;color:var(--t3);margin-top:4px">Set to July 13, 2026 (when Lia publishes the menu)</div>
     </div>
 
     <!-- Preview -->
@@ -2110,6 +2146,7 @@ function saveSchedule(){
   SCHEDULE.specialDeadline     = $('sch-deadline')       ? $('sch-deadline').value      : '';
   SCHEDULE.specialDeliveryDate = $('sch-delivery-date')  ? $('sch-delivery-date').value : '';
   SCHEDULE.specialDeliveryLabel= $('sch-delivery-label') ? $('sch-delivery-label').value.trim() : '';
+  SCHEDULE.loyaltyLaunchDate   = $('sch-loyalty-launch') ? $('sch-loyalty-launch').value : '';
   try{ localStorage.setItem('ladle_schedule', JSON.stringify(SCHEDULE)); }catch(e){}
   initScheduleDisplay();
   countdown();
@@ -2156,6 +2193,7 @@ function buildScheduleAdmin(){
   if($('sch-deadline'))       $('sch-deadline').value       = SCHEDULE.specialDeadline||'';
   if($('sch-delivery-date'))  $('sch-delivery-date').value  = SCHEDULE.specialDeliveryDate||'';
   if($('sch-delivery-label')) $('sch-delivery-label').value = SCHEDULE.specialDeliveryLabel||'';
+  if($('sch-loyalty-launch')) $('sch-loyalty-launch').value = SCHEDULE.loyaltyLaunchDate||'';
   scheduleChanged();
 }
 function initScheduleDisplay(){
@@ -2217,18 +2255,25 @@ function initScheduleDisplay(){
 // ════ LOYALTY PAGE ════
 function initLoyaltyPage(){
   var prof = getProfile();
-  var refEl = $('loyalty-ref-code');
-  if(refEl){
-    var phone = (prof.phone||'').replace(/\D/g,'');
-    refEl.textContent = phone.length >= 10
-      ? phone.replace(/(\d{3})(\d{3})(\d{4})/,'($1) $2-$3')
-      : (prof.name ? 'Complete your profile to see your code' : 'Set up your profile to see your code');
-  }
-  var statusEl = $('loyalty-status-body');
-  if(statusEl && prof.name){
-    statusEl.innerHTML = '<div style="font-size:13px;color:var(--t2);line-height:1.8">'
-      +'<strong>' + prof.name.split(' ')[0] + '</strong> — program launches July 20, 2026.<br>'
-      +'Your streak and credit balance will appear here after your first order post-launch.</div>';
+  var today = new Date().toISOString().slice(0,10);
+  var launched = !SCHEDULE.loyaltyLaunchDate || today >= SCHEDULE.loyaltyLaunchDate;
+  var fullEl = $('loyalty-full-content');
+  var teaserEl = $('loyalty-teaser');
+  if(fullEl) fullEl.style.display = launched ? '' : 'none';
+  if(teaserEl) teaserEl.style.display = launched ? 'none' : '';
+  if(launched){
+    var refEl = $('loyalty-ref-code');
+    if(refEl){
+      var phone = (prof.phone||'').replace(/\D/g,'');
+      refEl.textContent = phone.length >= 10
+        ? phone.replace(/(\d{3})(\d{3})(\d{4})/,'($1) $2-$3')
+        : (prof.name ? 'Complete your profile to see your code' : 'Set up your profile to see your code');
+    }
+    var statusEl = $('loyalty-status-body');
+    if(statusEl && prof.name){
+      statusEl.innerHTML = '<div style="font-size:13px;color:var(--t2);line-height:1.8">'
+        +'<strong>' + prof.name.split(' ')[0] + '</strong> — your streak and credit balance will appear here after your first order.</div>';
+    }
   }
 }
 
