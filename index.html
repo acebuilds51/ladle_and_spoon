@@ -537,7 +537,7 @@ header{background:var(--f);padding:10px 14px;min-height:72px;display:flex;align-
 <div class="view" id="v-menu">
   <div class="mgrid" id="mgrid"></div>
   <div style="text-align:center;padding:20px 16px 8px">
-    <button onclick="showSoupRequest()" style="background:transparent;border:1.5px solid var(--f);color:var(--f);padding:10px 22px;border-radius:20px;font-size:13px;font-weight:600;cursor:pointer">🍲 Request a Soup or Salad</button>
+    <button onclick="showSoupRequest()" style="background:transparent;border:1.5px solid var(--f);color:var(--f);padding:10px 22px;border-radius:20px;font-size:13px;font-weight:600;cursor:pointer">💡 Suggest a Future Menu Item</button>
   </div>
 </div>
 
@@ -702,7 +702,6 @@ header{background:var(--f);padding:10px 14px;min-height:72px;display:flex;align-
     <button class="at" onclick="adm('notify',this)">📣 Notify</button>
     <button class="at" onclick="adm('ratings',this)">⭐ Ratings</button>
     <button class="at" onclick="adm('schedule',this);buildScheduleAdmin()">🗓️ Schedule</button>
-    <button class="at" onclick="adm('subs',this);buildSubAdmin();loadFeaturedSelects()">📦 Subs</button>
     <button class="at" onclick="adm('soups',this);buildSoupIntel();buildPhotoUploader()">🧠 Soups</button>
     <button class="at" onclick="adm('custs',this)">👥 Customers</button>
     <button class="at" onclick="adm('react',this);buildReact();buildRetentionMap()">💌 Re-engage</button>
@@ -718,7 +717,6 @@ header{background:var(--f);padding:10px 14px;min-height:72px;display:flex;align-
       <div class="kc"><div class="kl">This Week</div><div class="kv" id="kpi-week-rev">—</div><div class="ks" id="kpi-week-orders">loading...</div></div>
       <div class="kc"><div class="kl">All-Time Revenue</div><div class="kv" id="kpi-yearly-rev">—</div><div class="ks" id="kpi-yearly-weeks">loading...</div></div>
       <div class="kc"><div class="kl">Avg Weekly</div><div class="kv" id="kpi-avg-weekly">—</div><div class="ks" id="kpi-avg-best">loading...</div></div>
-      <div class="kc"><div class="kl">Subscribers</div><div class="kv" id="sub-count-dash">0</div><div class="ks">Weekly recurring</div></div>
     </div>
     <div class="ccrd">
       <h3>Payment Split — This Week</h3>
@@ -914,14 +912,6 @@ header{background:var(--f);padding:10px 14px;min-height:72px;display:flex;align-
     </div>
   </div>
 
-  <div class="asec" id="adm-subs">
-    <div class="sh"><div class="st">Active Subscriptions (Founding Members)</div></div>
-    <div class="kgrid">
-      <div class="kc"><div class="kl">Active Plans</div><div class="kv" id="sub-count-adm">0</div><div class="ks">Weekly recurring</div></div>
-      <div class="kc"><div class="kl">Recurring Revenue</div><div class="kv" id="sub-rev-adm">$0</div><div class="ks">Estimated/wk</div></div>
-    </div>
-    <div id="sub-ad-list"><p style="font-size:13px;color:var(--t3)">No active subscriptions yet.</p></div>
-  </div>
 
   <div class="asec" id="adm-soups">
     <div class="sh"><div class="st">Soup Intelligence</div><button onclick="showAddItemModal()" style="padding:6px 14px;border-radius:20px;border:none;background:var(--f);color:#fff;font-size:12px;font-weight:700;cursor:pointer">➕ Add Item</button></div>
@@ -1131,13 +1121,15 @@ header{background:var(--f);padding:10px 14px;min-height:72px;display:flex;align-
 <div class="ov hidden" id="ov-req" onclick="if(event.target===this)this.classList.add('hidden')">
   <div class="sheet" style="padding:24px">
     <div class="hdl"><div class="hdl-b"></div></div>
-    <h3 style="font-family:'Cormorant Garamond',serif;font-size:22px;color:var(--f);margin-bottom:6px">🍲 Request a Soup or Salad</h3>
-    <p style="font-size:13px;color:var(--t3);margin-bottom:16px">Have a soup or salad you'd love to see on the menu? Let Lia know! Requests are reviewed each week.</p>
-    <label style="font-size:11px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.5px">Your Request *</label>
+    <h3 style="font-family:'Cormorant Garamond',serif;font-size:22px;color:var(--f);margin-bottom:6px">💡 Suggest a Menu Item</h3>
+    <div style="background:#fff8e1;border-radius:10px;padding:12px 14px;margin-bottom:14px;border-left:3px solid var(--am)">
+      <p style="font-size:13px;color:#92400e;margin:0;line-height:1.6"><strong>This is not an order.</strong> You're suggesting a soup or salad you'd love to see Lia make in the future. She reviews all suggestions and works them into upcoming menus when she can!</p>
+    </div>
+    <label style="font-size:11px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.5px">What would you like to see on the menu? *</label>
     <textarea id="req-text" placeholder="e.g. Broccoli Cheddar Soup, or a Greek salad with feta..." style="width:100%;padding:12px;border-radius:10px;border:2px solid #e5e7eb;font-size:14px;margin-top:4px;box-sizing:border-box;height:90px;resize:none;font-family:inherit" oninput="this.style.borderColor=''"></textarea>
-    <label style="font-size:11px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.5px;margin-top:12px;display:block">Your Name (optional)</label>
-    <input id="req-name" type="text" placeholder="First name or nickname" style="width:100%;padding:11px;border-radius:10px;border:2px solid #e5e7eb;font-size:14px;margin-top:4px;box-sizing:border-box">
-    <button class="bp" style="margin-top:16px" onclick="submitSoupRequest()">Send Request 🥣</button>
+    <label style="font-size:11px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.5px;margin-top:12px;display:block">Your Name *</label>
+    <input id="req-name" type="text" placeholder="First name" style="width:100%;padding:11px;border-radius:10px;border:2px solid #e5e7eb;font-size:14px;margin-top:4px;box-sizing:border-box" oninput="this.style.borderColor=''">
+    <button class="bp" style="margin-top:16px" onclick="submitSoupRequest()">Send My Suggestion 💡</button>
     <button style="width:100%;padding:10px;border:none;background:transparent;color:var(--t3);font-size:13px;cursor:pointer;margin-top:6px" onclick="closeOv('ov-req')">Cancel</button>
   </div>
 </div>
@@ -1387,12 +1379,6 @@ function getSoupPhoto(name, soupId) {
 let MENU_ITEMS = [];
 let MENU_LOADING = true; // true until we get a response from the Sheet
 
-const PLANS = [
-  {id:'ind',icon:'🥣',name:'Individual Plan',desc:'2 Pints of the weekly feature soup, delivered every Monday.',detail:'2 Pints / week',price:16,disc:14.00,del:5,delDisc:3,popular:false},
-  {id:'fam',icon:'🍲',name:'Family Plan',desc:'2 Quarts per week — enough to feed the whole family.',detail:'2 Quarts / week',price:30,disc:27.00,del:5,delDisc:3,popular:true},
-  {id:'ss', icon:'🥣🥗',name:'Soup & Salad Plan',desc:'2 Pints of soup + 1 weekly salad. A complete, balanced meal.',detail:'2 Pints + 1 Salad',price:31,disc:26.00,del:5,delDisc:3,popular:false},
-  {id:'sal',icon:'🥗🥗',name:'Salad Lover Plan',desc:'2 of the weekly salads — perfect for lighter eating or meal prep.',detail:'2 Salads / week',price:28,disc:25.20,del:5,delDisc:3,popular:false},
-];
 
 let MONTHLY = [
   {m:"Mar '25",r:3154},{m:"Apr '25",r:2123},{m:"May '25",r:1961},{m:"Jun '25",r:2388},
@@ -1625,7 +1611,7 @@ const FIREBASE_CONFIG = {
   appId: "1:432229384791:web:4db16a355c485a91a95912"
 };
 const VAPID_KEY = 'BJFMSeMr6wjx_D0GfnH3dolcN_PQFgQh6xP9RuUKSJ2GLUwq-1fv8GUwWJg36LMSQy6U6kLk4FHNjaF4zpM1Ikk'; // ← paste Web App URL after deploying
-let cart=[], szi={}, isAdmin=false, selPlan=null, mySub=null, starPending={};
+let cart=[], szi={}, isAdmin=false, starPending={};
 
 // ════ SCHEDULE (vacation mode + special deadline) ════
 var SCHEDULE = (function(){
@@ -1937,7 +1923,7 @@ function applyCoupon(){
 function submitOrder(){
   // Calculate total from cart
   var food=cart.reduce(function(s,i){return s+i.sz.p*i.qty;},0);
-  var del=mySub?3:5;
+  var del=5;
   var couponDisc=activeCoupon?Math.round(food*(activeCoupon.pct||0)/100*100)/100:0;
   var total=food-couponDisc+(cart.length>0?del:0);
   const name   = ($('ord-name') ||{value:''}).value.trim();
@@ -1977,7 +1963,7 @@ function submitOrder(){
     notes,
     coupon:      appliedCoupon,
     total,
-    deliveryFee: mySub ? 3 : 5,
+    deliveryFee: 5,
     items: cart.map(c=>({
       name:  c.n,
       size:  c.sz.l,
@@ -2446,128 +2432,6 @@ function weeklyReset(){
 }
 
 
-function showSubSwap(){
-  // Use WKMENU (this week's actual menu) — must be loaded from server
-  var weekItems = (WKMENU && WKMENU.length > 0) ? WKMENU
-    : (MENU_ITEMS && MENU_ITEMS.length > 0) ? MENU_ITEMS
-    : [];
-
-  if(!weekItems.length){
-    $('rcc').innerHTML = '<div class="hdl"><div class="hdl-b"></div></div>'
-      +'<div class="cs"><h2 style="font-family:Cormorant Garamond,serif;font-size:24px;color:var(--f)">Swap This Week</h2>'
-      +'<p style="color:var(--t3);font-size:14px;margin-top:16px">This week\'s menu hasn\'t loaded yet. Please go to the Home tab first, then come back to swap.</p>'
-      +'<button class="bp" onclick="closeOv(\'ov-rec\')">OK</button></div>';
-    openOv('ov-rec');
-    return;
-  }
-
-  // Identify soups vs salads from this week's menu
-  const soups  = weekItems.filter(function(m){
-    var cat = m.cat || '';
-    var n = (m.n||'').toLowerCase();
-    if(cat === 'salad') return false;
-    if(/salad|ceviche|berry crunch/i.test(n)) return false;
-    return true;
-  });
-  const salads = weekItems.filter(function(m){
-    var cat = m.cat || '';
-    var n = (m.n||'').toLowerCase();
-    if(cat === 'salad') return true;
-    if(/salad|ceviche|berry crunch/i.test(n)) return true;
-    return false;
-  });
-  const mySwap={}; try{Object.assign(mySwap,JSON.parse(localStorage.getItem('my_swap')||'{}'));}catch(e){}
-  const feat={};  try{Object.assign(feat,JSON.parse(localStorage.getItem('featured_items')||'{}'));}catch(e){}
-  const planId = mySub ? mySub.plan.id : 'ind';
-  const planDesc = {ind:'2 Pints of soup', fam:'2 Quarts of soup', ss:'2 Pints of soup + 1 Salad', sal:'2 Salads'};
-
-  // Default names from Lia's featured selections
-  const def = {
-    soup1:  feat.soup1  || (soups[0]  ? soups[0].n  : ''),
-    soup2:  feat.soup2  || (soups[1]  ? soups[1].n  : feat.soup1 || ''),
-    salad1: feat.salad1 || (salads[0] ? salads[0].n : ''),
-    salad2: feat.salad2 || (salads[1] ? salads[1].n : feat.salad1 || '')
-  };
-
-  const mkOpts = (items, key) => {
-    const defaultName = def[key] || '';
-    const currentSwap = mySwap[key] || '';
-    // First option shows what they currently GET by default
-    const keepLabel = defaultName ? '✓ Keep: '+defaultName : '— Keep my default —';
-    return '<option value="">'+keepLabel+'</option>'
-      + items.filter(s => s.n !== defaultName).map(s=>
-          '<option value="'+s.n+'"'+(currentSwap===s.n?' selected':'')+'>'
-          +s.n+(defaultName?' (instead of '+defaultName+')':'')
-          +'</option>'
-        ).join('');
-  };
-
-  const slotLabel = planId==='fam' ? 'Quart' : 'Pint';
-  const slots = {
-    ind: [{id:'soup1', label:'🥣 '+slotLabel+' #1', opts:mkOpts(soups,'soup1')},
-          {id:'soup2', label:'🥣 '+slotLabel+' #2', opts:mkOpts(soups,'soup2')}],
-    fam: [{id:'soup1', label:'🍲 Quart #1', opts:mkOpts(soups,'soup1')},
-          {id:'soup2', label:'🍲 Quart #2', opts:mkOpts(soups,'soup2')}],
-    ss:  [{id:'soup1', label:'🥣 Pint #1',  opts:mkOpts(soups,'soup1')},
-          {id:'soup2', label:'🥣 Pint #2',  opts:mkOpts(soups,'soup2')},
-          {id:'salad1',label:'🥗 Salad',    opts:mkOpts(salads,'salad1')}],
-    sal: [{id:'salad1',label:'🥗 Salad #1', opts:mkOpts(salads,'salad1')},
-          {id:'salad2',label:'🥗 Salad #2', opts:mkOpts(salads,'salad2')}]
-  };
-  const mySlots = slots[planId] || slots['ind'];
-
-  let html='<div class="hdl"><div class="hdl-b"></div></div>'
-    +'<div class="cs">'
-    +'<h2 style="font-family:Cormorant Garamond,serif;font-size:24px;color:var(--f);margin-bottom:4px">Swap This Week</h2>'
-    +'<p style="font-size:12px;color:var(--t3);margin-bottom:4px">Your plan: <strong>'+(planDesc[planId]||'')+'</strong></p>'
-    +'<p style="font-size:12px;color:var(--t3);margin-bottom:16px">Select what you want for each slot — must be done by Friday 6 PM.</p>';
-
-  mySlots.forEach(function(slot){
-    html+='<div style="margin-bottom:14px">'
-      +'<label style="font-size:12px;font-weight:700;color:var(--t2);display:block;margin-bottom:5px">'+slot.label+'</label>'
-      +'<select id="swap-'+slot.id+'" style="width:100%;padding:10px;border-radius:10px;border:2px solid var(--bd);font-size:13px;background:#fff">'
-      +slot.opts
-      +'</select></div>';
-  });
-
-  html+='<button class="bp" onclick="saveSwap()">Save My Selections</button></div>';
-  $('rcc').innerHTML=html;
-  openOv('ov-rec');
-}
-function saveSwap(){
-  // Read all possible swap slots
-  const soup1  = ($('swap-soup1')  ||{value:''}).value;
-  const soup2  = ($('swap-soup2')  ||{value:''}).value;
-  const salad1 = ($('swap-salad1') ||{value:''}).value;
-  const salad2 = ($('swap-salad2') ||{value:''}).value;
-  const prof  = getProfile();
-  const swapData = {soup1,soup2,salad1,salad2,date:new Date().toISOString()};
-  if(soup1) swapData.soup = soup1;
-  if(salad1) swapData.salad = salad1;
-
-  try{localStorage.setItem('my_swap',JSON.stringify(swapData));}catch(e){}
-
-  if(APPS_SCRIPT_URL && APPS_SCRIPT_URL !== 'PASTE_YOUR_URL_HERE'){
-    fetch(APPS_SCRIPT_URL, {
-      method:  'POST',
-      headers: {'Content-Type':'text/plain'},
-      body:    JSON.stringify({
-        type:  'swap',
-        email: prof.email || '',
-        name:  prof.name  || '',
-        soup1, soup2, salad1, salad2,
-        // Also send defaults so Lia's email shows "X instead of Y"
-        default_soup1:  def.soup1  || '',
-        default_soup2:  def.soup2  || '',
-        default_salad1: def.salad1 || '',
-        default_salad2: def.salad2 || ''
-      })
-    }).catch(()=>{});
-  }
-
-  toast('✅ Your swap is saved! Lia will see it before delivery.');
-  closeOv('ov-rec');
-}
 
 function _fetchAndApplyPhotos(){
   if(!APPS_SCRIPT_URL) return;
@@ -3143,39 +3007,6 @@ window.onload = () => {
       if(s) s.desc = _descs[sid];
     });
   }catch(e){}
-  // Show first name on profile button if profile exists
-  // Restore subscription from localStorage first, then verify/sync from Sheet
-  try{
-    var _savedSub = JSON.parse(localStorage.getItem('my_sub')||'null');
-    if(_savedSub && _savedSub.plan){ mySub = _savedSub; updateSubStatus(); }
-  }catch(e){}
-
-  // Also fetch from Sheet to sync across devices
-  var _prof2 = getProfile();
-  if(_prof2.email && APPS_SCRIPT_URL){
-    fetch(APPS_SCRIPT_URL + '?type=get_subscribers')
-    .then(function(r){ return r.json(); })
-    .catch(function(){ return null; })
-    .then(function(d){
-      if(!d || !d.subscribers) return;
-      var planMap = {ind:{id:'ind',icon:'🥣',name:'Individual Plan',disc:14,del:3,delDisc:3},
-                     fam:{id:'fam',icon:'🍲',name:'Family Plan',disc:27,del:3,delDisc:3},
-                     ss: {id:'ss', icon:'🥣🥗',name:'Soup & Salad Plan',disc:26,del:3,delDisc:3},
-                     sal:{id:'sal',icon:'🥗🥗',name:'Salad Lover Plan',disc:25,del:3,delDisc:3}};
-      var mySub2 = d.subscribers.find(function(s){
-        return s.email.toLowerCase() === _prof2.email.toLowerCase() && s.plan !== 'cancelled';
-      });
-      if(mySub2){
-        var plan = planMap[mySub2.plan] || planMap['ind'];
-        mySub = {plan: plan, paused: mySub2.paused};
-        try{ localStorage.setItem('my_sub', JSON.stringify(mySub)); }catch(e){}
-        updateSubStatus();
-        buildPlans();
-        buildMenu();
-      }
-    });
-  }
-
   var _prof=getProfile();
   if(_prof.name){
     var _pb=$("pfb"); if(_pb) _pb.textContent="👤 "+_prof.name.split(" ")[0];
@@ -3240,7 +3071,7 @@ window.onload = () => {
     });
   buildMenu(); buildRepo(); buildDash(); buildOrders(); buildCusts();
   buildReact(); buildAreas(); buildRoute(); buildWkMenu(); buildSoupIntel();
-  buildPlans(); buildRatings(); buildSubAdmin(); buildMonthly(); countdown(); buildRouteStrip(); loadFeaturedSelects(); loadSavedPhotos();
+  buildRatings(); buildMonthly(); countdown(); buildRouteStrip(); loadFeaturedSelects(); loadSavedPhotos();
   initScheduleDisplay(); initLoyaltyPage();
   loadSheetRatings();
   // Reload featured selects after dashboard data arrives (MENU_ITEMS will be populated)
@@ -3315,8 +3146,9 @@ function submitSoupRequest(){
   var text = ($('req-text')||{value:''}).value.trim();
   var name = ($('req-name')||{value:''}).value.trim();
   var prof = getProfile();
-  if(!text){ $('req-text').style.borderColor='#e53e3e'; toast('Please describe what you\'d like!'); return; }
-  var reqName = name || prof.name || 'Anonymous';
+  if(!text){ $('req-text').style.borderColor='#e53e3e'; toast('Please tell us what you\'d like to see on the menu!'); return; }
+  if(!name){ $('req-name').style.borderColor='#e53e3e'; toast('Please enter your name so Lia knows who to thank!'); return; }
+  var reqName = name;
   var reqEmail = prof.email || '';
   // Log to sheet via GAS
   if(APPS_SCRIPT_URL){
@@ -3329,7 +3161,7 @@ function submitSoupRequest(){
   closeOv('ov-req');
   if($('req-text')) $('req-text').value='';
   if($('req-name')) $('req-name').value='';
-  toast('🥣 Request sent! Lia loves the inspiration.');
+  toast('💡 Suggestion sent! Lia will review it for an upcoming menu.');
 }
 function stars(r,max=5){return r>0?'★'.repeat(Math.round(r))+'☆'.repeat(max-Math.round(r)):'';}
 function trendClass(t){return t.includes('📈')?'trend-up':t.includes('📉')?'trend-dn':'trend-st';}
@@ -3947,15 +3779,14 @@ function buildMenu(){
   let items = MENU_ITEMS;
   $('mgrid').innerHTML = items.map(i=>{
     const s    = ALL_SOUPS.find(x=>x.id===i.soupId)||{rating:0,reviews:[]};
-    const disc = mySub ? 0.9 : 1;
-    const fp   = (i.sz[0].p*disc).toFixed(2);
+    const fp   = i.sz[0].p.toFixed(2);
     const ph   = i.photo || getSoupPhoto(i.n, i.soupId);
     // Build inline size buttons if item has multiple sizes
     const szBtns = i.sz.length > 1 ? `
       <div class="mc-sizes" onclick="event.stopPropagation()">
         ${i.sz.map((sz,si)=>`<button class="mc-sz-btn" onclick="event.stopPropagation();qAddSized('${i.id}',${si})" ${i.soldout?'disabled':''}>
           <span class="mc-sz-label">${sz.l}</span>
-          <span class="mc-sz-price">$${(sz.p*disc).toFixed(0)}</span>
+          <span class="mc-sz-price">$${sz.p.toFixed(0)}</span>
         </button>`).join('')}
       </div>` : '';
     return `<div class="mc" onclick="showItem('${i.id}')">
@@ -3963,7 +3794,6 @@ function buildMenu(){
         ${ph?'':''+i.em}
         ${i.tags&&i.tags.includes('new')?'<div class="badge new">NEW</div>':''}
         ${i.soldout?'<div class="badge so">SOLD OUT</div>':''}
-        ${mySub?'<div class="badge sub">Sub</div>':''}
       </div>
       <div class="mcb">
         <h3>${i.n}${(function(){var f=isFeaturedItem(i.n);return f?'<span style="display:block;font-size:10px;background:#fef3c7;color:#92400e;padding:2px 6px;border-radius:10px;font-weight:700;margin-top:3px">'+f+'</span>':''})()}</h3>
@@ -3973,7 +3803,6 @@ function buildMenu(){
         <div class="mcf" ${i.sz.length > 1 ? 'style="display:none"' : ''}>
           <div>
             <div class="mcp">${i.soldout?'Sold Out':'from $'+fp}</div>
-            ${mySub&&!i.soldout?`<div class="sub-price">Subscriber price</div>`:''}
           </div>
           <button class="mca" ${i.soldout?'disabled':''} onclick="event.stopPropagation();qAdd('${i.id}')">+</button>
         </div>
@@ -3988,7 +3817,6 @@ function showItem(id){
   const it = MENU_ITEMS.find(i=>i.id===id); if(!it){console.error('showItem: item not found',id);return;}
   const s = ALL_SOUPS.find(x=>x.id===it.soupId)||{rating:0,reviews:[]};
   szi[id] = szi[id]||0;
-  const disc = mySub ? 0.9 : 1;
   const revHTML = s.reviews.length
     ? s.reviews.map(r=>`<div class="rev-card"><div class="rev-head"><span class="rev-name">${r.name}</span><span class="rev-stars">${'★'.repeat(r.stars)+'☆'.repeat(5-r.stars)}</span></div><div class="rev-txt">${r.text}</div></div>`).join('')
     : '<p style="font-size:13px;color:var(--t3)">No reviews yet — be the first!</p>';
@@ -3999,14 +3827,13 @@ function showItem(id){
       <h2>${it.n}</h2>
       <div class="tagrow">
         ${it.tags.map(t=>`<span class="tag">${t==='new'?'⭐ New This Week':t}</span>`).join('')}
-        ${mySub?'<span class="tag sub">📦 Subscriber</span>':''}
       </div>
       <p class="itd" id="item-desc-${it.id}" style="cursor:pointer;border-radius:6px;padding:4px;transition:background .2s" ${isAdmin?`onclick="editItemDesc('${it.id}')" title="Admin: tap to edit" style="cursor:pointer;border-radius:6px;padding:4px;border:1px dashed #ddd"`:'style=""'}>${it.desc||''}</p>
       ${it.al.length?`<div class="alg">${it.al.map(a=>`<span>⚠️ ${a}</span>`).join('')}</div>`:''}
       <div class="srow" id="sr-${id}" data-sid="${id}">
         ${it.sz.map((sz,i)=>`<div class="so ${szi[id]===i?'active':''} ${it.soldout?'soldout':''}" onclick="${it.soldout?'':'selSzEl(this,'+i+')'}">
           <strong>${sz.l}</strong><span>${sz.o}</span>
-          <span style="font-weight:700;margin-top:3px;">${mySub?'<s style="opacity:.45">$'+sz.p+'</s> $'+(sz.p*disc).toFixed(2):'$'+sz.p}</span>
+          <span style="font-weight:700;margin-top:3px;">$${sz.p}</span>
         </div>`).join('')}
       </div>
       <div class="qrow">
@@ -4015,9 +3842,8 @@ function showItem(id){
         <button class="qb" onclick="chgQ(1,'q${id}')">+</button>
         <span style="font-size:12px;color:var(--t3)">qty</span>
       </div>
-      ${mySub?'<div class="sub-note-box">📦 Subscriber price applied — 10% off every item!</div>':''}
       <button class="bp" id="abtn${id}" onclick="addToCart('${id}')" ${it.soldout?'disabled style="opacity:.5"':''}>
-        ${it.soldout?'Sold Out':'Add to Order — $'+(it.sz[szi[id]].p*disc).toFixed(2)}
+        ${it.soldout?'Sold Out':'Add to Order — $'+it.sz[szi[id]].p}
       </button>
       <div class="rev-section">
         <h4>⭐ Ratings &amp; Reviews${s.rating>0?' · '+s.rating+' avg ('+s.reviews.length+')':''}</h4>
@@ -4045,30 +3871,27 @@ function selSzEl(el, idx){
 function selSz(id,idx,el){
   szi[id]=idx;
   document.querySelectorAll(`#sr-${id} .so`).forEach((o,i)=>o.classList.toggle('active',i===idx));
-  const it=MENU_ITEMS.find(i=>i.id===id), disc=mySub?0.9:1;
-  $('abtn'+id).textContent='Add to Order — $'+(it.sz[idx].p*disc).toFixed(2);
+  const it=MENU_ITEMS.find(i=>i.id===id);
+  $('abtn'+id).textContent='Add to Order — $'+it.sz[idx].p;
 }
 function chgQ(d,elId){const el=$(elId);let v=parseInt(el.textContent)+d;if(v<1)v=1;el.textContent=v;}
 function addToCart(id){
   try{
   const it=MENU_ITEMS.find(i=>i.id===id), si=szi[id]||0;
   const q=parseInt($('q'+id)?.textContent||1);
-  const disc=mySub?0.9:1, p={...it.sz[si],p:Math.round(it.sz[si].p*disc*100)/100};
+  const p={...it.sz[si]};
   for(let i=0;i<q;i++) cart.push({id,n:it.n,em:it.em,sz:p,qty:1});
   updCart(); closeOv('ov-item'); toast('🛒 '+it.n+' added!');
   }catch(e){console.error('addToCart error:',e); toast('Error adding to cart — check console');}
 }
 function qAdd(id){
   const it=MENU_ITEMS.find(i=>i.id===id); if(it.soldout)return;
-  const disc=mySub?0.9:1, p={...it.sz[0],p:Math.round(it.sz[0].p*disc*100)/100};
-  cart.push({id,n:it.n,em:it.em,sz:p,qty:1}); updCart(); toast('🛒 '+it.n+' added!');
+  cart.push({id,n:it.n,em:it.em,sz:{...it.sz[0]},qty:1}); updCart(); toast('🛒 '+it.n+' added!');
 }
 function qAddSized(id, sizeIdx){
   const it=MENU_ITEMS.find(i=>i.id===id); if(!it||it.soldout)return;
-  const disc=mySub?0.9:1;
   const sz=it.sz[sizeIdx]||it.sz[0];
-  const p={...sz,p:Math.round(sz.p*disc*100)/100};
-  cart.push({id,n:it.n,em:it.em,sz:p,qty:1}); updCart();
+  cart.push({id,n:it.n,em:it.em,sz:{...sz},qty:1}); updCart();
   toast('🛒 '+it.n+' ('+sz.l+') added!');
 }
 function updCart(){var _cc=$('cc');if(_cc)_cc.textContent=cart.reduce((a,b)=>a+b.qty,0);}
@@ -4095,81 +3918,13 @@ function submitRev(menuId, soupId){
 // ════ CART ════
 function showCart(){
   const food = cart.reduce((a,b)=>a+b.sz.p*b.qty,0);
-  const del = mySub?3:5;
+  const del = 5;
   const couponDisc = appliedCoupon==='WELCOMEBACK'?Math.round(food*0.1):0;
   const total = food - couponDisc + (cart.length>0?del:0);
   $('ctc').innerHTML = `
     <div class="hdl"><div class="hdl-b"></div></div>
     <div class="cs">
       <div class="sh"><div class="st">Your Order</div><button onclick="closeOv('ov-cart')" style="font-size:12px;font-weight:700;color:var(--f);background:transparent;border:1.5px solid var(--f);border-radius:8px;padding:4px 10px;cursor:pointer">+ Continue Shopping</button></div>
-      ${mySub?'<div class="sub-note-box">📦 Subscriber prices applied · Delivery $${del}</div>':''}
-      ${cart.length===0
-        ?'<div style="text-align:center;padding:30px 0;font-size:44px">🛒<p style="color:var(--t3);font-size:14px;margin-top:10px">Your cart is empty</p></div>'
-        :cart.map((c,i)=>`<div class="ci">
-          <div class="ciem">${c.em}</div>
-          <div class="ciinf"><strong>${c.n}</strong><span>${c.sz.l} · ${c.sz.o} × ${c.qty}</span></div>
-          <div class="cip">$${(c.sz.p*c.qty).toFixed(2)}</div>
-          <button class="cirm" onclick="rmItem(${i})">✕</button>
-        </div>`).join('')}
-      ${cart.length>0?`
-        <div class="cart-summary">
-          <div class="cs-row"><span>Food subtotal</span><span>$${food.toFixed(2)}</span></div>
-          ${couponDisc>0?`<div class="cs-row" style="color:var(--sg)"><span>WELCOMEBACK discount</span><span>-$${couponDisc.toFixed(2)}</span></div>`:''}
-          <div class="cs-row"><span>Delivery fee</span><span>$${del}.00</span></div>
-          <div class="cs-row tot"><span>Total</span><span>$${total.toFixed(2)}</span></div>
-        </div>
-        <div style="margin:14px 0 8px;font-size:13px;font-weight:700;color:var(--t2)">Coupon Code</div>
-        <div style="display:flex;gap:7px;margin-bottom:14px">
-          <input id="coupon-inp" class="fi-sel" placeholder="Enter promo code" style="flex:1;padding:10px;border-radius:10px;border:2px solid var(--bd);font-size:13px;outline:none">
-          <button onclick="applyCoupon()" style="padding:10px 14px;background:var(--f);color:#fff;border:none;border-radius:10px;font-weight:700;cursor:pointer">Apply</button>
-        </div>
-        <div id="coupon-msg" style="font-size:12px;color:var(--sg);margin-bottom:10px;display:none"></div>
-        <div style="margin:0 0 8px;font-size:13px;font-weight:700;color:var(--t2)">Complete Your Order</div>
-        <div style="display:grid;gap:9px;margin-bottom:14px">
-          <input id="ord-name" class="fi-sel" placeholder="Full name *" style="padding:10px;border-radius:10px;border:2px solid var(--bd);font-size:13px;outline:none;width:100%">
-          <input id="ord-email" class="fi-sel" placeholder="Email address *" type="email" style="padding:10px;border-radius:10px;border:2px solid var(--bd);font-size:13px;outline:none;width:100%">
-          <input id="ord-phone" class="fi-sel" placeholder="Phone number *" type="tel" style="padding:10px;border-radius:10px;border:2px solid var(--bd);font-size:13px;outline:none;width:100%">
-          <div id="addr-toggle" style="display:none;margin-bottom:6px;gap:8px"><button type="button" id="addr-btn-home" onclick="switchAddr('home')" style="flex:1;padding:7px;border-radius:8px;border:2px solid var(--f);background:var(--f);color:#fff;font-size:11px;font-weight:700;cursor:pointer">🏠 Home</button><button type="button" id="addr-btn-alt" onclick="switchAddr('alt')" style="flex:1;padding:7px;border-radius:8px;border:2px solid #e5e7eb;background:#fff;color:#666;font-size:11px;font-weight:700;cursor:pointer">🏢 Alternate</button></div>
-          <input id="ord-addr" class="fi-sel" placeholder="Street address (e.g. 1247 Bielby St, Waterford) *" oninput="this.style.borderColor=''" style="padding:10px;border-radius:10px;border:2px solid var(--bd);font-size:13px;outline:none;width:100%">
-          <select id="ord-new" class="fi-sel" style="padding:10px;border-radius:10px;border:2px solid var(--bd);font-size:13px;outline:none;width:100%;background:#fff">
-            <option value="returning">Nope! I am back for more! 😋</option>
-            <option value="new">Yes I am New and hungry! 🎉</option>
-          </select>
-          <select id="ord-pay" class="fi-sel" style="padding:10px;border-radius:10px;border:2px solid var(--bd);font-size:13px;outline:none;width:100%;background:#fff">
-            <option value="venmo">Venmo (QR Code Provided Here)</option>
-            <option value="cash">Cash on Delivery</option>
-          </select>
-          <textarea id="ord-notes" class="fi-sel" placeholder="Comments or special instructions (delivery window, etc.)" rows="2" style="padding:10px;border-radius:10px;border:2px solid var(--bd);font-size:13px;outline:none;width:100%;resize:none"></textarea>
-        </div>
-        <button class="bp" onclick="submitOrder()" style="margin-bottom:10px">
-          📋 Place Order
-        </button>
-        <p style="font-size:11px;color:var(--t3);text-align:center">Orders close Friday 6 PM · Delivered Monday</p>
-      `:''}
-    </div>`;
-  openOv('ov-cart');
-  // Pre-fill if subscriber
-  const prof=getProfile();
-  if(prof.name&&$('ord-name'))$('ord-name').value=prof.name;
-  if(prof.email&&$('ord-email'))$('ord-email').value=prof.email;
-  if(prof.phone&&$('ord-phone'))$('ord-phone').value=prof.phone;
-  if(prof.addr&&$('ord-addr'))$('ord-addr').value=prof.addr;
-  if(prof.pay&&$('ord-pay'))$('ord-pay').value=prof.pay;
-  if(prof.notes&&$('ord-notes'))$('ord-notes').value=prof.notes;
-  // Show address toggle if alt address exists
-  var tog=$('addr-toggle');
-  if(tog) tog.style.display = prof.addr2 ? 'flex' : 'none';
-}
-function showCart(){
-  const food = cart.reduce((a,b)=>a+b.sz.p*b.qty,0);
-  const del = mySub?3:5;
-  const couponDisc = appliedCoupon==='WELCOMEBACK'?Math.round(food*0.1):0;
-  const total = food - couponDisc + (cart.length>0?del:0);
-  $('ctc').innerHTML = `
-    <div class="hdl"><div class="hdl-b"></div></div>
-    <div class="cs">
-      <div class="sh"><div class="st">Your Order</div><button onclick="closeOv('ov-cart')" style="font-size:12px;font-weight:700;color:var(--f);background:transparent;border:1.5px solid var(--f);border-radius:8px;padding:4px 10px;cursor:pointer">+ Continue Shopping</button></div>
-      ${mySub?'<div class="sub-note-box">📦 Subscriber prices applied · Delivery $${del}</div>':''}
       ${cart.length===0
         ?'<div style="text-align:center;padding:30px 0;font-size:44px">🛒<p style="color:var(--t3);font-size:14px;margin-top:10px">Your cart is empty</p></div>'
         :cart.map((c,i)=>`<div class="ci">
@@ -4230,134 +3985,6 @@ function showCart(){
 
 
 function rmItem(i){cart.splice(i,1);updCart();showCart();}
-
-// ════ SUBSCRIPTIONS ════
-function buildPlans(){
-  // Subscriptions are closed to new signups
-  // Show plans only to existing subscribers; show "closed" message to everyone else
-  var isExistingSub = mySub && mySub.plan;
-  var closed = $('sub-new-closed');
-  var swapSection = $('sub-swap-section');
-  if(closed) closed.style.display = isExistingSub ? 'none' : 'block';
-  if(swapSection) swapSection.style.display = isExistingSub ? 'block' : 'none';
-  if(!isExistingSub){ $('sub-plans').innerHTML = ''; return; }
-  $('sub-plans').innerHTML = PLANS.map(p=>`
-    <div class="sub-plan ${p.popular?'popular':''} ${selPlan===p.id?'selected':''}" onclick="selectPlan('${p.id}')">
-      <div class="sph">
-        <div>
-          <div style="font-size:28px;margin-bottom:3px">${p.icon}</div>
-          <h3>${p.name}</h3>
-          ${p.popular?'<span class="pop-badge">⭐ Most Popular</span>':''}
-        </div>
-        <div class="sp-price">
-          <strong>$${p.disc.toFixed(2)}/wk</strong>
-          <span><s>$${p.price}</s> save 10%</span>
-          <span style="display:block">+ $${p.delDisc} delivery</span>
-        </div>
-      </div>
-      <p style="font-size:13px;color:var(--t2)">${p.desc}</p>
-      <div style="font-size:12px;color:var(--t3);margin-top:4px">Includes: ${p.detail}</div>
-      <div class="perks">
-        <span class="perk">✓ 10% off food</span>
-        <span class="perk">✓ 40% off delivery</span>
-        <span class="perk">✓ Swap between week's soups</span>
-        <span class="perk">✓ Pause up to 4 weeks</span>
-      </div>
-    </div>`).join('');
-  // Populate soup selector
-  const sel = $('sub-soup-sel');
-  if(sel){
-    // Only show soups on this week's menu (not all 118)
-    const weekSoups = MENU_ITEMS.filter(i=>i.cat==='soup');
-    sel.innerHTML = weekSoups.map((s,i)=>`<option value="${s.id}" ${i===0?'selected':''}>${s.em} ${s.n}${i===0?' (Weekly Feature)':''}</option>`).join('');
-  }
-}
-function selectPlan(id){
-  selPlan = id;
-  buildPlans();
-  $('sub-config').style.display='block';
-  $('sub-confirm').style.display='flex';
-  toast(PLANS.find(p=>p.id===id).name+' selected!');
-}
-function confirmSub(){
-  if(!selPlan){toast('Please choose a plan above!');return;}
-  const plan = PLANS.find(p=>p.id===selPlan);
-  const soupOpt = $('sub-soup-sel');
-  const soupName = soupOpt.options[soupOpt.selectedIndex].text;
-  mySub = {plan, soup:soupName, paused:false};
-  try{ localStorage.setItem('my_sub', JSON.stringify(mySub)); }catch(e){}
-  updateSubStatus();
-  $('sub-config').style.display='none';
-  $('sub-confirm').style.display='none';
-  $('sub-count-dash').textContent='1';
-  $('sub-count-adm').textContent='1';
-  $('sub-rev-adm').textContent='$'+plan.disc.toFixed(2);
-  buildMenu(); buildPlans();
-  // Save to Sheet so Lia can see subscribers
-  var prof = getProfile();
-  if(APPS_SCRIPT_URL && prof.email){
-    fetch(APPS_SCRIPT_URL, {method:'POST',
-      headers:{'Content-Type':'text/plain'},
-      body: JSON.stringify({
-        type:'save_subscriber',
-        name: prof.name||'', email: prof.email,
-        phone: prof.phone||'', plan: plan.id,
-        since: new Date().toISOString(), addr: prof.addr||''
-      })
-    }).catch(function(){});
-  }
-  toast('✅ '+plan.name+' started! You save 10% every week 🎉');
-}
-function updateSubStatus(){
-  const el = $('my-sub-status');
-  if(!el) return;
-  if(!mySub){el.innerHTML='<p style="font-size:13px;color:var(--t3)">No active subscription.</p>';return;}
-  const p=mySub.plan;
-  el.innerHTML=`<div class="my-sub">
-    <div style="font-size:26px;margin-bottom:5px">${p.icon}</div>
-    <strong style="display:block;font-size:16px;color:var(--f)">${p.name}</strong>
-    <div style="font-size:13px;color:var(--t2);margin:5px 0">$${p.disc.toFixed(2)}/week · Delivery $${p.delDisc}</div>
-    <div style="font-size:12px;color:var(--t3)">Weekly soup: ${mySub.soup||'This week\'s featured'}</div>
-    ${mySub.paused?'<div style="font-size:12px;color:var(--cl);font-weight:700;margin-top:5px">⏸ Delivery paused</div>':''}
-    <div class="my-sub-actions">
-      <button class="msab pause" onclick="togglePause()">${mySub.paused?'▶ Resume':'⏸ Pause'}</button>
-      <button class="msab swap" onclick="showSubSwap()">🔄 Swap This Week</button>
-      <button class="msab cancel" onclick="cancelSub()">Cancel</button>
-    </div>
-  </div>`;
-}
-function togglePause(){if(!mySub)return;mySub.paused=!mySub.paused;updateSubStatus();toast(mySub.paused?'⏸ Delivery paused for next week!':'▶ Delivery resumed!');}
-function cancelSub(){
-  var prof = getProfile();
-  if(!confirm('Are you sure you want to cancel your subscription?')) return;
-  mySub=null; selPlan=null;
-  try{ localStorage.removeItem('my_sub'); }catch(e){}
-  updateSubStatus(); buildMenu(); buildPlans();
-  var cd=$('sub-count-dash'),ca=$('sub-count-adm'),cr=$('sub-rev-adm');
-  if(cd) cd.textContent='0'; if(ca) ca.textContent='0'; if(cr) cr.textContent='$0';
-  if(APPS_SCRIPT_URL && prof.email){
-    fetch(APPS_SCRIPT_URL, {method:'POST',
-      headers:{'Content-Type':'text/plain'},
-      body: JSON.stringify({type:'cancel_subscriber', email: prof.email})
-    }).catch(function(){});
-  }
-  toast('Subscription cancelled. We hope to see you back soon!');
-}
-
-function togglePause(){
-  var prof = getProfile();
-  if(!mySub || !prof.email) return;
-  mySub.paused = !mySub.paused;
-  try{ localStorage.setItem('my_sub', JSON.stringify(mySub)); }catch(e){}
-  updateSubStatus(); buildPlans();
-  if(APPS_SCRIPT_URL && prof.email){
-    fetch(APPS_SCRIPT_URL, {method:'POST',
-      headers:{'Content-Type':'text/plain'},
-      body: JSON.stringify({type:'pause_subscriber', email: prof.email})
-    }).catch(function(){});
-  }
-  toast(mySub.paused ? '⏸ Subscription paused — no order this week.' : '▶ Subscription resumed!');
-}
 
 // ════ AUDIT ════
 // Load monthly detail directly from Sheet tabs — no dependency on audit
@@ -6800,67 +6427,6 @@ function sendReact(btn){
     console.log('Re-engage error:', err.message);
   });
 }
-function buildSubAdmin(){
-  var el = $('sub-ad-list');
-  if(!el) return;
-  el.innerHTML = '<p style="font-size:13px;color:var(--t3)">Loading...</p>';
-  if(APPS_SCRIPT_URL){
-    fetch(APPS_SCRIPT_URL + '?type=get_subscribers')
-    .then(function(r){ return r.json(); })
-    .catch(function(){ return null; })
-    .then(function(d){
-      if(!d || !d.subscribers || !d.subscribers.length){
-        el.innerHTML = '<p style="font-size:13px;color:var(--t3)">No active subscriptions yet.</p>';
-        // Reset counts
-        var cd=$('sub-count-dash'),ca=$('sub-count-adm'),cr=$('sub-rev-adm');
-        if(cd) cd.textContent='0';
-        if(ca) ca.textContent='0';
-        if(cr) cr.textContent='$0';
-        return;
-      }
-      var planNames  = {ind:'Individual (2 Pints)', fam:'Family (2 Quarts)', ss:'Soup & Salad', sal:'Salad Lover'};
-      var active     = d.subscribers.filter(function(s){ return s.plan !== 'cancelled'; });
-      var cancelled  = d.subscribers.filter(function(s){ return s.plan === 'cancelled'; });
-      var planRevs   = {ind:14, fam:27, ss:26, sal:25};
-      var totalRev   = active.reduce(function(s,sub){ return s+(planRevs[sub.plan]||0); },0);
-
-      var cd=$('sub-count-dash'),ca=$('sub-count-adm'),cr=$('sub-rev-adm');
-      if(cd) cd.textContent = active.length;
-      if(ca) ca.textContent = active.length;
-      if(cr) cr.textContent = '$'+totalRev;
-
-      var renderSub = function(s, isCancelled){
-        var swap = s.swap_soup1 || s.swap_soup2 || s.swap_salad1 || s.swap_salad2;
-        return '<div style="padding:10px 0;border-bottom:1px solid var(--bd);opacity:'+(isCancelled?'0.5':'1')+'">'
-          +'<div style="display:flex;justify-content:space-between;align-items:flex-start">'
-            +'<div>'
-              +'<div style="font-weight:700;font-size:13px">'+s.name+(isCancelled?' <span style="font-size:10px;color:#991b1b;font-weight:700">[CANCELLED]</span>':'')+'</div>'
-              +'<div style="font-size:11px;color:var(--t3)">'+s.email+(s.phone?' · 📱'+s.phone:'')+'</div>'
-              +'<div style="font-size:11px;color:var(--f);font-weight:600;margin-top:2px">'+(planNames[s.plan]||s.plan)+'</div>'
-              +(s.paused?'<div style="font-size:10px;color:var(--am);font-weight:700">⏸ PAUSED this week</div>':'')
-              +(function(){
-                var swapLines = [];
-                if(s.swap_soup1)  swapLines.push('Slot 1 → '+s.swap_soup1);
-                if(s.swap_soup2)  swapLines.push('Slot 2 → '+s.swap_soup2);
-                if(s.swap_salad1) swapLines.push('Salad → '+s.swap_salad1);
-                if(s.swap_salad2) swapLines.push('Salad 2 → '+s.swap_salad2);
-                return swapLines.length ? '<div style="font-size:10px;color:#0066cc;margin-top:2px">🔄 This week: '+swapLines.join(' · ')+'</div>' : '';
-              })()
-            +'</div>'
-            +'<div style="font-size:11px;color:var(--t3);text-align:right">Since '+s.since+'</div>'
-          +'</div>'
-        +'</div>';
-      };
-
-      el.innerHTML = '<div style="font-size:11px;color:var(--t3);margin-bottom:8px">'+active.length+' active · $'+totalRev+'/wk</div>'
-        + active.map(function(s){ return renderSub(s,false); }).join('')
-        + (cancelled.length ? '<div style="font-size:11px;color:var(--t3);margin:12px 0 4px">Previously cancelled ('+cancelled.length+')</div>'
-          + cancelled.map(function(s){ return renderSub(s,true); }).join('') : '');
-    });
-  } else {
-    el.innerHTML = '<p style="font-size:13px;color:var(--t3)">No active subscriptions yet.</p>';
-  }
-}
 function buildAreas(){
   var flyerEl = $('flyer-streets');
   var listEl  = $('areal');
@@ -7097,7 +6663,6 @@ function applyCoupon(code) {
     const used = localStorage.getItem('coupon_' + c);
     if (used) { toast('❌ This code has already been used.'); return; }
   } catch(e) {}
-  if (mySub) { toast('❌ WELCOMEBACK is not valid with subscription plans.'); return; }
   activeCoupon = COUPON;
   showCart();
   toast('✅ 10% off applied to this order!');
