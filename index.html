@@ -715,7 +715,7 @@ header{background:var(--f);padding:10px 14px;min-height:72px;display:flex;align-
   <div class="atabs">
     <button class="at active" onclick="adm('dash',this)">📊 Dash</button>
     <button class="at" onclick="adm('orders',this)">📋 Orders</button>
-    <button class="at" onclick="adm('menu',this);loadFeaturedSelects()">🍲 Menu</button>
+    <button class="at" onclick="adm('menu',this)">🍲 Menu</button>
     <button class="at" onclick="adm('notify',this)">📣 Notify</button>
     <button class="at" onclick="adm('ratings',this)">⭐ Ratings</button>
     <button class="at" onclick="adm('schedule',this);buildScheduleAdmin()">🗓️ Schedule</button>
@@ -3062,7 +3062,7 @@ function refShareNative(code,fname){
 }
 
 window.onload = () => {
-  console.log("APP VERSION: 2026-06-17-v156-batch1");
+  console.log("APP VERSION: 2026-06-17-v157-fix-kpi");
   // One-time cleanup: remove legacy subscription data from localStorage
   try{ localStorage.removeItem('my_sub'); localStorage.removeItem('my_swap'); }catch(e){}
   loadCustomItems();
@@ -3136,7 +3136,6 @@ window.onload = () => {
         });
       }
       buildMenu();
-      loadFeaturedSelects(); // reload now that MENU_ITEMS is populated
     });
   buildMenu(); buildRepo(); buildDash(); buildOrders(); buildCusts();
   buildReact(); buildAreas(); buildRoute(); buildWkMenu(); buildSoupIntel();
@@ -3522,7 +3521,6 @@ function applyAdminData(data){
       });
       buildMenu();
       buildWkMenu();
-      loadFeaturedSelects(); // reload now that MENU_ITEMS is populated from sheet
       // Explicitly fetch photos after menu items are set
       _fetchAndApplyPhotos();
     }
