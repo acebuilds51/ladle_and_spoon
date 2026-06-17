@@ -79,6 +79,10 @@ header{background:var(--f);padding:10px 14px;min-height:72px;display:flex;align-
 .dlc{margin-left:auto;text-align:right;}
 .dlc b{display:block;font-size:20px;color:var(--cl);}
 .dlc span{font-size:10px;color:var(--t3);}
+.dlc.u-amber b{color:var(--am);}
+.dlc.u-red b{color:#e53e3e;animation:cdown-pulse 1.1s ease-in-out infinite;}
+@keyframes cdown-pulse{0%,100%{opacity:1;}50%{opacity:.3;}}
+.ov.ctr{align-items:center;}
 .nc{background:#fff;border-radius:12px;padding:12px 14px;margin-bottom:8px;display:flex;align-items:flex-start;gap:10px;box-shadow:var(--sh);border-left:3px solid var(--sg);}
 .nc.red{border-left-color:var(--cl);}
 .nc.gold{border-left-color:var(--am);}
@@ -660,12 +664,25 @@ header{background:var(--f);padding:10px 14px;min-height:72px;display:flex;align-
           <div style="font-size:13px;color:var(--t2);line-height:1.5"><strong>You</strong> earn 1 credit &nbsp;·&nbsp; <strong>They</strong> get free delivery on that first order.</div>
         </div>
       </div>
-      <div style="background:var(--f);border-radius:10px;padding:20px 16px;text-align:center">
+      <div style="background:var(--f);border-radius:10px;padding:20px 16px;text-align:center;margin-bottom:14px">
         <div style="font-size:11px;color:rgba(255,255,255,.7);font-weight:700;letter-spacing:1px;margin-bottom:10px;text-transform:uppercase">Your Referral Code</div>
         <div style="background:rgba(0,0,0,.25);border-radius:8px;padding:14px 12px;margin-bottom:12px">
           <div style="font-size:32px;font-weight:700;color:#7FFF00;letter-spacing:3px;line-height:1" id="loyalty-ref-code">—</div>
         </div>
         <div style="font-size:12px;color:rgba(255,255,255,.8);line-height:1.6">Give friends these <strong style="color:#fff">10 digits</strong> — no dashes or spaces.<br>They enter it exactly as shown at checkout.</div>
+      </div>
+      <!-- Share with a Friend -->
+      <div id="ref-share-section" style="display:none">
+        <div style="font-size:13px;font-weight:700;color:var(--f);margin-bottom:10px">Send to a Friend</div>
+        <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:12px">
+          <input id="ref-friend-name" type="text" placeholder="Friend's name (optional)" style="width:100%;padding:10px;border-radius:10px;border:2px solid #e5e7eb;font-size:14px;box-sizing:border-box">
+          <input id="ref-friend-phone" type="tel" placeholder="Friend's phone — auto-opens in Messages (optional)" style="width:100%;padding:10px;border-radius:10px;border:2px solid #e5e7eb;font-size:14px;box-sizing:border-box">
+        </div>
+        <div style="display:flex;flex-direction:column;gap:8px">
+          <button onclick="refShareText()" style="display:flex;align-items:center;justify-content:center;gap:8px;padding:13px;background:#3b82f6;color:#fff;border:none;border-radius:12px;font-size:14px;font-weight:700;cursor:pointer;width:100%">📱 Open in Messages</button>
+          <button onclick="refShareCopy()" style="display:flex;align-items:center;justify-content:center;gap:8px;padding:13px;background:#f0faf0;color:var(--f);border:2px solid var(--f);border-radius:12px;font-size:14px;font-weight:700;cursor:pointer;width:100%">📋 Copy Message</button>
+          <button onclick="refShareNative()" style="display:flex;align-items:center;justify-content:center;gap:8px;padding:13px;background:#f9f5f0;color:var(--t2);border:2px solid #e5e7eb;border-radius:12px;font-size:14px;font-weight:700;cursor:pointer;width:100%">🔗 More Ways to Share</button>
+        </div>
       </div>
     </div>
 
@@ -1084,6 +1101,39 @@ header{background:var(--f);padding:10px 14px;min-height:72px;display:flex;align-
 <div class="ov hidden" id="ov-cart" onclick="if(event.target===this)this.classList.add('hidden')"><div class="sheet" id="ctc"></div></div>
 <div class="ov hidden" id="ov-rec" onclick="if(event.target===this)this.classList.add('hidden')"><div class="sheet" id="rcc"></div></div>
 <div class="ov hidden" id="ov-rate"><div class="sheet" id="rtc"></div></div>
+<!-- Order History Modal -->
+<div class="ov hidden" id="ov-hist" onclick="if(event.target===this)this.classList.add('hidden')"><div class="sheet" id="histc"></div></div>
+<!-- New Customer Welcome -->
+<div class="ov ctr hidden" id="ov-welcome" onclick="if(event.target===this)dismissWelcome()">
+  <div style="background:#fff;border-radius:18px;width:100%;max-width:420px;max-height:90vh;overflow-y:auto;margin:20px">
+    <div style="background:linear-gradient(135deg,var(--f),#2A5630);padding:28px 24px 20px;text-align:center;border-radius:18px 18px 0 0">
+      <div style="font-size:48px;margin-bottom:10px">🍲</div>
+      <h2 style="font-family:'Cormorant Garamond',serif;font-size:26px;color:#fff;margin:0 0 8px">Welcome to Ladle &amp; Spoon!</h2>
+      <p style="color:rgba(255,255,255,.85);font-size:14px;line-height:1.6;margin:0">Homemade soups &amp; salads, made fresh by Lia and delivered to your door.</p>
+    </div>
+    <div style="padding:22px 24px 28px">
+      <div style="display:flex;flex-direction:column;gap:14px;margin-bottom:22px">
+        <div style="display:flex;align-items:flex-start;gap:14px">
+          <div style="font-size:26px;flex-shrink:0">📋</div>
+          <div><div style="font-weight:700;font-size:14px;margin-bottom:3px">Browse the menu</div><div style="font-size:13px;color:var(--t3);line-height:1.5">Each week Lia publishes fresh soups &amp; salads. Add what you want to your cart.</div></div>
+        </div>
+        <div style="display:flex;align-items:flex-start;gap:14px">
+          <div style="font-size:26px;flex-shrink:0">⏰</div>
+          <div><div style="font-weight:700;font-size:14px;margin-bottom:3px">Order by Friday 6 PM</div><div style="font-size:13px;color:var(--t3);line-height:1.5">The menu closes Friday evening. Fresh delivery every Monday.</div></div>
+        </div>
+        <div style="display:flex;align-items:flex-start;gap:14px">
+          <div style="font-size:26px;flex-shrink:0">💳</div>
+          <div><div style="font-weight:700;font-size:14px;margin-bottom:3px">Pay by Venmo or cash</div><div style="font-size:13px;color:var(--t3);line-height:1.5">Pay @Lia-Merritt2282 on Venmo after ordering, or have cash ready for delivery.</div></div>
+        </div>
+        <div style="display:flex;align-items:flex-start;gap:14px">
+          <div style="font-size:26px;flex-shrink:0">👤</div>
+          <div><div style="font-weight:700;font-size:14px;margin-bottom:3px">Save your profile</div><div style="font-size:13px;color:var(--t3);line-height:1.5">Tap the profile button to save your address once — it pre-fills every future order!</div></div>
+        </div>
+      </div>
+      <button class="bp" style="width:100%;padding:14px;font-size:16px" onclick="dismissWelcome()">Let's See the Menu!</button>
+    </div>
+  </div>
+</div>
 <!-- Soup Request Modal -->
 <div class="ov hidden" id="ov-req" onclick="if(event.target===this)this.classList.add('hidden')">
   <div class="sheet" style="padding:24px">
@@ -1906,6 +1956,20 @@ function submitOrder(){
 }
 
 function showOrderConfirmation(o){
+  var _oprofile=getProfile();
+  var _oPhone=(_oprofile.phone||'').replace(/\D/g,'');
+  var _oRefCode=_oPhone.length>=10?_oPhone.slice(0,10):'';
+  var _oRefMsg=_oRefCode?encodeURIComponent("Hey! I just ordered from Ladle & Spoon — Lia's homemade soups & salads are amazing. Use my code "+_oRefCode+" for FREE delivery on your first order!\n\nOrder here: https://acebuilds51.github.io/ladle_and_spoon/"):'';
+  var _oRefHtml=_oRefCode
+    ? '<div style="background:#f0faf0;border-radius:12px;padding:16px;margin-bottom:16px;border:1.5px solid var(--f);text-align:left">'
+        +'<div style="font-size:13px;font-weight:800;color:var(--f);margin-bottom:4px">Know someone who would love this?</div>'
+        +'<div style="font-size:12px;color:var(--t2);margin-bottom:12px">Share your code <strong style="color:var(--f)">'+_oRefCode+'</strong> — friends get FREE delivery, you earn a credit!</div>'
+        +'<div style="display:flex;gap:8px">'
+        +'<button onclick="window.open(\'sms:?body='+_oRefMsg+'\',\'_blank\')" style="flex:1;padding:10px 4px;background:#3b82f6;color:#fff;border:none;border-radius:10px;font-size:12px;font-weight:700;cursor:pointer">📱 Text</button>'
+        +'<button onclick="refShareCopy(\''+_oRefCode+'\',\'\')" style="flex:1;padding:10px 4px;background:#f0faf0;color:var(--f);border:2px solid var(--f);border-radius:10px;font-size:12px;font-weight:700;cursor:pointer">📋 Copy</button>'
+        +'<button onclick="refShareNative(\''+_oRefCode+'\',\'\')" style="flex:1;padding:10px 4px;background:#f9f5f0;color:var(--t2);border:2px solid #e5e7eb;border-radius:10px;font-size:12px;font-weight:700;cursor:pointer">🔗 Share</button>'
+        +'</div></div>'
+    : '';
   $('ctc').innerHTML=`
     <div class="hdl"><div class="hdl-b"></div></div>
     <div class="cs" style="text-align:center;padding-top:30px">
@@ -1921,6 +1985,7 @@ function showOrderConfirmation(o){
       <div style="background:#fef3c7;border-radius:10px;padding:12px;font-size:13px;margin-bottom:18px">
         ${o.payment==='venmo'?'<div style="text-align:center"><img src="data:image/png;base64,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" style="width:160px;height:160px;border-radius:8px;margin:4px auto;display:block" alt="Venmo QR"><div style="font-size:13px;font-weight:700;color:#1B3D1C;margin-top:6px">Scan to pay @Lia-Merritt2282</div><div style="font-size:11px;color:var(--t3);margin-top:2px">$'+o.total.toFixed(2)+' · Use your name as the note</div><div style="font-size:11px;color:var(--t3);margin-top:2px">Venmo last 4 of phone: <strong>5132</strong></div></div>':'<strong>Please have $'+o.total.toFixed(2)+' cash ready for delivery</strong>'}
       </div>
+      ${_oRefHtml}
       <button class="bp" onclick="closeOv('ov-cart')">Done ✓</button>
     </div>`;
   openOv('ov-cart');
@@ -2209,16 +2274,20 @@ function initLoyaltyPage(){
   } else {
     if(_loyCountdown){ clearInterval(_loyCountdown); _loyCountdown = null; }
     var refEl = $('loyalty-ref-code');
+    var shareSection = $('ref-share-section');
     if(refEl){
       var phone = (prof.phone||'').replace(/\D/g,'');
       if(phone.length >= 10){
-        refEl.textContent = phone.slice(0,10);
+        var refCode = phone.slice(0,10);
+        refEl.textContent = refCode;
         refEl.style.fontSize = '32px';
         refEl.style.letterSpacing = '4px';
+        if(shareSection){shareSection.style.display='';shareSection.dataset.ref=refCode;}
       } else {
         refEl.textContent = 'Please update your profile including Name, Address, City, State, Zip, and Phone to get your referral code.';
         refEl.style.fontSize = '12px';
         refEl.style.letterSpacing = '0';
+        if(shareSection) shareSection.style.display='none';
       }
     }
     var statusEl = $('loyalty-status-body');
@@ -2917,8 +2986,83 @@ function copyAllAddresses(btn){
     }, 3000);
   });
 }
+// ── ORDER HISTORY ──
+function showOrderHistory(){
+  var orders;try{orders=JSON.parse(localStorage.getItem('submitted_orders')||'[]');}catch(e){orders=[];}
+  var h='<div class="hdl"><div class="hdl-b"></div></div><div class="cs"><h2 style="font-size:20px;font-weight:800;color:var(--f);margin-bottom:16px">📦 My Order History</h2>';
+  if(!orders.length){
+    h+='<div style="text-align:center;padding:40px 0;color:var(--t3);font-size:14px">No orders yet — place your first order from the menu!</div>';
+  } else {
+    orders.forEach(function(o){
+      var dt=o.timestamp?new Date(o.timestamp).toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric',year:'numeric'}):'—';
+      var items=(o.items||[]).map(function(i){return i.name+' '+i.size+' &times;'+i.qty;}).join('<br>');
+      var payIcon=o.payment==='venmo'?'💙 Venmo':'💵 Cash';
+      h+='<div style="background:#f9f5f0;border-radius:12px;padding:14px 15px;margin-bottom:12px;font-size:13px">';
+      h+='<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">';
+      h+='<div style="font-weight:700;color:var(--f);font-size:14px">'+dt+'</div>';
+      h+='<div style="font-weight:800;color:var(--f);font-size:16px">$'+(o.total||0).toFixed(2)+'</div>';
+      h+='</div>';
+      h+='<div style="color:var(--t2);line-height:1.8;margin-bottom:6px">'+items+'</div>';
+      h+='<div style="font-size:12px;color:var(--t3)">'+payIcon+(o.notes?'&nbsp;&middot;&nbsp;'+o.notes:'')+'</div>';
+      h+='</div>';
+    });
+  }
+  h+='<button class="bp" style="width:100%;margin-top:8px" onclick="closeOv(\'ov-hist\')">Close</button></div>';
+  $('histc').innerHTML=h;
+  openOv('ov-hist');
+}
+
+// ── NEW CUSTOMER WELCOME ──
+function maybeShowWelcome(){
+  try{
+    if(localStorage.getItem('ladle_welcome_shown')) return;
+    var prof=JSON.parse(localStorage.getItem('customer_profile')||'{}');
+    if(prof.name) return;
+    openOv('ov-welcome');
+  }catch(e){}
+}
+function dismissWelcome(){
+  try{localStorage.setItem('ladle_welcome_shown','1');}catch(e){}
+  closeOv('ov-welcome');
+}
+
+// ── REFERRAL SHARING ──
+function _refCode(){var ss=$('ref-share-section');return ss?(ss.dataset.ref||''):''}
+function _refFriendName(){var el=$('ref-friend-name');return el?el.value.trim():''}
+function _refFriendPhone(){var el=$('ref-friend-phone');return el?el.value.replace(/\D/g,''):''}
+function _refMsg(code,fname){
+  return (fname?'Hey '+fname+'! ':'Hey! ')
+    +"I've been loving Lia's homemade soups & salads from Ladle & Spoon."
+    +" Use my code "+code+" when you order and get FREE delivery on your first order!\n\nOrder here: https://acebuilds51.github.io/ladle_and_spoon/";
+}
+function _copyFallback(text){
+  var ta=document.createElement('textarea');ta.value=text;ta.style.cssText='position:fixed;opacity:0';
+  document.body.appendChild(ta);ta.select();
+  try{document.execCommand('copy');toast('Message copied!');}catch(e){toast('Please copy manually');}
+  document.body.removeChild(ta);
+}
+function refShareText(){
+  var code=_refCode();if(!code){toast('Add your phone number to your profile to get a referral code!');return;}
+  var msg=_refMsg(code,_refFriendName());
+  window.open('sms:'+_refFriendPhone()+'?body='+encodeURIComponent(msg),'_blank');
+}
+function refShareCopy(code,fname){
+  code=code||_refCode();if(!code){toast('Add your phone number to your profile to get a referral code!');return;}
+  var msg=_refMsg(code,fname!=null?fname:_refFriendName());
+  if(navigator.clipboard&&navigator.clipboard.writeText){
+    navigator.clipboard.writeText(msg).then(function(){toast('Message copied to clipboard!');}).catch(function(){_copyFallback(msg);});
+  }else{_copyFallback(msg);}
+}
+function refShareNative(code,fname){
+  code=code||_refCode();if(!code){toast('Add your phone number to your profile to get a referral code!');return;}
+  var msg=_refMsg(code,fname!=null?fname:_refFriendName());
+  if(navigator.share){
+    navigator.share({title:'Try Ladle & Spoon!',text:msg,url:'https://acebuilds51.github.io/ladle_and_spoon/'}).catch(function(){});
+  }else{refShareCopy(code,fname);}
+}
+
 window.onload = () => {
-  console.log("APP VERSION: 2026-06-17-v155-cleanup");
+  console.log("APP VERSION: 2026-06-17-v156-batch1");
   // One-time cleanup: remove legacy subscription data from localStorage
   try{ localStorage.removeItem('my_sub'); localStorage.removeItem('my_swap'); }catch(e){}
   loadCustomItems();
@@ -2941,8 +3085,10 @@ window.onload = () => {
   } else {
     var _nudge=$('profile-nudge-card'); if(_nudge) _nudge.style.display='flex';
   }
-  // Prompt new visitors to set up profile
-  if(!_prof.addr && !_prof.street){setTimeout(function(){toast("👤 Tap the profile button to save your address for faster ordering!");},3000);}
+  // Prompt existing customers (who have a name) missing address to complete profile
+  if(_prof.name && !_prof.addr && !_prof.street){setTimeout(function(){toast("👤 Tap the profile button to save your address for faster ordering!");},3000);}
+  // Show welcome overlay for brand-new visitors (no saved profile)
+  setTimeout(maybeShowWelcome, 800);
 
   // Clear admin data cache on every fresh page load
   sessionStorage.removeItem('admin_data');
@@ -3663,13 +3809,23 @@ function countdown(){
       : 'Friday 6 PM';
     htxt.innerHTML = 'Fresh soups &amp; salads made with love.<br>Order by ' + deadlineShort + ' &middot; Delivering ' + deliveryLabel + '.';
   }
-  const u = ()=>{
-    const df = dead-new Date();
-    if(df<=0){$('cdown').textContent='Closed';return;}
-    const d=Math.floor(df/86400000),h=Math.floor((df%86400000)/3600000),m=Math.floor((df%3600000)/60000);
-    $('cdown').textContent = d>0 ? d+'d '+h+'h' : h+'h '+m+'m';
+  var _cdMs=0,_cdInt=null;
+  const u=()=>{
+    const df=dead-new Date();
+    const el=$('cdown'),dlc=document.querySelector('.dlc');
+    if(df<=0){
+      if(_cdInt){clearInterval(_cdInt);_cdInt=null;}
+      if(el)el.textContent='Closed';
+      if(dlc){dlc.classList.remove('u-amber','u-red');}
+      return;
+    }
+    const d=Math.floor(df/86400000),h=Math.floor((df%86400000)/3600000),m=Math.floor((df%3600000)/60000),s=Math.floor((df%60000)/1000);
+    if(dlc){dlc.classList.toggle('u-amber',df<=86400000&&df>14400000);dlc.classList.toggle('u-red',df<=14400000);}
+    if(el)el.textContent=df>14400000?(d>0?d+'d '+h+'h':h+'h '+m+'m'):(h>0?h+'h '+m+'m '+s+'s':m+'m '+s+'s');
+    const need=df<=14400000?1000:60000;
+    if(_cdMs!==need){if(_cdInt)clearInterval(_cdInt);_cdInt=setInterval(u,need);_cdMs=need;}
   };
-  u(); setInterval(u,60000);
+  u();
 }
 
 // ════ MENU ════
@@ -6768,6 +6924,7 @@ function markCouponUsed() {
       </div>
     </div>
     <button onclick="saveProfileForm()" style="width:100%;padding:14px;background:var(--f);color:#fff;border:none;border-radius:12px;font-size:16px;font-weight:800;cursor:pointer;margin-top:20px">💾 Save Profile</button>
+    <button onclick="hideProfile();showOrderHistory()" style="width:100%;padding:12px;background:var(--cr);color:var(--f);border:1.5px solid var(--f);border-radius:12px;font-size:14px;font-weight:700;cursor:pointer;margin-top:8px">📦 View My Order History</button>
     <button onclick="clearProfile()" style="width:100%;padding:10px;background:none;color:#999;border:none;font-size:13px;cursor:pointer;margin-top:8px">Clear saved info</button>
   </div>
 </div>
