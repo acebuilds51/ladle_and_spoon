@@ -755,39 +755,6 @@ header{background:var(--f);padding:10px 14px;min-height:72px;display:flex;align-
       <div id="menu-save-status" style="font-size:12px;color:var(--t3);margin-top:8px"></div>
     </div>
     <!-- Featured items for subscription plan defaults -->
-    <div class="ccrd" style="background:var(--sgl);border:1.5px solid var(--sg)">
-      <h3 style="color:var(--f)">⭐ Subscription Plan Defaults</h3>
-      <p style="font-size:12px;color:var(--t3);margin-bottom:12px">These are the default items subscribers receive unless they swap. Set each week when publishing the menu.</p>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px">
-        <div>
-          <label style="font-size:11px;font-weight:700;color:var(--t2);display:block;margin-bottom:4px">🥣 Featured Soup (Default)</label>
-          <select id="featured-soup-1" class="fi-sel" onchange="saveFeatured()" style="width:100%">
-            <option value="">Select soup...</option>
-          </select>
-        </div>
-        <div>
-          <label style="font-size:11px;font-weight:700;color:var(--t2);display:block;margin-bottom:4px">🍲 2nd Soup Option</label>
-          <select id="featured-soup-2" class="fi-sel" onchange="saveFeatured()" style="width:100%">
-            <option value="">Select soup...</option>
-          </select>
-        </div>
-        <div>
-          <label style="font-size:11px;font-weight:700;color:var(--t2);display:block;margin-bottom:4px">🥗 Featured Salad (Default)</label>
-          <select id="featured-salad-1" class="fi-sel" onchange="saveFeatured()" style="width:100%">
-            <option value="">Select salad...</option>
-          </select>
-        </div>
-        <div>
-          <label style="font-size:11px;font-weight:700;color:var(--t2);display:block;margin-bottom:4px">🥙 2nd Salad Option <span style="font-weight:400;color:var(--t3)">(optional)</span></label>
-          <select id="featured-salad-2" class="fi-sel" onchange="saveFeatured()" style="width:100%">
-            <option value="">None this week</option>
-          </select>
-        </div>
-      </div>
-      <div id="featured-preview" style="font-size:12px;color:var(--t2);padding:8px;background:#fff;border-radius:8px;border:1px solid var(--bd)">
-        Select items above to set this week's subscription defaults.
-      </div>
-    </div>
     <div id="wkml"></div>
     <div class="ccrd">
       <h3>🤖 AI Menu Suggestions</h3>
@@ -1722,55 +1689,6 @@ function clearGroceryCost(month){
 
 
 // ── FEATURED ITEMS (Subscription Defaults) ──
-function loadFeaturedSelects(){
-  // Use this week's menu items only — fall back to ALL_SOUPS if menu not set yet
-  var menuSrc = MENU_ITEMS && MENU_ITEMS.length > 0 ? MENU_ITEMS : ALL_SOUPS;
-  var soups  = menuSrc.filter(function(s){return (s.cat||'').toLowerCase()==='soup';}).sort(function(a,b){return a.n.localeCompare(b.n);});
-  var salads = menuSrc.filter(function(s){return (s.cat||'').toLowerCase()==='salad';}).sort(function(a,b){return a.n.localeCompare(b.n);});
-  var saved={}; try{saved=JSON.parse(localStorage.getItem('featured_items')||'{}');}catch(e){}
-
-  console.log('loadFeaturedSelects: soups='+soups.length+' salads='+salads.length+' src='+(MENU_ITEMS.length>0?'MENU_ITEMS':'ALL_SOUPS'));
-
-  [['featured-soup-1',soups,'soup1'],['featured-soup-2',soups,'soup2'],
-   ['featured-salad-1',salads,'salad1'],['featured-salad-2',salads,'salad2']].forEach(function(pair){
-    var el=$(pair[0]); if(!el){ console.log('Element not found: '+pair[0]); return; }
-    var opts='<option value="">Select...</option>';
-    pair[1].forEach(function(m){ opts+='<option value="'+m.n+'"'+(saved[pair[2]]===m.n?' selected':'')+'>'+m.em+' '+m.n+'</option>'; });
-    el.innerHTML=opts;
-  });
-  updateFeaturedPreview();
-}
-function saveFeatured(){
-  var saved={
-    soup1: ($('featured-soup-1')||{}).value||'',
-    soup2: ($('featured-soup-2')||{}).value||'',
-    salad1:($('featured-salad-1')||{}).value||'',
-    salad2:($('featured-salad-2')||{}).value||''
-  };
-  try{localStorage.setItem('featured_items',JSON.stringify(saved));}catch(e){}
-  // Also save to GAS so triggerFridaySubOrders can read it
-  if(APPS_SCRIPT_URL){
-    fetch(APPS_SCRIPT_URL,{
-      method:'POST',
-      body:JSON.stringify({type:'save_featured',featured:saved}),
-      headers:{'Content-Type':'text/plain'}
-    }).catch(function(){});
-  }
-  updateFeaturedPreview();
-}
-function updateFeaturedPreview(){
-  var el=$('featured-preview'); if(!el) return;
-  var saved={}; try{saved=JSON.parse(localStorage.getItem('featured_items')||'{}');}catch(e){}
-  var s1=saved.soup1||'Not set', s2=saved.soup2||'Not set';
-  var sl1=saved.salad1||'Not set', sl2=saved.salad2||'Not set';
-  el.innerHTML='<strong>This week subscribers will receive:</strong><br>'
-    +'🥣 <b>Featured Soup:</b> '+s1+'  &nbsp;  🍲 <b>2nd Soup:</b> '+s2+'<br>'
-    +'🥗 <b>Featured Salad:</b> '+sl1+'  &nbsp;  🥙 <b>2nd Salad:</b> '+sl2;
-  // Sub soup select is rebuilt when user opens Plans tab
-}
-function getFeaturedSoup(){
-  try{var s=JSON.parse(localStorage.getItem('featured_items')||'{}');return s.soup1||'';}catch(e){return '';}
-}
 
 
 // ── RETIRE CUSTOMERS ──
@@ -1815,9 +1733,8 @@ function suggestNextWeek(){
       _ls=_orig?_orig.last_sort:0;
     }
     var daysSince=_ls?Math.floor((today-_ls)/10000*365+(today%10000-_ls%10000)/100*30):999;
-    // Penalty for recently featured; exclude if < 3 weeks ago
-    var recencyBoost=daysSince>90?2.0:daysSince>60?1.5:daysSince>30?1.1:daysSince>21?0.5:0.0;
-    s._score=daysSince>21?s.avg*recencyBoost:0; // suppress if featured within 3 weeks
+    var recencyBoost=daysSince>90?2.0:daysSince>60?1.5:daysSince>30?1.1:1.0;
+    s._score=s.avg*recencyBoost;
     s._days=daysSince;
   });
   candidates=candidates.filter(function(s){return s._score>0;});
@@ -1871,15 +1788,6 @@ function suggestNextWeek(){
 
 
 // ── FEATURED BADGE HELPER ──
-function isFeaturedItem(name){
-  try{
-    var f=JSON.parse(localStorage.getItem('featured_items')||'{}');
-    return name===f.soup1?'⭐ Plan Default Soup':
-           name===f.soup2?'🥣 2nd Plan Soup':
-           name===f.salad1?'⭐ Plan Default Salad':
-           name===f.salad2?'🥗 2nd Plan Salad':'';
-  }catch(e){return '';}
-}
 
 
 // ── ORDER SUBMISSION ──
@@ -3010,7 +2918,7 @@ function copyAllAddresses(btn){
   });
 }
 window.onload = () => {
-  console.log("APP VERSION: 2026-06-16-v154-loyalty");
+  console.log("APP VERSION: 2026-06-17-v155-cleanup");
   // One-time cleanup: remove legacy subscription data from localStorage
   try{ localStorage.removeItem('my_sub'); localStorage.removeItem('my_swap'); }catch(e){}
   loadCustomItems();
@@ -3086,11 +2994,9 @@ window.onload = () => {
     });
   buildMenu(); buildRepo(); buildDash(); buildOrders(); buildCusts();
   buildReact(); buildAreas(); buildRoute(); buildWkMenu(); buildSoupIntel();
-  buildRatings(); buildMonthly(); countdown(); buildRouteStrip(); loadFeaturedSelects(); loadSavedPhotos();
+  buildRatings(); buildMonthly(); countdown(); buildRouteStrip(); loadSavedPhotos();
   initScheduleDisplay(); initLoyaltyPage();
   loadSheetRatings();
-  // Reload featured selects after dashboard data arrives (MENU_ITEMS will be populated)
-  setTimeout(function(){ loadFeaturedSelects(); }, 5000);
 
   // Auto-restore push subscription if customer previously opted in
   autoRestorePushIfNeeded();
@@ -3811,7 +3717,7 @@ function buildMenu(){
         ${i.soldout?'<div class="badge so">SOLD OUT</div>':''}
       </div>
       <div class="mcb">
-        <h3>${i.n}${(function(){var f=isFeaturedItem(i.n);return f?'<span style="display:block;font-size:10px;background:#fef3c7;color:#92400e;padding:2px 6px;border-radius:10px;font-weight:700;margin-top:3px">'+f+'</span>':''})()}</h3>
+        <h3>${i.n}</h3>
         ${s.rating>0?`<div class="mc-stars">${stars(s.rating)} <span style="font-size:10px;color:var(--t3)">(${s.reviews.length})</span></div>`:''}
         <p>${i.desc}</p>
         ${szBtns}
