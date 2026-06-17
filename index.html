@@ -646,46 +646,6 @@ header{background:var(--f);padding:10px 14px;min-height:72px;display:flex;align-
       </div>
     </div>
 
-    <!-- Referral -->
-    <div class="ccrd">
-      <h3>Refer a Friend</h3>
-      <p style="font-size:13px;color:var(--t2);margin-bottom:14px">Know someone who would love Lia's soups? Send them your code. It's that simple.</p>
-      <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:16px;counter-reset:ref-steps">
-        <div style="display:flex;align-items:flex-start;gap:12px">
-          <div style="background:var(--f);color:#fff;font-size:12px;font-weight:700;border-radius:50%;width:22px;height:22px;flex-shrink:0;display:flex;align-items:center;justify-content:center;margin-top:1px">1</div>
-          <div style="font-size:13px;color:var(--t2);line-height:1.5">Share your 10-digit referral code (shown below) with a friend — no dashes, no spaces.</div>
-        </div>
-        <div style="display:flex;align-items:flex-start;gap:12px">
-          <div style="background:var(--f);color:#fff;font-size:12px;font-weight:700;border-radius:50%;width:22px;height:22px;flex-shrink:0;display:flex;align-items:center;justify-content:center;margin-top:1px">2</div>
-          <div style="font-size:13px;color:var(--t2);line-height:1.5">They enter your 10-digit code at checkout — digits only, exactly as shown.</div>
-        </div>
-        <div style="display:flex;align-items:flex-start;gap:12px">
-          <div style="background:var(--f);color:#fff;font-size:12px;font-weight:700;border-radius:50%;width:22px;height:22px;flex-shrink:0;display:flex;align-items:center;justify-content:center;margin-top:1px">3</div>
-          <div style="font-size:13px;color:var(--t2);line-height:1.5"><strong>You</strong> earn 1 credit &nbsp;·&nbsp; <strong>They</strong> get free delivery on that first order.</div>
-        </div>
-      </div>
-      <div style="background:var(--f);border-radius:10px;padding:20px 16px;text-align:center;margin-bottom:14px">
-        <div style="font-size:11px;color:rgba(255,255,255,.7);font-weight:700;letter-spacing:1px;margin-bottom:10px;text-transform:uppercase">Your Referral Code</div>
-        <div style="background:rgba(0,0,0,.25);border-radius:8px;padding:14px 12px;margin-bottom:12px">
-          <div style="font-size:32px;font-weight:700;color:#7FFF00;letter-spacing:3px;line-height:1" id="loyalty-ref-code">—</div>
-        </div>
-        <div style="font-size:12px;color:rgba(255,255,255,.8);line-height:1.6">Give friends these <strong style="color:#fff">10 digits</strong> — no dashes or spaces.<br>They enter it exactly as shown at checkout.</div>
-      </div>
-      <!-- Share with a Friend -->
-      <div id="ref-share-section" style="display:none">
-        <div style="font-size:13px;font-weight:700;color:var(--f);margin-bottom:10px">Send to a Friend</div>
-        <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:12px">
-          <input id="ref-friend-name" type="text" placeholder="Friend's name (optional)" style="width:100%;padding:10px;border-radius:10px;border:2px solid #e5e7eb;font-size:14px;box-sizing:border-box">
-          <input id="ref-friend-phone" type="tel" placeholder="Friend's phone — auto-opens in Messages (optional)" style="width:100%;padding:10px;border-radius:10px;border:2px solid #e5e7eb;font-size:14px;box-sizing:border-box">
-        </div>
-        <div style="display:flex;flex-direction:column;gap:8px">
-          <button onclick="refShareText()" style="display:flex;align-items:center;justify-content:center;gap:8px;padding:13px;background:#3b82f6;color:#fff;border:none;border-radius:12px;font-size:14px;font-weight:700;cursor:pointer;width:100%">📱 Open in Messages</button>
-          <button onclick="refShareCopy()" style="display:flex;align-items:center;justify-content:center;gap:8px;padding:13px;background:#f0faf0;color:var(--f);border:2px solid var(--f);border-radius:12px;font-size:14px;font-weight:700;cursor:pointer;width:100%">📋 Copy Message</button>
-          <button onclick="refShareNative()" style="display:flex;align-items:center;justify-content:center;gap:8px;padding:13px;background:#f9f5f0;color:var(--t2);border:2px solid #e5e7eb;border-radius:12px;font-size:14px;font-weight:700;cursor:pointer;width:100%">🔗 More Ways to Share</button>
-        </div>
-      </div>
-    </div>
-
     <!-- Your status -->
     <div class="ccrd">
       <h3>Your Loyalty Status</h3>
@@ -695,6 +655,32 @@ header{background:var(--f);padding:10px 14px;min-height:72px;display:flex;align-
     </div>
 
   </div><!-- end loyalty-full-content -->
+
+  <!-- Refer a Friend — always visible, text reveals on launch date -->
+  <div class="ccrd">
+    <h3>Share with a Friend</h3>
+    <p style="font-size:13px;color:var(--t2);margin-bottom:14px" id="ref-card-sub">Know someone who'd love Lia's cooking? Share your personal code — they'll enter it when they order.</p>
+    <div style="background:var(--f);border-radius:10px;padding:20px 16px;text-align:center;margin-bottom:14px">
+      <div style="font-size:11px;color:rgba(255,255,255,.7);font-weight:700;letter-spacing:1px;margin-bottom:10px;text-transform:uppercase">Your Referral Code</div>
+      <div style="background:rgba(0,0,0,.25);border-radius:8px;padding:14px 12px;margin-bottom:12px">
+        <div style="font-size:32px;font-weight:700;color:#7FFF00;letter-spacing:3px;line-height:1" id="loyalty-ref-code">—</div>
+      </div>
+      <div style="font-size:12px;color:rgba(255,255,255,.8);line-height:1.6">Give friends these <strong style="color:#fff">10 digits</strong> to enter at checkout.</div>
+    </div>
+    <!-- Share with a Friend -->
+    <div id="ref-share-section" style="display:none">
+      <div style="font-size:13px;font-weight:700;color:var(--f);margin-bottom:10px">Send to a Friend</div>
+      <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:12px">
+        <input id="ref-friend-name" type="text" placeholder="Friend's name (optional)" style="width:100%;padding:10px;border-radius:10px;border:2px solid #e5e7eb;font-size:14px;box-sizing:border-box">
+        <input id="ref-friend-phone" type="tel" placeholder="Friend's phone — auto-opens in Messages (optional)" style="width:100%;padding:10px;border-radius:10px;border:2px solid #e5e7eb;font-size:14px;box-sizing:border-box">
+      </div>
+      <div style="display:flex;flex-direction:column;gap:8px">
+        <button onclick="refShareText()" style="display:flex;align-items:center;justify-content:center;gap:8px;padding:13px;background:#3b82f6;color:#fff;border:none;border-radius:12px;font-size:14px;font-weight:700;cursor:pointer;width:100%">📱 Open in Messages</button>
+        <button onclick="refShareCopy()" style="display:flex;align-items:center;justify-content:center;gap:8px;padding:13px;background:#f0faf0;color:var(--f);border:2px solid var(--f);border-radius:12px;font-size:14px;font-weight:700;cursor:pointer;width:100%">📋 Copy Message</button>
+        <button onclick="refShareNative()" style="display:flex;align-items:center;justify-content:center;gap:8px;padding:13px;background:#f9f5f0;color:var(--t2);border:2px solid #e5e7eb;border-radius:12px;font-size:14px;font-weight:700;cursor:pointer;width:100%">🔗 More Ways to Share</button>
+      </div>
+    </div>
+  </div>
 
 </div>
 
@@ -1891,6 +1877,7 @@ function submitOrder(){
   const pay    = ($('ord-pay')  ||{value:'venmo'}).value;
   const notes  = ($('ord-notes')||{value:''}).value;
   const isNew  = ($('ord-new') ||{value:'returning'}).value === 'new';
+  const refCode = isNew ? ($('ord-ref-code')||{value:''}).value.replace(/\D/g,'').slice(0,10) : '';
 
   if(!name){toast('⚠️ Please enter your name'); $('ord-name').focus(); return;}
   if(!email||!email.includes('@')){toast('⚠️ Please enter a valid email'); $('ord-email').focus(); return;}
@@ -1922,6 +1909,7 @@ function submitOrder(){
     coupon:      appliedCoupon,
     total,
     deliveryFee: 5,
+    referralCode: refCode || undefined,
     items: cart.map(c=>({
       name:  c.n,
       size:  c.sz.l,
@@ -2273,27 +2261,31 @@ function initLoyaltyPage(){
     startLoyaltyCountdown(launchDate);
   } else {
     if(_loyCountdown){ clearInterval(_loyCountdown); _loyCountdown = null; }
-    var refEl = $('loyalty-ref-code');
-    var shareSection = $('ref-share-section');
-    if(refEl){
-      var phone = (prof.phone||'').replace(/\D/g,'');
-      if(phone.length >= 10){
-        var refCode = phone.slice(0,10);
-        refEl.textContent = refCode;
-        refEl.style.fontSize = '32px';
-        refEl.style.letterSpacing = '4px';
-        if(shareSection){shareSection.style.display='';shareSection.dataset.ref=refCode;}
-      } else {
-        refEl.textContent = 'Please update your profile including Name, Address, City, State, Zip, and Phone to get your referral code.';
-        refEl.style.fontSize = '12px';
-        refEl.style.letterSpacing = '0';
-        if(shareSection) shareSection.style.display='none';
-      }
-    }
+    // Reveal full referral benefit text on launch day
+    var refCardSub = $('ref-card-sub');
+    if(refCardSub) refCardSub.innerHTML = 'Know someone who would love Lia\'s cooking? Share your code — <strong>you earn 1 credit</strong> every time a friend orders for the first time!';
     var statusEl = $('loyalty-status-body');
     if(statusEl && prof.name){
       statusEl.innerHTML = '<div style="font-size:13px;color:var(--t2);line-height:1.8">'
         +'<strong>' + prof.name.split(' ')[0] + '</strong> — your streak and credit balance will appear here after your first order.</div>';
+    }
+  }
+  // ALWAYS: display ref code regardless of launch date
+  var refEl = $('loyalty-ref-code');
+  var shareSection = $('ref-share-section');
+  if(refEl){
+    var phone = (prof.phone||'').replace(/\D/g,'');
+    if(phone.length >= 10){
+      var refCode = phone.slice(0,10);
+      refEl.textContent = refCode;
+      refEl.style.fontSize = '32px';
+      refEl.style.letterSpacing = '4px';
+      if(shareSection){shareSection.style.display='';shareSection.dataset.ref=refCode;}
+    } else {
+      refEl.textContent = prof.phone ? 'Invalid phone — please update your profile' : 'Add your phone number to your profile to get your code.';
+      refEl.style.fontSize = '12px';
+      refEl.style.letterSpacing = '0';
+      if(shareSection) shareSection.style.display='none';
     }
   }
 }
@@ -3062,7 +3054,7 @@ function refShareNative(code,fname){
 }
 
 window.onload = () => {
-  console.log("APP VERSION: 2026-06-17-v157-fix-kpi");
+  console.log("APP VERSION: 2026-06-17-v158-referral-loop");
   // One-time cleanup: remove legacy subscription data from localStorage
   try{ localStorage.removeItem('my_sub'); localStorage.removeItem('my_swap'); }catch(e){}
   loadCustomItems();
@@ -4028,10 +4020,13 @@ function showCart(){
           <input id="ord-phone" class="fi-sel" placeholder="Phone number *" type="tel" style="padding:10px;border-radius:10px;border:2px solid var(--bd);font-size:13px;outline:none;width:100%">
           <div id="addr-toggle" style="display:none;margin-bottom:6px;gap:8px"><button type="button" id="addr-btn-home" onclick="switchAddr('home')" style="flex:1;padding:7px;border-radius:8px;border:2px solid var(--f);background:var(--f);color:#fff;font-size:11px;font-weight:700;cursor:pointer">🏠 Home</button><button type="button" id="addr-btn-alt" onclick="switchAddr('alt')" style="flex:1;padding:7px;border-radius:8px;border:2px solid #e5e7eb;background:#fff;color:#666;font-size:11px;font-weight:700;cursor:pointer">🏢 Alternate</button></div>
           <input id="ord-addr" class="fi-sel" placeholder="Street address (e.g. 1247 Bielby St, Waterford) *" oninput="this.style.borderColor=''" style="padding:10px;border-radius:10px;border:2px solid var(--bd);font-size:13px;outline:none;width:100%">
-          <select id="ord-new" class="fi-sel" style="padding:10px;border-radius:10px;border:2px solid var(--bd);font-size:13px;outline:none;width:100%;background:#fff">
+          <select id="ord-new" class="fi-sel" onchange="var r=$('ref-code-row');if(r)r.style.display=(this.value==='new'?'':'none');" style="padding:10px;border-radius:10px;border:2px solid var(--bd);font-size:13px;outline:none;width:100%;background:#fff">
             <option value="returning">Nope! I am back for more! 😋</option>
             <option value="new">Yes I am New and hungry! 🎉</option>
           </select>
+          <div id="ref-code-row" style="display:none">
+            <input id="ord-ref-code" class="fi-sel" type="tel" placeholder="Referral code from a friend? (optional)" style="padding:10px;border-radius:10px;border:2px solid var(--bd);font-size:13px;outline:none;width:100%">
+          </div>
           <select id="ord-pay" class="fi-sel" style="padding:10px;border-radius:10px;border:2px solid var(--bd);font-size:13px;outline:none;width:100%;background:#fff">
             <option value="venmo">Venmo (QR Code Provided Here)</option>
             <option value="cash">Cash on Delivery</option>
