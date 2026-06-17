@@ -1733,7 +1733,7 @@ function suggestNextWeek(){
       _ls=_orig?_orig.last_sort:0;
     }
     var daysSince=_ls?Math.floor((today-_ls)/10000*365+(today%10000-_ls%10000)/100*30):999;
-    var recencyBoost=daysSince>90?2.0:daysSince>60?1.5:daysSince>30?1.1:1.0;
+    var recencyBoost=daysSince>56?2.0:daysSince>42?1.5:daysSince>28?1.1:1.0;
     s._score=s.avg*recencyBoost;
     s._days=daysSince;
   });
