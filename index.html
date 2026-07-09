@@ -2102,6 +2102,17 @@ function saveProfile(p){
 }
 
 // ════ SCHEDULE / VACATION ════
+function isVacationActive(){
+  if(!SCHEDULE.vacationStart) return false;
+  var today = new Date(); today.setHours(0,0,0,0);
+  var vs = new Date(SCHEDULE.vacationStart); vs.setHours(0,0,0,0);
+  if(today < vs) return false;
+  if(SCHEDULE.vacationBack){
+    var vb = new Date(SCHEDULE.vacationBack); vb.setHours(0,0,0,0);
+    if(today >= vb) return false;
+  }
+  return true;
+}
 function saveSchedule(){
   SCHEDULE.bannerStart    = $('sch-banner-start')   ? $('sch-banner-start').value   : '';
   SCHEDULE.lastDelivery   = $('sch-last-delivery')  ? $('sch-last-delivery').value  : '';
@@ -2862,6 +2873,19 @@ function initNotifUI(){
 function updateHeroState(){
   var h1 = document.getElementById('hero-h1');
   if(!h1) return;
+
+  if(isVacationActive()){
+    h1.innerHTML = 'On Vacation<br><em style="font-size:16px">🏖️ No deliveries this week</em>';
+    h1.onclick = null; h1.style.cursor = 'default';
+    var vtxt = $('hero-deadline-txt');
+    if(vtxt){
+      vtxt.innerHTML = SCHEDULE.vacationBack
+        ? ('Back and delivering ' + new Date(SCHEDULE.vacationBack).toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric'}) + '.')
+        : 'Check back soon for our return date.';
+    }
+    return;
+  }
+
   var now = new Date();
   var dow = now.getDay(); // 0=Sun, 1=Mon, 2=Tue, 3=Wed, 4=Thu, 5=Fri, 6=Sat
 
@@ -3759,6 +3783,18 @@ function setOS(os,btn){
 function countdown(){
   const now = new Date();
   const dow = now.getDay();
+
+  updateHeroState();
+  const dlBlock = document.querySelector('.dl');
+  const wktEl0 = document.querySelector('.wkt');
+
+  if(isVacationActive()){
+    if(dlBlock) dlBlock.style.display = 'none';
+    if(wktEl0) wktEl0.textContent = 'ON VACATION';
+    return;
+  }
+  if(dlBlock) dlBlock.style.display = '';
+
   // Use special deadline from SCHEDULE if set, otherwise default to next Friday 6 PM
   var dead;
   if(SCHEDULE.specialDeadline && new Date(SCHEDULE.specialDeadline) > now){
@@ -3774,7 +3810,6 @@ function countdown(){
   mon.setDate(now.getDate() - (dow === 0 ? 6 : dow - 1));
   const wktEl = document.querySelector('.wkt');
   if(wktEl) wktEl.textContent = 'WEEK OF ' + mon.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}).toUpperCase();
-  updateHeroState();
   // Update deadline display
   const dlEl = document.querySelector('.dlt span');
   if(dlEl){
