@@ -2126,7 +2126,21 @@ function saveSchedule(){
   try{ localStorage.setItem('ladle_schedule', JSON.stringify(SCHEDULE)); }catch(e){}
   initScheduleDisplay();
   countdown();
-  toast('Schedule saved!');
+  // Push to Apps Script so EVERY customer's device sees the same schedule —
+  // not just this admin browser's localStorage.
+  if(APPS_SCRIPT_URL){
+    toast('Saving schedule for all customers…');
+    fetch(APPS_SCRIPT_URL, {
+      method:  'POST',
+      body:    JSON.stringify({ type: 'save_schedule', schedule: SCHEDULE }),
+      headers: { 'Content-Type': 'text/plain' }
+    })
+    .then(function(r){ return r.text(); })
+    .then(function(){ toast('✅ Schedule saved for all customers!'); })
+    .catch(function(){ toast('⚠️ Saved locally, but sync to server failed — try again.'); });
+  } else {
+    toast('Schedule saved!');
+  }
 }
 function clearSchedule(){
   if(!confirm('Clear all schedule settings?')) return;
@@ -2135,7 +2149,17 @@ function clearSchedule(){
   buildScheduleAdmin();
   initScheduleDisplay();
   countdown();
-  toast('Schedule cleared');
+  if(APPS_SCRIPT_URL){
+    fetch(APPS_SCRIPT_URL, {
+      method:  'POST',
+      body:    JSON.stringify({ type: 'save_schedule', schedule: {} }),
+      headers: { 'Content-Type': 'text/plain' }
+    })
+    .then(function(){ toast('Schedule cleared for all customers'); })
+    .catch(function(){ toast('Cleared locally — server sync failed'); });
+  } else {
+    toast('Schedule cleared');
+  }
 }
 function scheduleChanged(){
   // Live-update the preview panel
@@ -3119,6 +3143,15 @@ window.onload = () => {
       if(!d) return;
       console.log('Dashboard scriptVersion:', d.scriptVersion, '| wkmenu items:', d.wkmenu ? d.wkmenu.length : 0, d.wkmenu ? d.wkmenu.map(function(w){return w.n;}) : []);
       MENU_LOADING = false; // got a response — stop showing spinner
+      // Apply server-side schedule (vacation dates, deadlines) so EVERY visitor
+      // sees the same thing, not just the admin device that set it.
+      if(d.schedule && typeof d.schedule === 'object'){
+        SCHEDULE = d.schedule;
+        try{ localStorage.setItem('ladle_schedule', JSON.stringify(SCHEDULE)); }catch(e){}
+        initScheduleDisplay();
+        countdown();
+        if(typeof buildScheduleAdmin === 'function' && $('sch-vac-start')) buildScheduleAdmin();
+      }
       if(d && d.wkmenu && d.wkmenu.length > 0){
         MENU_ITEMS = d.wkmenu.map(function(w, i){
           // Find matching ALL_SOUPS entry for cat, desc, em, al
@@ -5459,6 +5492,18 @@ function migratePhotosToCloudinary(){
 // ════ MENU BUILDER ════
 var _menuSelections = { items: [], soups: [], salads: [] };
 
+// Category-based fallback sizes — used whenever an ALL_SOUPS entry doesn't
+// define its own `sz` array (which is most items; only specially-priced
+// items like Jambalaya or Shrimp Ceviche override this).
+function _defaultSizesForItem(item){
+  if(item && item.sz && item.sz.length) return item.sz;
+  var cat = item ? item.cat : 'soup';
+  if(cat === 'salad')  return [{l:'Single', p:15}];
+  if(cat === 'bakery') return [{l:'Each',   p:5}];
+  if(cat === 'other')  return [{l:'Single', p:15}];
+  return [{l:'Pint', p:8}, {l:'Quart', p:15}]; // soup default
+}
+
 function _resolveSlotId(val){
   if(!val) return '';
   var id   = typeof val === 'object' ? val.id : val;
@@ -5514,13 +5559,11 @@ function _addSlotHTML(type, selectedId){
   var slotId = 'mslot-any-' + idx + '-' + Date.now();
 
   // Get default prices for selected item
-  var defP1 = '', defP2 = '';
-  if(selectedItem && selectedItem.sz && selectedItem.sz.length > 0){
-    defP1 = selectedItem.sz[0] ? selectedItem.sz[0].p : '';
-    defP2 = selectedItem.sz[1] ? selectedItem.sz[1].p : '';
-  }
-  var defLbl1 = selectedItem && selectedItem.sz && selectedItem.sz[0] ? selectedItem.sz[0].l : 'Pint';
-  var defLbl2 = selectedItem && selectedItem.sz && selectedItem.sz[1] ? selectedItem.sz[1].l : 'Quart';
+  var _defSz  = _defaultSizesForItem(selectedItem);
+  var defP1   = _defSz[0] ? _defSz[0].p : '';
+  var defP2   = _defSz[1] ? _defSz[1].p : '';
+  var defLbl1 = _defSz[0] ? _defSz[0].l : 'Pint';
+  var defLbl2 = _defSz[1] ? _defSz[1].l : '';
 
   var div = document.createElement('div');
   div.className = 'menu-slot';
@@ -5613,7 +5656,7 @@ function _selectSlotItem(e, slotId, id, label, cat){
 
     // Find item and update price fields in the new unified price row
     var item = ALL_SOUPS.find(function(s){ return s.id === id; });
-    var sz = item && item.sz ? item.sz : [];
+    var sz = _defaultSizesForItem(item || {cat: cat});
     var slotId = slot.querySelector('[id$="-inp"]') ? slot.querySelector('[id$="-inp"]').id.replace('-inp','') : null;
 
     if(slotId){
