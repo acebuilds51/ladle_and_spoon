@@ -3219,7 +3219,7 @@ function refShareNative(code,fname){
 }
 
 window.onload = () => {
-  console.log("APP VERSION: 2026-08-11-v170-photo-overwrite-fix");
+  console.log("APP VERSION: 2026-08-11-v171-desc-save-fix");
   // One-time cleanup: remove legacy subscription data from localStorage
   try{ localStorage.removeItem('my_sub'); localStorage.removeItem('my_swap'); }catch(e){}
   loadCustomItems();
@@ -3707,6 +3707,14 @@ function applyAdminData(data){
           soupId:  w.soupId || (fullItem ? fullItem.id : '')
         };
       });
+      // Re-apply any locally-saved descriptions (SOUP_INTEL items didn't exist at startup)
+      try{
+        var _descs=JSON.parse(localStorage.getItem('custom_descs')||'{}');
+        MENU_ITEMS.forEach(function(mi){
+          var saved=_descs[mi.soupId]||_descs[mi.id]||_descs[mi.n.toLowerCase()]||'';
+          if(saved){ mi.desc=saved; var as=ALL_SOUPS.find(function(s){return s.id===mi.soupId;}); if(as) as.desc=saved; }
+        });
+      }catch(e){}
       buildMenu();
       buildWkMenu();
       // Explicitly fetch photos after menu items are set
@@ -5535,7 +5543,9 @@ function editItemDesc(itemId){
   // Save to localStorage
   try{
     var descs = JSON.parse(localStorage.getItem('custom_descs')||'{}');
-    descs[mi.soupId||itemId] = newDesc;
+    if(mi.soupId) descs[mi.soupId] = newDesc;
+    descs[itemId] = newDesc;
+    descs[mi.n.toLowerCase()] = newDesc;
     localStorage.setItem('custom_descs', JSON.stringify(descs));
   }catch(e){}
   toast('✅ Description saved');
