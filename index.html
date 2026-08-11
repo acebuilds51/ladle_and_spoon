@@ -2685,7 +2685,7 @@ function buildPhotoUploader(){
       +'</div>';
   });
   var missingCount=allSoups.filter(function(s){return !s.photo||s.photo.length<50;}).length;
-  if(missingCount===0) html='<div style="font-size:13px;color:var(--sg);font-weight:600">✅ All soups have photos!</div>';
+  if(missingCount===0) html+='<div style="font-size:12px;color:var(--sg);font-weight:600;padding:4px 0 8px">✅ All soups have photos — tap Update to change one</div>';
   el.innerHTML=html;
 }
 function handlePhotoUpload(input){
@@ -3217,7 +3217,7 @@ function refShareNative(code,fname){
 }
 
 window.onload = () => {
-  console.log("APP VERSION: 2026-08-10-v168-daysSince-fix");
+  console.log("APP VERSION: 2026-08-11-v169-photo-uploader-fix");
   // One-time cleanup: remove legacy subscription data from localStorage
   try{ localStorage.removeItem('my_sub'); localStorage.removeItem('my_swap'); }catch(e){}
   loadCustomItems();
