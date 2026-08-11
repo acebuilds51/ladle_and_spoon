@@ -1379,6 +1379,7 @@ function getSoupPhoto(name, soupId) {
 }
 
 let MENU_ITEMS = [];
+var _uploadedPhotos = {}; // locally-uploaded URLs not yet confirmed in sheet
 let MENU_LOADING = true; // true until we get a response from the Sheet
 
 
@@ -2589,8 +2590,8 @@ function _fetchAndApplyPhotos(){
           var mn = mi.n.toLowerCase();
           if(mn === cleanKey || mn === sid.toLowerCase() ||
              cleanKey.indexOf(mn) === 0 || mn.indexOf(cleanKey) === 0){
-            mi.photo = url;  // always overwrite — no guard
-            SOUP_PHOTOS[mn] = url;
+            var _lu=_uploadedPhotos[mn]; mi.photo=(_lu&&_lu!==url)?_lu:url;
+            SOUP_PHOTOS[mn] = mi.photo;
             console.log('Photo applied to menu item:', mi.n, '← key:', sid);
           }
         });
@@ -2719,6 +2720,7 @@ function handlePhotoUpload(input){
       // Store the Cloudinary URL — use name-based key for cross-device stability
       if(soup) soup.photo = url;
       SOUP_PHOTOS[name.toLowerCase()] = url;
+      _uploadedPhotos[name.toLowerCase()] = url; // protect from stale sheet overwrites
       // Stamp directly on MENU_ITEMS so buildMenu shows it immediately
       MENU_ITEMS.forEach(function(mi){ if(mi.n.toLowerCase()===name.toLowerCase()) mi.photo=url; });
 
@@ -2738,7 +2740,7 @@ function handlePhotoUpload(input){
         })
         .then(function(r){return r.json();})
         .then(function(d){
-          if(d&&d.success){ console.log('✅ Photo saved to Sheet for:', name); }
+          if(d&&d.success){ console.log('✅ Photo saved to Sheet for:', name); delete _uploadedPhotos[name.toLowerCase()]; }
           else { console.error('❌ Photo save to Sheet FAILED:', d); toast('⚠️ Photo on Cloudinary but not saved to Sheet — use Sync button'); }
         })
         .catch(function(e){ console.error('❌ Photo save error:', e); });
@@ -3217,7 +3219,7 @@ function refShareNative(code,fname){
 }
 
 window.onload = () => {
-  console.log("APP VERSION: 2026-08-11-v169-photo-uploader-fix");
+  console.log("APP VERSION: 2026-08-11-v170-photo-overwrite-fix");
   // One-time cleanup: remove legacy subscription data from localStorage
   try{ localStorage.removeItem('my_sub'); localStorage.removeItem('my_swap'); }catch(e){}
   loadCustomItems();
@@ -3738,8 +3740,8 @@ function applyAdminData(data){
           if(mn === cleanKey || mn === sid.toLowerCase() ||
              cleanKey.indexOf(mn) === 0 || mn.indexOf(cleanKey) === 0 ||
              (firstWord.length > 4 && cleanKey.indexOf(firstWord) === 0)){
-            mi.photo = url;
-            SOUP_PHOTOS[mn] = url;
+            var _lu=_uploadedPhotos[mn]; mi.photo=(_lu&&_lu!==url)?_lu:url;
+            SOUP_PHOTOS[mn] = mi.photo;
             console.log('Matched photo to menu item:', mi.n, '← key:', sid);
           }
         });
