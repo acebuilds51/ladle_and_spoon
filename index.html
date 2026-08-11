@@ -2603,7 +2603,6 @@ function _fetchAndApplyPhotos(){
         if(soup){ soup.photo = url; SOUP_PHOTOS[soup.n.toLowerCase()] = url; }
       });
       buildMenu();
-      setTimeout(buildMenu, 1000); // second pass — catches any race with MENU_ITEMS
     }).catch(function(){});
 }
 
@@ -3219,7 +3218,7 @@ function refShareNative(code,fname){
 }
 
 window.onload = () => {
-  console.log("APP VERSION: 2026-08-11-v171-desc-save-fix");
+  console.log("APP VERSION: 2026-08-11-v172-desc-render-fix");
   // One-time cleanup: remove legacy subscription data from localStorage
   try{ localStorage.removeItem('my_sub'); localStorage.removeItem('my_swap'); }catch(e){}
   loadCustomItems();
@@ -4058,11 +4057,13 @@ function buildMenu(){
     return;
   }
 
+  var _cdescs={}; try{_cdescs=JSON.parse(localStorage.getItem('custom_descs')||'{}');}catch(e){}
   let items = MENU_ITEMS;
   $('mgrid').innerHTML = items.map(i=>{
     const s    = ALL_SOUPS.find(x=>x.id===i.soupId)||{rating:0,reviews:[]};
     const fp   = i.sz[0].p.toFixed(2);
     const ph   = i.photo || getSoupPhoto(i.n, i.soupId);
+    const desc = i.desc || _cdescs[i.soupId] || _cdescs[i.n.toLowerCase()] || '';
     // Build inline size buttons if item has multiple sizes
     const szBtns = i.sz.length > 1 ? `
       <div class="mc-sizes" onclick="event.stopPropagation()">
@@ -4080,7 +4081,7 @@ function buildMenu(){
       <div class="mcb">
         <h3>${i.n}</h3>
         ${s.rating>0?`<div class="mc-stars">${stars(s.rating)} <span style="font-size:10px;color:var(--t3)">(${s.reviews.length})</span></div>`:''}
-        <p>${i.desc}</p>
+        <p>${desc}</p>
         ${szBtns}
         <div class="mcf" ${i.sz.length > 1 ? 'style="display:none"' : ''}>
           <div>
@@ -4103,6 +4104,8 @@ function showItem(id){
     ? s.reviews.map(r=>`<div class="rev-card"><div class="rev-head"><span class="rev-name">${r.name}</span><span class="rev-stars">${'★'.repeat(r.stars)+'☆'.repeat(5-r.stars)}</span></div><div class="rev-txt">${r.text}</div></div>`).join('')
     : '<p style="font-size:13px;color:var(--t3)">No reviews yet — be the first!</p>';
   const ph = getSoupPhoto(it.n, it.soupId);
+  var _itDescs={}; try{_itDescs=JSON.parse(localStorage.getItem('custom_descs')||'{}');}catch(e){}
+  const itDesc = it.desc || _itDescs[it.soupId] || _itDescs[it.n.toLowerCase()] || '';
   $('itc').innerHTML = `
     <div class="it-img" style="${ph ? 'background-image:url('+ph+');background-size:cover;background-position:center;font-size:0' : ''}">${ph ? '' : it.em}<button class="it-close" onclick="closeOv('ov-item')">✕</button></div>
     <div class="itb">
@@ -4110,7 +4113,7 @@ function showItem(id){
       <div class="tagrow">
         ${it.tags.map(t=>`<span class="tag">${t==='new'?'⭐ New This Week':t}</span>`).join('')}
       </div>
-      <p class="itd" id="item-desc-${it.id}" style="cursor:pointer;border-radius:6px;padding:4px;transition:background .2s" ${isAdmin?`onclick="editItemDesc('${it.id}')" title="Admin: tap to edit" style="cursor:pointer;border-radius:6px;padding:4px;border:1px dashed #ddd"`:'style=""'}>${it.desc||''}</p>
+      <p class="itd" id="item-desc-${it.id}" style="cursor:pointer;border-radius:6px;padding:4px;transition:background .2s" ${isAdmin?`onclick="editItemDesc('${it.id}')" title="Admin: tap to edit" style="cursor:pointer;border-radius:6px;padding:4px;border:1px dashed #ddd"`:'style=""'}>${itDesc}</p>
       ${it.al.length?`<div class="alg">${it.al.map(a=>`<span>⚠️ ${a}</span>`).join('')}</div>`:''}
       <div class="srow" id="sr-${id}" data-sid="${id}">
         ${it.sz.map((sz,i)=>`<div class="so ${szi[id]===i?'active':''} ${it.soldout?'soldout':''}" onclick="${it.soldout?'':'selSzEl(this,'+i+')'}">
