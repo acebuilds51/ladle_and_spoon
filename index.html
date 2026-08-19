@@ -1601,7 +1601,7 @@ let ROUTE = [
 ];
 
 // ════ STATE ════
-const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyXEJn7Wbr3tzs2xYZW1gVIyHq1emF2EdWuoxhoAFNaVRwHjZMfflqxLTtSLxYq2VJuXQ/exec' ;
+const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbysJ821SMErJp_MDaEEaK_gXdZad4UVAZG0idT6Hog5XJoNfa2ocz9_s9cTBZ-LTG-6/exec';
 const CLOUDINARY_CLOUD = 'drcjmvjc9';
 const CLOUDINARY_PRESET = 'ladle-soup-photos';
 const CLOUDINARY_URL = 'https://api.cloudinary.com/v1_1/drcjmvjc9/image/upload';
@@ -3252,7 +3252,7 @@ window.onload = () => {
   sessionStorage.removeItem('admin_data_time');
   // Fetch live menu from Sheet on load for all users — lightweight endpoint,
   // NOT the full admin dashboard (that only runs when the admin panel opens)
-  fetch(APPS_SCRIPT_URL + '?type=get_dashboard')
+  fetch(APPS_SCRIPT_URL + '?type=get_menu')
     .then(function(r){return r.json();})
     .catch(function(){
       MENU_LOADING = false; // failed to load — show empty state not spinner
