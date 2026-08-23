@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Ladle &amp; Spoon — This Week's Menu</title>
+
+<!-- Tiny share/landing page. Link scrapers (iMessage, RCS, Facebook) read these
+     tags without running JavaScript; real visitors get redirected to the app
+     immediately by the script at the bottom. Exists because the main index.html
+     is ~4.5MB and some scrapers give up before reaching its <head>.
+     og:url points at THIS page on purpose — if it pointed at index.html, some
+     scrapers would re-fetch that big file and hit the same problem. -->
+<meta property="og:site_name" content="Ladle &amp; Spoon">
+<meta property="og:title" content="Ladle &amp; Spoon — This Week's Menu">
+<meta property="og:description" content="Homemade soups &amp; salads delivered to your door. Order by Friday for Monday delivery.">
+<meta property="og:image" content="https://res.cloudinary.com/drcjmvjc9/image/upload/v1787150539/ladle-spoon-og-kitchen-1200x630_c8rjbc.jpg">
+<meta property="og:image:secure_url" content="https://res.cloudinary.com/drcjmvjc9/image/upload/v1787150539/ladle-spoon-og-kitchen-1200x630_c8rjbc.jpg">
+<meta property="og:image:type" content="image/jpeg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Ladle &amp; Spoon kitchen with a pot on the stove">
+<meta property="og:url" content="https://acebuilds51.github.io/ladle_and_spoon/share.html">
+<meta property="og:type" content="website">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Ladle &amp; Spoon — This Week's Menu">
+<meta name="twitter:description" content="Homemade soups &amp; salads delivered to your door. Order by Friday for Monday delivery.">
+<meta name="twitter:image" content="https://res.cloudinary.com/drcjmvjc9/image/upload/v1787150539/ladle-spoon-og-kitchen-1200x630_c8rjbc.jpg">
+<meta name="description" content="Homemade soups &amp; salads delivered to your door in Waterford, MI. Order by Friday for Monday delivery.">
+<style>
+  body{margin:0;min-height:100vh;display:flex;flex-direction:column;align-items:center;
+       justify-content:center;gap:18px;background:#F8F4EC;color:#1B3D1C;
+       font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;text-align:center;padding:24px;}
+  a{display:inline-block;background:#1B3D1C;color:#fff;text-decoration:none;
+    padding:14px 28px;border-radius:8px;font-weight:700;}
+</style>
+</head>
+<body>
+  <p>Opening this week's menu&hellip;</p>
+  <a href="https://acebuilds51.github.io/ladle_and_spoon/">Tap here if it doesn't open</a>
+<script>
+  // Send real visitors straight to the app. Scrapers never execute this, so they
+  // keep the meta tags above. replace() avoids leaving this page in history.
+  location.replace('https://acebuilds51.github.io/ladle_and_spoon/');
+</script>
+</body>
+</html>
