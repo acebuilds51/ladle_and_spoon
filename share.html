@@ -5,7 +5,10 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Ladle &amp; Spoon — This Week's Menu</title>
 
-<!-- Tiny share/landing page. Link scrapers (iMessage, RCS, Facebook) read these
+<!-- Tiny share/landing page.
+     og:image is served from THIS domain on purpose. Facebook's crawler repeatedly
+     failed to pull the same image from Cloudinary (tags scraped fine, picture came
+     back blank); a same-origin image removes that variable entirely. Link scrapers (iMessage, RCS, Facebook) read these
      tags without running JavaScript; real visitors get redirected to the app
      immediately by the script at the bottom. Exists because the main index.html
      is ~4.5MB and some scrapers give up before reaching its <head>.
@@ -14,8 +17,8 @@
 <meta property="og:site_name" content="Ladle &amp; Spoon">
 <meta property="og:title" content="Ladle &amp; Spoon — This Week's Menu">
 <meta property="og:description" content="Homemade soups &amp; salads delivered to your door. Order by Friday for Monday delivery.">
-<meta property="og:image" content="https://res.cloudinary.com/drcjmvjc9/image/upload/v1787150539/ladle-spoon-og-kitchen-1200x630_c8rjbc.jpg">
-<meta property="og:image:secure_url" content="https://res.cloudinary.com/drcjmvjc9/image/upload/v1787150539/ladle-spoon-og-kitchen-1200x630_c8rjbc.jpg">
+<meta property="og:image" content="https://acebuilds51.github.io/ladle_and_spoon/og-image.jpg">
+<meta property="og:image:secure_url" content="https://acebuilds51.github.io/ladle_and_spoon/og-image.jpg">
 <meta property="og:image:type" content="image/jpeg">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
@@ -25,7 +28,7 @@
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Ladle &amp; Spoon — This Week's Menu">
 <meta name="twitter:description" content="Homemade soups &amp; salads delivered to your door. Order by Friday for Monday delivery.">
-<meta name="twitter:image" content="https://res.cloudinary.com/drcjmvjc9/image/upload/v1787150539/ladle-spoon-og-kitchen-1200x630_c8rjbc.jpg">
+<meta name="twitter:image" content="https://acebuilds51.github.io/ladle_and_spoon/og-image.jpg">
 <meta name="description" content="Homemade soups &amp; salads delivered to your door in Waterford, MI. Order by Friday for Monday delivery.">
 <style>
   body{margin:0;min-height:100vh;display:flex;flex-direction:column;align-items:center;
