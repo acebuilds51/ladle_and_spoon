@@ -12,7 +12,7 @@
 set -euo pipefail
 
 # ─── set these two once ────────────────────────────────────────────────────────
-REPO="$HOME/code/ladle_and_spoon"        # your local clone
+REPO="/c/Users/tonye/OneDrive/Documents/GitHub/ladle_and_spoon"        # your local clone
 DOWNLOADS="$HOME/Downloads"              # where the files land from Claude
 # ───────────────────────────────────────────────────────────────────────────────
 
