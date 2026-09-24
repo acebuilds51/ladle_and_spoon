@@ -31,6 +31,12 @@ the From line shows the business address rather than the account that runs the s
 **Frontend:** push to `main`. GitHub Pages serves it directly, so the push *is* the
 deploy. Hard-refresh afterwards — the PWA caches aggressively.
 
+Claude edits this clone in place and pushes with plain `git commit` + `git push`. Git
+is not on PATH; use the copy bundled with GitHub Desktop
+(`%LOCALAPPDATA%\GitHubDesktop\app-*\resources\app\git\cmd\git.exe` — the version folder
+changes when Desktop updates). Credentials come from Git Credential Manager, so no token
+is ever needed in chat. Syntax-check before every push (see *Conventions*).
+
 **Backend:** Apps Script editor → Deploy → Manage deployments → **pencil on the live
 deployment** → Version: **New version** → Deploy.
 
