@@ -17,7 +17,7 @@ case where that rule is already broken.
 | Link preview | `share.html` + `og-image.jpg` | Tiny page for social/messaging previews. |
 | Backend | Google Apps Script | Single file, confusingly named `Business Analysis.gs`. |
 | Database | Google Sheets | Orders, customers, loyalty, photos, gift certs, analytics. |
-| Images | Cloudinary + embedded | See *the 4MB problem*. |
+| Images | Cloudinary + `img/` | Uploaded photos live on Cloudinary. The logo, hero and built-in soup photo library are files in `img/`. |
 | Push | Firebase (`ladle-and-spoon-push-notify`) | |
 
 Apps Script runs as a dedicated Google account, which gives the business its own
@@ -175,11 +175,12 @@ admin PIN and sample customer lists (`CUSTS`, `REACT`, `ROUTE_STOPS`) with real 
 emails, phones and addresses. They are gone from the current file but remain in every
 earlier commit of this public repo until history is rewritten.
 
-**`index.html` is ~4MB, and ~88% of that is embedded base64 images** — around 75 of
-them. The actual code is roughly 330KB. Every visitor downloads all of it. This is why
-loads are slow, why the PWA cache is unwieldy, and why a link-preview page had to exist
-at all. Extracting those images into files would cut the page by ~90% and is the single
-highest-value change available.
+**Keep images out of `index.html`.** Until v234 the page was ~4.3MB, ~88% of it base64
+images, and the menu took ~6s to appear on a 4G phone. They now live in `img/`
+(`logo.png`, `hero.jpg`, `soups/*.jpg`, referenced by relative path from `SOUP_PHOTOS`),
+and the page is ~0.5MB. The test suite fails if the page passes 0.6MB, embeds an image over
+8KB, references a missing or truncated `img/` file, or leaves an unused one there. Commit
+`img/` together with `index.html`: `deploy.sh` only copies `index.html` from Downloads.
 
 **Delivery-fee data starts in Jan 2026.** Earlier weeks genuinely have no per-order fee
 recorded, so analytics fall back to a flat $5 for them. That is correct, not a bug.
