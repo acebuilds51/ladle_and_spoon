@@ -35,7 +35,12 @@ Claude edits this clone in place and pushes with plain `git commit` + `git push`
 is not on PATH; use the copy bundled with GitHub Desktop
 (`%LOCALAPPDATA%\GitHubDesktop\app-*\resources\app\git\cmd\git.exe` — the version folder
 changes when Desktop updates). Credentials come from Git Credential Manager, so no token
-is ever needed in chat. Syntax-check before every push (see *Conventions*).
+is ever needed in chat.
+
+**Before every frontend push:** `npm run prepush` in the sibling private repo
+`..\ladle_and_spoon_backend` (backend logic, static checks, headless-Edge browser tests,
+about 30 s) must be green. **After it:** `npm run verify-live` there waits for Pages and runs
+the read-only live checks. A weekly Saturday run follows that repo's `RUNBOOK.md`.
 
 **Backend:** Apps Script editor → Deploy → Manage deployments → **pencil on the live
 deployment** → Version: **New version** → Deploy.
