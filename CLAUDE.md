@@ -15,6 +15,7 @@ case where that rule is already broken.
 |---|---|---|
 | Frontend | `index.html` | One self-contained PWA. Customer app *and* admin panel. |
 | Link preview | `share.html` + `og-image.jpg` | Tiny page for social/messaging previews. |
+| Published menu | `data/site.json` | Menu, photos, custom items. **Written by the backend**, not by hand (see below). |
 | Backend | Google Apps Script | Single file, confusingly named `Business Analysis.gs`. |
 | Database | Google Sheets | Orders, customers, loyalty, photos, gift certs, analytics. |
 | Images | Cloudinary + `img/` | Uploaded photos live on Cloudinary. The logo, hero and built-in soup photo library are files in `img/`. |
@@ -41,6 +42,13 @@ is ever needed in chat.
 `..\ladle_and_spoon_backend` (backend logic, static checks, headless-Edge browser tests,
 about 30 s) must be green. **After it:** `npm run verify-live` there waits for Pages and runs
 the read-only live checks. A weekly Saturday run follows that repo's `RUNBOOK.md`.
+
+**The backend commits to `main` too.** `publishStaticSite()` writes `data/site.json`
+through the GitHub API (Script property `GITHUB_TOKEN`, a fine-grained token limited to
+this repo's Contents) whenever the menu, photos or custom items change, and hourly as a
+backstop. The page shows that copy first — same origin, ~100 ms — then asks Apps Script,
+whose answer wins if different. So: `git pull --rebase` before pushing, never edit
+`data/site.json` by hand, and never put customer data or revenue in it (it is public).
 
 **Backend:** Apps Script editor → Deploy → Manage deployments → **pencil on the live
 deployment** → Version: **New version** → Deploy.
