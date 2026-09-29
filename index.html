@@ -109,6 +109,18 @@ body{display:flex;flex-direction:column;}
   .bn svg{width:19px;height:19px}
 }
 header{background:var(--f);padding:10px 14px;min-height:88px;display:flex;align-items:center;justify-content:center;flex-shrink:0;z-index:10;}
+/* On a phone held upright the tagline and "Delivered Directly…" (both pinned to the
+   edges) slid under the centred logo. Below 640px they step aside: the tagline and
+   delivery line hide, the version sits under the left badge, and the profile/cart
+   buttons centre vertically on the right. */
+@media(max-width:640px){
+  header .hdr-tagtxt, header .hdr-deliv{display:none}
+  /* !important: these override the elements' inline styles */
+  header .hdr-tag{position:absolute!important;left:0;top:100%;margin-top:4px;line-height:1!important}
+  header .hdr-btns{top:50%!important;bottom:auto!important;transform:translateY(-50%)}
+  header .hdr-logo{max-height:58px!important;max-width:34%!important}
+  #pfb{max-width:80px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+}
 
 .hdr-r{display:flex;gap:8px;align-items:center;}
 .mp{background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.2);color:rgba(255,255,255,.6);border-radius:20px;padding:5px 12px;font-size:11px;font-weight:700;cursor:pointer;}
@@ -529,11 +541,11 @@ header{background:var(--f);padding:10px 14px;min-height:88px;display:flex;align-
   <div class="anniv-confetti"><i class="anniv-cf"></i><i class="anniv-cf"></i><i class="anniv-cf"></i><i class="anniv-cf"></i><i class="anniv-cf"></i><i class="anniv-cf"></i><i class="anniv-cf"></i><i class="anniv-cf"></i><i class="anniv-cf"></i><i class="anniv-cf"></i><i class="anniv-cf"></i><i class="anniv-cf"></i><i class="anniv-cf"></i><i class="anniv-cf"></i><i class="anniv-cf"></i><i class="anniv-cf"></i><i class="anniv-cf"></i><i class="anniv-cf"></i><i class="anniv-cf"></i><i class="anniv-cf"></i><i class="anniv-cf"></i><i class="anniv-cf"></i><i class="anniv-cf"></i><i class="anniv-cf"></i><i class="anniv-cf"></i><i class="anniv-cf"></i><i class="anniv-cf"></i><i class="anniv-cf"></i><i class="anniv-cf"></i><i class="anniv-cf"></i></div>
   <div style="position:absolute;left:14px;top:50%;transform:translateY(-50%);display:flex;align-items:center;z-index:2">
     <div class="anniv-wrap"><svg viewBox="0 0 30 50" width="24" height="40" aria-hidden="true" style="flex-shrink:0"><g><g fill="currentColor"><ellipse cx="14.0" cy="44.0" rx="5.2" ry="2.5" transform="rotate(-62 14.0 44.0)"/><ellipse cx="20.6" cy="45.5" rx="4.7" ry="2.2" transform="rotate(-4 20.6 45.5)"/><ellipse cx="12.8" cy="39.2" rx="5.0" ry="2.4" transform="rotate(-56 12.8 39.2)"/><ellipse cx="19.4" cy="40.8" rx="4.5" ry="2.2" transform="rotate(2 19.4 40.8)"/><ellipse cx="11.5" cy="34.5" rx="4.8" ry="2.3" transform="rotate(-50 11.5 34.5)"/><ellipse cx="18.1" cy="36.0" rx="4.3" ry="2.1" transform="rotate(8 18.1 36.0)"/><ellipse cx="10.2" cy="29.8" rx="4.6" ry="2.2" transform="rotate(-45 10.2 29.8)"/><ellipse cx="16.9" cy="31.2" rx="4.1" ry="2.0" transform="rotate(13 16.9 31.2)"/><ellipse cx="9.0" cy="25.0" rx="4.4" ry="2.1" transform="rotate(-39 9.0 25.0)"/><ellipse cx="15.6" cy="26.5" rx="3.9" ry="1.9" transform="rotate(19 15.6 26.5)"/><ellipse cx="7.8" cy="20.2" rx="4.1" ry="2.1" transform="rotate(-33 7.8 20.2)"/><ellipse cx="14.3" cy="21.8" rx="3.7" ry="1.9" transform="rotate(25 14.3 21.8)"/><ellipse cx="6.5" cy="15.5" rx="3.9" ry="2.0" transform="rotate(-28 6.5 15.5)"/><ellipse cx="13.1" cy="17.0" rx="3.5" ry="1.8" transform="rotate(30 13.1 17.0)"/><ellipse cx="5.2" cy="10.8" rx="3.7" ry="1.9" transform="rotate(-22 5.2 10.8)"/><ellipse cx="11.8" cy="12.2" rx="3.3" ry="1.7" transform="rotate(36 11.8 12.2)"/><ellipse cx="4.0" cy="6.0" rx="3.5" ry="1.8" transform="rotate(-16 4.0 6.0)"/><ellipse cx="10.6" cy="7.5" rx="3.1" ry="1.6" transform="rotate(42 10.6 7.5)"/><path d="M15 46 Q10 26 5 7" stroke="currentColor" stroke-width="1.6" fill="none" stroke-linecap="round"/></g></g></svg><div class="anniv-txt"><span class="a1">Celebrating</span><span class="a2">Two Years</span><span class="a3">In Business</span></div><svg viewBox="0 0 30 50" width="24" height="40" aria-hidden="true" style="flex-shrink:0"><g transform="scale(-1,1) translate(-30,0)"><g fill="currentColor"><ellipse cx="14.0" cy="44.0" rx="5.2" ry="2.5" transform="rotate(-62 14.0 44.0)"/><ellipse cx="20.6" cy="45.5" rx="4.7" ry="2.2" transform="rotate(-4 20.6 45.5)"/><ellipse cx="12.8" cy="39.2" rx="5.0" ry="2.4" transform="rotate(-56 12.8 39.2)"/><ellipse cx="19.4" cy="40.8" rx="4.5" ry="2.2" transform="rotate(2 19.4 40.8)"/><ellipse cx="11.5" cy="34.5" rx="4.8" ry="2.3" transform="rotate(-50 11.5 34.5)"/><ellipse cx="18.1" cy="36.0" rx="4.3" ry="2.1" transform="rotate(8 18.1 36.0)"/><ellipse cx="10.2" cy="29.8" rx="4.6" ry="2.2" transform="rotate(-45 10.2 29.8)"/><ellipse cx="16.9" cy="31.2" rx="4.1" ry="2.0" transform="rotate(13 16.9 31.2)"/><ellipse cx="9.0" cy="25.0" rx="4.4" ry="2.1" transform="rotate(-39 9.0 25.0)"/><ellipse cx="15.6" cy="26.5" rx="3.9" ry="1.9" transform="rotate(19 15.6 26.5)"/><ellipse cx="7.8" cy="20.2" rx="4.1" ry="2.1" transform="rotate(-33 7.8 20.2)"/><ellipse cx="14.3" cy="21.8" rx="3.7" ry="1.9" transform="rotate(25 14.3 21.8)"/><ellipse cx="6.5" cy="15.5" rx="3.9" ry="2.0" transform="rotate(-28 6.5 15.5)"/><ellipse cx="13.1" cy="17.0" rx="3.5" ry="1.8" transform="rotate(30 13.1 17.0)"/><ellipse cx="5.2" cy="10.8" rx="3.7" ry="1.9" transform="rotate(-22 5.2 10.8)"/><ellipse cx="11.8" cy="12.2" rx="3.3" ry="1.7" transform="rotate(36 11.8 12.2)"/><ellipse cx="4.0" cy="6.0" rx="3.5" ry="1.8" transform="rotate(-16 4.0 6.0)"/><ellipse cx="10.6" cy="7.5" rx="3.1" ry="1.6" transform="rotate(42 10.6 7.5)"/><path d="M15 46 Q10 26 5 7" stroke="currentColor" stroke-width="1.6" fill="none" stroke-linecap="round"/></g></g></svg></div>
-    <div style="color:#7FFF00;font-size:10px;letter-spacing:1.5px;text-transform:uppercase;font-weight:700;line-height:1.4;">Homemade<br>Soups &amp; Salads<br><span style="font-size:8px;opacity:0.6;letter-spacing:1px">v245</span></div>
+    <div class="hdr-tag" style="color:#7FFF00;font-size:10px;letter-spacing:1.5px;text-transform:uppercase;font-weight:700;line-height:1.4;"><span class="hdr-tagtxt">Homemade<br>Soups &amp; Salads<br></span><span style="font-size:8px;opacity:0.6;letter-spacing:1px">v246</span></div>
   </div>
-  <img src="img/logo.png" style="display:block;height:auto;max-height:66px;max-width:70%;" alt="Ladle &amp; Spoon">
-  <div style="position:absolute;right:14px;top:8px;color:#7FFF00;font-size:10px;letter-spacing:1px;font-weight:600;line-height:1.4;text-align:right;z-index:2">Delivered Directly from<br>Our Kitchen to Your Door</div>
-  <div style="position:absolute;right:14px;bottom:8px;display:flex;gap:6px;align-items:center;">
+  <img id="hdr-logo" class="hdr-logo" src="img/logo.png" style="display:block;height:auto;max-height:66px;max-width:70%;" alt="Ladle &amp; Spoon">
+  <div class="hdr-deliv" style="position:absolute;right:14px;top:8px;color:#7FFF00;font-size:10px;letter-spacing:1px;font-weight:600;line-height:1.4;text-align:right;z-index:2">Delivered Directly from<br>Our Kitchen to Your Door</div>
+  <div class="hdr-btns" style="position:absolute;right:14px;bottom:8px;display:flex;gap:6px;align-items:center;">
     <button id="pfb" onclick="showProfile()" style="background:var(--sgl);color:var(--f);border:none;border-radius:20px;padding:4px 10px;font-size:11px;font-weight:700;cursor:pointer;" title="My Profile">👤</button>
     <button id="cpb" onclick="showCart()" style="background:var(--am);color:var(--f);border:none;border-radius:20px;padding:4px 10px;font-size:11px;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:4px;">🛒 <span id="cc">0</span></button>
   </div>
@@ -1614,7 +1626,22 @@ function adminHashOpen(){
   if(typeof sw === 'function') sw('admin', document.getElementById('nav-admin'));
   return true;
 }
+// Inside the installed app there is no address bar for #admin (and on iPhone the
+// home-screen app has its own storage, so signing in through Safari does not carry
+// over). Five taps on the header logo within a few seconds opens the PIN prompt.
+var _admTapN = 0, _admTapT = 0;
+function adminLogoTap(){
+  var now = Date.now();
+  if(now - _admTapT > 2500) _admTapN = 0;
+  _admTapT = now;
+  if(++_admTapN < 5) return;
+  _admTapN = 0;
+  showAdminNav();
+  if(typeof sw === 'function') sw('admin', document.getElementById('nav-admin'));
+}
 (function(){
+  var logo = document.getElementById('hdr-logo');
+  if(logo) logo.addEventListener('click', adminLogoTap);
   try{ if(localStorage.getItem(ADMIN_DEVICE_KEY)) showAdminNav(); }catch(e){}
   if(location.hash === '#admin') showAdminNav();
   window.addEventListener('hashchange', adminHashOpen);
@@ -4197,7 +4224,7 @@ function refShareNative(code,fname){
 }
 
 window.onload = () => {
-  console.log("APP VERSION: 2026-09-29-v245-order-retry");
+  console.log("APP VERSION: 2026-09-29-v246-phone-header");
   // One-time cleanup: remove legacy subscription data from localStorage
   try{ localStorage.removeItem('my_sub'); localStorage.removeItem('my_swap'); }catch(e){}
   startMenuEarly();   // normally already running since DOMContentLoaded — see below
