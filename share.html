@@ -44,7 +44,10 @@
 <script>
   // Send real visitors straight to the app. Scrapers never execute this, so they
   // keep the meta tags above. replace() avoids leaving this page in history.
-  location.replace('https://acebuilds51.github.io/ladle_and_spoon/');
+  // Keep the query string: share.html?src=waterfordhappenings is how the app credits
+  // a new customer to the post that brought them (Acquisition sheet). Dropping it
+  // recorded every one of them as "unknown".
+  location.replace('https://acebuilds51.github.io/ladle_and_spoon/' + location.search);
 </script>
 </body>
 </html>
