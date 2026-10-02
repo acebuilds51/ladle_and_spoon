@@ -425,18 +425,36 @@ header{background:var(--f);padding:10px 14px;min-height:88px;display:flex;align-
 .ap{text-align:right;}
 .ap strong{display:block;font-size:16px;font-weight:700;color:var(--f);}
 .ap span{font-size:10px;color:var(--t3);}
-/* ROUTE */
-.rstop{display:flex;gap:10px;align-items:flex-start;margin-bottom:10px;position:relative;}
-.rstop::before{content:'';position:absolute;left:12px;top:26px;bottom:-10px;width:2px;background:var(--bd);}
-.rstop:last-child::before{display:none;}
-.sn{width:25px;height:25px;border-radius:50%;background:var(--f);color:#fff;font-size:10px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
-.sn.s{background:var(--sg);}
-.sn.e{background:var(--cl);}
-.sinf strong{display:block;font-size:13px;margin-bottom:1px;}
-.sinf span{font-size:11px;color:var(--t3);}
-.snote{font-size:11px;color:var(--cl);font-style:italic;margin-top:2px;}
-.sord{background:var(--cr);border-radius:5px;padding:2px 7px;font-size:11px;margin-top:3px;display:inline-block;}
-.spay{font-size:10px;font-weight:700;padding:2px 6px;border-radius:8px;margin-left:4px;}
+/* ROUTE (v259): planner list and the one-stop-at-a-time driving screen */
+.rt-card{background:#fff;border:1px solid var(--bd);border-radius:12px;padding:14px;margin-bottom:12px;}
+.rt-big{width:100%;padding:15px;border:none;border-radius:12px;font-size:16px;font-weight:800;font-family:inherit;cursor:pointer;color:#fff;background:var(--f);display:block;text-align:center;text-decoration:none;box-sizing:border-box;}
+.rt-big.go{background:#16a34a;}
+.rt-big.nav{background:#1a73e8;}
+.rt-big.alt{background:#fff;color:var(--f);border:2px solid var(--f);}
+.rt-big:disabled{opacity:.6;}
+.rt-warn{background:#fff7ed;border:1px solid #fdba74;border-radius:10px;padding:10px 12px;font-size:12px;color:#9a3412;margin-bottom:10px;line-height:1.5;}
+.rt-seg{display:flex;gap:6px;}
+.rt-seg button{flex:1;padding:9px 6px;border-radius:9px;border:1.5px solid var(--bd);background:#fff;font-size:13px;font-weight:700;font-family:inherit;cursor:pointer;color:var(--t2);}
+.rt-seg button.on{background:var(--f);border-color:var(--f);color:#fff;}
+.rt-stop{display:flex;gap:10px;align-items:flex-start;padding:10px 0;border-bottom:1px solid var(--bd);}
+.rt-stop:last-child{border-bottom:none;}
+.rt-num{width:28px;height:28px;border-radius:50%;background:var(--f);color:#fff;font-size:12px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.rt-num.off{background:#dc2626;}
+.rt-num.done{background:#16a34a;}
+.rt-inf{flex:1;min-width:0;}
+.rt-inf strong{display:block;font-size:14px;}
+.rt-inf span{display:block;font-size:12px;color:var(--t3);}
+.rt-mv{display:flex;flex-direction:column;gap:4px;}
+.rt-mv button{width:34px;height:30px;border-radius:8px;border:1.5px solid var(--bd);background:#fff;font-size:13px;cursor:pointer;}
+#drive{position:fixed;inset:0;z-index:9000;background:var(--cr);overflow-y:auto;padding:16px 16px 40px;box-sizing:border-box;}
+#drive.hidden{display:none;}
+.dv-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;font-size:13px;font-weight:700;color:var(--t3);}
+.dv-name{font-family:'Cormorant Garamond',serif;font-size:30px;font-weight:700;color:var(--f);line-height:1.1;margin-bottom:4px;}
+.dv-addr{font-size:16px;color:var(--t2);margin-bottom:12px;}
+.dv-row{display:flex;gap:8px;margin:10px 0;}
+.dv-row>*{flex:1;}
+.dv-pay{border-radius:10px;padding:10px 12px;font-size:15px;font-weight:800;margin-bottom:10px;}
+.dv-step{font-size:12px;color:var(--t3);text-align:center;margin-top:6px;}
 /* SOCIAL */
 .plt{display:flex;gap:8px;margin-bottom:12px;}
 .pb{flex:1;padding:9px 5px;border-radius:10px;border:2px solid var(--bd);background:#fff;font-size:11px;font-weight:700;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:3px;color:var(--t2);}
@@ -545,7 +563,7 @@ header{background:var(--f);padding:10px 14px;min-height:88px;display:flex;align-
   <div class="anniv-confetti"><i class="anniv-cf"></i><i class="anniv-cf"></i><i class="anniv-cf"></i><i class="anniv-cf"></i><i class="anniv-cf"></i><i class="anniv-cf"></i><i class="anniv-cf"></i><i class="anniv-cf"></i><i class="anniv-cf"></i><i class="anniv-cf"></i><i class="anniv-cf"></i><i class="anniv-cf"></i><i class="anniv-cf"></i><i class="anniv-cf"></i><i class="anniv-cf"></i><i class="anniv-cf"></i><i class="anniv-cf"></i><i class="anniv-cf"></i><i class="anniv-cf"></i><i class="anniv-cf"></i><i class="anniv-cf"></i><i class="anniv-cf"></i><i class="anniv-cf"></i><i class="anniv-cf"></i><i class="anniv-cf"></i><i class="anniv-cf"></i><i class="anniv-cf"></i><i class="anniv-cf"></i><i class="anniv-cf"></i><i class="anniv-cf"></i></div>
   <div style="position:absolute;left:14px;top:50%;transform:translateY(-50%);display:flex;align-items:center;z-index:2">
     <div class="anniv-wrap"><svg viewBox="0 0 30 50" width="24" height="40" aria-hidden="true" style="flex-shrink:0"><g><g fill="currentColor"><ellipse cx="14.0" cy="44.0" rx="5.2" ry="2.5" transform="rotate(-62 14.0 44.0)"/><ellipse cx="20.6" cy="45.5" rx="4.7" ry="2.2" transform="rotate(-4 20.6 45.5)"/><ellipse cx="12.8" cy="39.2" rx="5.0" ry="2.4" transform="rotate(-56 12.8 39.2)"/><ellipse cx="19.4" cy="40.8" rx="4.5" ry="2.2" transform="rotate(2 19.4 40.8)"/><ellipse cx="11.5" cy="34.5" rx="4.8" ry="2.3" transform="rotate(-50 11.5 34.5)"/><ellipse cx="18.1" cy="36.0" rx="4.3" ry="2.1" transform="rotate(8 18.1 36.0)"/><ellipse cx="10.2" cy="29.8" rx="4.6" ry="2.2" transform="rotate(-45 10.2 29.8)"/><ellipse cx="16.9" cy="31.2" rx="4.1" ry="2.0" transform="rotate(13 16.9 31.2)"/><ellipse cx="9.0" cy="25.0" rx="4.4" ry="2.1" transform="rotate(-39 9.0 25.0)"/><ellipse cx="15.6" cy="26.5" rx="3.9" ry="1.9" transform="rotate(19 15.6 26.5)"/><ellipse cx="7.8" cy="20.2" rx="4.1" ry="2.1" transform="rotate(-33 7.8 20.2)"/><ellipse cx="14.3" cy="21.8" rx="3.7" ry="1.9" transform="rotate(25 14.3 21.8)"/><ellipse cx="6.5" cy="15.5" rx="3.9" ry="2.0" transform="rotate(-28 6.5 15.5)"/><ellipse cx="13.1" cy="17.0" rx="3.5" ry="1.8" transform="rotate(30 13.1 17.0)"/><ellipse cx="5.2" cy="10.8" rx="3.7" ry="1.9" transform="rotate(-22 5.2 10.8)"/><ellipse cx="11.8" cy="12.2" rx="3.3" ry="1.7" transform="rotate(36 11.8 12.2)"/><ellipse cx="4.0" cy="6.0" rx="3.5" ry="1.8" transform="rotate(-16 4.0 6.0)"/><ellipse cx="10.6" cy="7.5" rx="3.1" ry="1.6" transform="rotate(42 10.6 7.5)"/><path d="M15 46 Q10 26 5 7" stroke="currentColor" stroke-width="1.6" fill="none" stroke-linecap="round"/></g></g></svg><div class="anniv-txt"><span class="a1">Celebrating</span><span class="a2">Two Years</span><span class="a3">In Business</span></div><svg viewBox="0 0 30 50" width="24" height="40" aria-hidden="true" style="flex-shrink:0"><g transform="scale(-1,1) translate(-30,0)"><g fill="currentColor"><ellipse cx="14.0" cy="44.0" rx="5.2" ry="2.5" transform="rotate(-62 14.0 44.0)"/><ellipse cx="20.6" cy="45.5" rx="4.7" ry="2.2" transform="rotate(-4 20.6 45.5)"/><ellipse cx="12.8" cy="39.2" rx="5.0" ry="2.4" transform="rotate(-56 12.8 39.2)"/><ellipse cx="19.4" cy="40.8" rx="4.5" ry="2.2" transform="rotate(2 19.4 40.8)"/><ellipse cx="11.5" cy="34.5" rx="4.8" ry="2.3" transform="rotate(-50 11.5 34.5)"/><ellipse cx="18.1" cy="36.0" rx="4.3" ry="2.1" transform="rotate(8 18.1 36.0)"/><ellipse cx="10.2" cy="29.8" rx="4.6" ry="2.2" transform="rotate(-45 10.2 29.8)"/><ellipse cx="16.9" cy="31.2" rx="4.1" ry="2.0" transform="rotate(13 16.9 31.2)"/><ellipse cx="9.0" cy="25.0" rx="4.4" ry="2.1" transform="rotate(-39 9.0 25.0)"/><ellipse cx="15.6" cy="26.5" rx="3.9" ry="1.9" transform="rotate(19 15.6 26.5)"/><ellipse cx="7.8" cy="20.2" rx="4.1" ry="2.1" transform="rotate(-33 7.8 20.2)"/><ellipse cx="14.3" cy="21.8" rx="3.7" ry="1.9" transform="rotate(25 14.3 21.8)"/><ellipse cx="6.5" cy="15.5" rx="3.9" ry="2.0" transform="rotate(-28 6.5 15.5)"/><ellipse cx="13.1" cy="17.0" rx="3.5" ry="1.8" transform="rotate(30 13.1 17.0)"/><ellipse cx="5.2" cy="10.8" rx="3.7" ry="1.9" transform="rotate(-22 5.2 10.8)"/><ellipse cx="11.8" cy="12.2" rx="3.3" ry="1.7" transform="rotate(36 11.8 12.2)"/><ellipse cx="4.0" cy="6.0" rx="3.5" ry="1.8" transform="rotate(-16 4.0 6.0)"/><ellipse cx="10.6" cy="7.5" rx="3.1" ry="1.6" transform="rotate(42 10.6 7.5)"/><path d="M15 46 Q10 26 5 7" stroke="currentColor" stroke-width="1.6" fill="none" stroke-linecap="round"/></g></g></svg></div>
-    <div class="hdr-tag" style="color:#7FFF00;font-size:10px;letter-spacing:1.5px;text-transform:uppercase;font-weight:700;line-height:1.4;"><span class="hdr-tagtxt">Homemade<br>Soups &amp; Salads<br></span><span style="font-size:8px;opacity:0.6;letter-spacing:1px">v258</span></div>
+    <div class="hdr-tag" style="color:#7FFF00;font-size:10px;letter-spacing:1.5px;text-transform:uppercase;font-weight:700;line-height:1.4;"><span class="hdr-tagtxt">Homemade<br>Soups &amp; Salads<br></span><span style="font-size:8px;opacity:0.6;letter-spacing:1px">v259</span></div>
   </div>
   <img id="hdr-logo" class="hdr-logo" src="img/logo.png" style="display:block;height:auto;max-height:66px;max-width:70%;" alt="Ladle &amp; Spoon">
   <div class="hdr-deliv" style="position:absolute;right:14px;top:8px;color:#7FFF00;font-size:10px;letter-spacing:1px;font-weight:600;line-height:1.4;text-align:right;z-index:2">Delivered Directly from<br>Our Kitchen to Your Door</div>
@@ -798,6 +816,7 @@ header{background:var(--f);padding:10px 14px;min-height:88px;display:flex;align-
   <div class="atabs">
     <button class="at active" onclick="adm('dash',this)">📊 Dash</button>
     <button class="at" onclick="adm('orders',this)">📋 Orders</button>
+    <button class="at" onclick="adm('route',this);buildRoutePlanner()">🚗 Route</button>
     <button class="at" onclick="adm('menu',this)">🍲 Menu</button>
     <button class="at" onclick="adm('schedule',this);buildScheduleAdmin()">🗓️ Schedule</button>
     <button class="at" onclick="adm('soups',this);buildSoupIntel();buildPhotoUploader()">🧠 Soups</button>
@@ -1119,29 +1138,9 @@ header{background:var(--f);padding:10px 14px;min-height:88px;display:flex;align-
 
   <div class="asec" id="adm-route">
     <div class="sh"><div class="st">Monday Delivery Route</div></div>
-
-    <!-- Route Summary Strip -->
-    <div style="display:flex;gap:8px;margin-bottom:12px;overflow-x:auto;padding-bottom:4px">
-      <div class="kc" style="flex-shrink:0;min-width:80px"><div class="kl">Stops</div><div class="kv" style="font-size:20px" id="route-stops">—</div></div>
-      <div class="kc" style="flex-shrink:0;min-width:80px"><div class="kl">Cash</div><div class="kv" style="font-size:20px" id="route-cash">—</div></div>
-      <div class="kc" style="flex-shrink:0;min-width:80px"><div class="kl">Venmo</div><div class="kv" style="font-size:20px" id="route-venmo">—</div></div>
-      <div class="kc" style="flex-shrink:0;min-width:80px"><div class="kl">Del. Fees</div><div class="kv" style="font-size:20px" id="route-del">—</div></div>
-    </div>
-
-    <!-- MapQuest button at top -->
-    <a id="route-maps-link" href="#" onclick="openRouteInMaps();return false;" target="_blank" style="display:flex;align-items:center;justify-content:center;gap:7px;margin-top:10px;padding:12px;background:var(--f);color:#fff;border-radius:10px;text-decoration:none;font-size:14px;font-weight:700;cursor:pointer;">
-  🗺️ Open Route in MapQuest
-</a>
-    <button onclick="copyAllAddresses(this)" style="width:100%;margin-top:8px;padding:11px;background:var(--sgl);color:#fff;border:none;border-radius:10px;font-size:13px;font-weight:700;cursor:pointer;">
-  📋 Copy All Addresses
-</button>
-    <!-- <span id="route-all-hd">All 22 Stops</span> -->
-    <div class="ccrd">
-      <h3><span id="route-all-hd">All Stops</span></h3>
-      <div id="rtstops" style="display:none"></div>
-      <div id="route-strip" style="display:flex;flex-direction:column;gap:3px"></div>
-    </div>
-
+    <!-- Filled by buildRoutePlanner(). Customer details only ever come from plan_route
+         (admin PIN), never from this public file. -->
+    <div id="rt-body"></div>
   </div><!-- end adm-route -->
 
   <div class="asec" id="adm-monthly">
@@ -1235,6 +1234,7 @@ header{background:var(--f);padding:10px 14px;min-height:88px;display:flex;align-
 <!-- Order History Modal -->
 <div class="ov hidden" id="ov-hist" onclick="if(event.target===this)this.classList.add('hidden')"><div class="sheet" id="histc"></div></div>
 <!-- New Customer Welcome -->
+<div id="drive" class="hidden"></div>
 <div class="ov ctr hidden" id="ov-welcome" onclick="if(event.target===this)dismissWelcome()">
   <div style="background:#fff;border-radius:18px;width:100%;max-width:420px;max-height:90vh;overflow-y:auto;margin:20px">
     <div style="background:linear-gradient(135deg,var(--f),#2A5630);padding:28px 24px 20px;text-align:center;border-radius:18px 18px 0 0">
@@ -1601,10 +1601,6 @@ let AREAS = [
 
 let WKMENU = [];
 
-let ROUTE = [
-  {lbl:"s",num:"🏠",n:"Lia's Kitchen",a:"Home base — pack and load",ord:"",note:"",pay:""},
-  {lbl:"e",num:"🏠",n:"Return Home",a:"Great job Lia!",ord:"",note:"",pay:""},
-];
 
 // ════ STATE ════
 // The backend. Since v248 this is the Cloudflare front door, which answers in ~0.2 s
@@ -2657,45 +2653,6 @@ function fetchLoyaltyStatus(cb){
 
 
 // ════ INIT ════
-let ROUTE_STOPS = [];   // filled from the protected dashboard endpoint — never ship customer data in this public file
-
-function buildRouteStrip(){
-  var el=$('route-strip');
-  if(!el||typeof ROUTE_STOPS==='undefined') return;
-  var html='';
-  ROUTE_STOPS.forEach(function(s,i){
-    var isFirst = i===0;
-    var isLast  = i===ROUTE_STOPS.length-1;
-    var snCls   = isFirst?'s':isLast?'e':'';
-    var payHtml = '';
-    if(s.pay==='venmo') payHtml='<span style="margin-left:6px;display:inline-block;background:#1d4ed8;color:#fff;border-radius:4px;padding:1px 7px;font-size:10px;font-weight:700;vertical-align:middle">Venmo</span>';
-    else if(s.pay==='cash') payHtml='<span style="margin-left:6px;display:inline-block;background:#555;color:#fff;border-radius:4px;padding:1px 7px;font-size:10px;font-weight:700;vertical-align:middle">Cash</span>';
-    html+='<div class="rstop">'
-      +'<div class="sn '+snCls+'">'+s.num+'</div>'
-      +'<div class="sinf">'
-      +'<strong>'+s.n+payHtml+'</strong>'
-      +'<span>'+s.a+'</span>'
-      +(s.items?'<div class="sord">📦 '+s.items+'</div>':'')
-      +(s.note?'<div style="font-size:10px;color:var(--cl);font-style:italic;margin-top:2px">'+s.note+'</div>':'')
-      +(s.num!=='H'?'<button data-n="'+s.n+'" onclick="togglePaid(this)" style="margin-top:5px;font-size:10px;padding:3px 10px;border:none;border-radius:6px;cursor:pointer;background:var(--sgl);color:var(--f);font-weight:700" class="pay-btn">✓ Mark Paid</button>':'')
-      +'</div></div>';
-  });
-  el.innerHTML=html;
-}
-
-function showStop(i) {
-  const s = ROUTE_STOPS[i];
-  const d = $('stop-detail');
-  $('sd-name').textContent = s.num + ' ' + s.n;
-  $('sd-addr').textContent = '📍 ' + s.a;
-  $('sd-items').textContent = s.items ? '📦 ' + s.items : '';
-  $('sd-note').textContent = s.note ? '📝 ' + s.note : '';
-  const pb = $('sd-pay');
-  pb.textContent = s.pay === 'venmo' ? '📱 Venmo' : s.pay === 'cash' ? '💵 Cash' : '';
-  pb.style.background = s.pay === 'venmo' ? '#e8f4ff' : s.pay === 'cash' ? '#f5f5f5' : 'transparent';
-  pb.style.color = s.pay === 'venmo' ? '#0066cc' : '#555';
-  d.style.display = 'block';
-}
 
 // ── GROCERY COST TRACKER ──
 function getGroceryCosts(){
@@ -3625,24 +3582,6 @@ function sendAllNotif(){
   if(!confirm('Send a "menu is live" push notification to every subscribed customer now?')) return;
   sendMenuNotification(MENU_ITEMS);
 }
-function togglePaid(btn){
-  const name=btn.dataset.n;
-  let paid={};try{paid=JSON.parse(localStorage.getItem('route_paid')||'{}');}catch(e){}
-  if(paid[name]){
-    delete paid[name];
-    btn.style.background='var(--sgl)';btn.style.color='var(--f)';btn.textContent='✓ Mark Paid';
-  } else {
-    paid[name]=true;
-    btn.style.background='#16a34a';btn.style.color='#fff';btn.textContent='💚 Paid!';
-    toast('💰 '+name+' marked paid');
-  }
-  localStorage.setItem('route_paid',JSON.stringify(paid));
-}
-function resetRoutePaid(){
-  localStorage.removeItem('route_paid');
-  buildRouteStrip();
-  toast('Route payment tracking reset');
-}
 
 
 function weeklyResetTest(){
@@ -3704,7 +3643,7 @@ function weeklyReset(btn){
       if(d.success){
         // 2. Clear localStorage orders
         try{ localStorage.removeItem('submitted_orders'); }catch(e){}
-        try{ localStorage.removeItem('route_paid'); }catch(e){}
+        try{ localStorage.removeItem('route_paid'); routeClearWeek(); }catch(e){}
         // 3. Clear session cache so admin refreshes
         try{ sessionStorage.removeItem('admin_data'); sessionStorage.removeItem('admin_data_time'); }catch(e){}
         // 4. Clear MENU_ITEMS so Lia can set next week's menu
@@ -4311,72 +4250,6 @@ function publishMenu(btn){
 
 
 
-function openRouteInMaps(){
-  var stops = ROUTE.filter(function(s){ return !s.lbl; });
-  if(!stops.length){ toast('No stops loaded'); return; }
-
-  // MapQuest accepts addresses as URL parameters
-  // Format: ?stop[]=address1&stop[]=address2...
-  var base   = '1247 Bielby St, Waterford, MI 48328';
-  var params = [];
-
-  // Start: Lia's kitchen
-  params.push('stop[]=' + encodeURIComponent(base));
-
-  // All delivery stops
-  stops.forEach(function(s){
-    var addr = (s.a || '').trim();
-    if(addr) params.push('stop[]=' + encodeURIComponent(addr + (addr.toLowerCase().includes('mi') ? '' : ', MI')));
-  });
-
-  // Return home
-  params.push('stop[]=' + encodeURIComponent(base));
-
-  var url = 'https://www.mapquest.com/routeplanner?' + params.join('&');
-  window.open(url, '_blank');
-}
-
-function copyAllAddresses(btn){
-  var stops = ROUTE.filter(function(s){ return !s.lbl; });
-  if(!stops.length){ toast('No stops to copy'); return; }
-
-  var base  = '1247 Bielby St, Waterford, MI 48328';
-  var lines = [base];
-
-  stops.forEach(function(s){
-    var addr = (s.a || '').trim();
-    if(addr) lines.push(addr);
-  });
-
-  lines.push(base);
-
-  var text = lines.join('\n');
-  navigator.clipboard.writeText(text).then(function(){
-    btn.textContent = '✅ Copied!';
-    btn.style.background = 'var(--sg)';
-    toast('📋 ' + stops.length + ' addresses copied — paste into MapQuest!');
-    setTimeout(function(){
-      btn.textContent = '📋 Copy All Addresses';
-      btn.style.background = 'var(--sgl)';
-    }, 3000);
-  }).catch(function(){
-    var ta = document.createElement('textarea');
-    ta.value = text;
-    ta.style.position = 'fixed';
-    ta.style.opacity = '0';
-    document.body.appendChild(ta);
-    ta.select();
-    document.execCommand('copy');
-    document.body.removeChild(ta);
-    btn.textContent = '✅ Copied!';
-    btn.style.background = 'var(--sg)';
-    toast('📋 ' + stops.length + ' addresses copied — paste into MapQuest!');
-    setTimeout(function(){
-      btn.textContent = '📋 Copy All Addresses';
-      btn.style.background = 'var(--sgl)';
-    }, 3000);
-  });
-}
 // ── ORDER HISTORY ──
 function showOrderHistory(){
   var orders;try{orders=JSON.parse(localStorage.getItem('submitted_orders')||'[]');}catch(e){orders=[];}
@@ -4459,7 +4332,7 @@ function refShareNative(code,fname){
 }
 
 window.onload = () => {
-  console.log("APP VERSION: 2026-10-02-v258-ordering-on-a-phone");
+  console.log("APP VERSION: 2026-10-02-v259-delivery-route");
   // One-time cleanup: remove legacy subscription data from localStorage
   try{ localStorage.removeItem('my_sub'); localStorage.removeItem('my_swap'); }catch(e){}
   startMenuEarly();   // normally already running since DOMContentLoaded — see below
@@ -4486,8 +4359,8 @@ window.onload = () => {
   setTimeout(resendUnsentOrder, 1500);   // an order that never reached Lia (IMP-020)
   sessionStorage.removeItem('admin_data_time');
   buildMenu(); buildRepo(); buildDash(); buildOrders(); buildCusts();
-  buildReact(); buildAreas(); buildRoute(); buildWkMenu(); buildSoupIntel();
-  buildRatings(); buildMonthly(); countdown(); buildRouteStrip();
+  buildReact(); buildAreas(); buildWkMenu(); buildSoupIntel();
+  buildRatings(); buildMonthly(); countdown();
   captureSource();
   initScheduleDisplay(); initLoyaltyPage();
   // Deferred well past first paint. This POSTs to Apps Script, which writes to the
@@ -5182,20 +5055,6 @@ function applyAdminData(data){
       buildAreas();
     }
 
-    // Update route from live Sheet orders
-    if(data.route && data.route.length > 0){
-      ROUTE_STOPS = data.route;
-      ROUTE = data.route;
-    } else if(data.orders && data.orders.length > 0){
-      // Build route from orders if no route data
-      ROUTE = [{lbl:'s',num:'🏠',n:"Lia's Kitchen",a:'1247 Bielby St, Waterford',ord:'',note:'',pay:''}];
-      data.orders.forEach(function(o,i){
-        ROUTE.push({num:String(i+1),n:o.n,a:o.addr||'Waterford',ord:o.it,tot:o.tot||'',note:o.note||'',pay:o.pay||''});
-      });
-      ROUTE.push({lbl:'e',num:'🏠',n:'Return Home',a:'1247 Bielby St, Waterford',ord:'',note:'',pay:''});
-      ROUTE_STOPS = ROUTE;
-    }
-    buildRoute();
 
     // Update weekly menu summary
     if(data.wkmenu && data.wkmenu.length > 0){
@@ -6836,14 +6695,7 @@ function markDelivered(btn, idx, resend){
       toast('📧 Invoice sent to ' + email);
       o.delivered = true;
       if(d.key && !o.key) o.key = d.key;
-      // The admin cache on this phone must remember it too, or a tab switch undoes it.
-      try{
-        var cached = JSON.parse(sessionStorage.getItem('admin_data')||'null');
-        if(cached && Array.isArray(cached.orders)){
-          cached.orders.forEach(function(c){ if(c.key && c.key === o.key) c.delivered = true; });
-          sessionStorage.setItem('admin_data', JSON.stringify(cached));
-        }
-      }catch(e){}
+      rememberDelivered(o.key);
       buildOrders();
     } else if(d && d.already){
       btn.disabled = false; btn.innerHTML = original;
@@ -6862,6 +6714,353 @@ function markDelivered(btn, idx, resend){
 }
 
 
+
+// The phone's copies of the orders must remember an invoice too, or a tab switch undoes it.
+function rememberDelivered(key){
+  if(!key) return;
+  (ORDERS||[]).forEach(function(c){ if(c.key === key) c.delivered = true; });
+  try{
+    var cached = JSON.parse(sessionStorage.getItem('admin_data')||'null');
+    if(cached && Array.isArray(cached.orders)){
+      cached.orders.forEach(function(c){ if(c.key && c.key === key) c.delivered = true; });
+      sessionStorage.setItem('admin_data', JSON.stringify(cached));
+    }
+  }catch(e){}
+}
+
+// ════ DELIVERY ROUTE (v259, backend gs81) ════
+// Lia plans Monday's drive with one tap (plan_route: Google's best order from the kitchen
+// and back), then works one stop at a time. Navigate opens Google Maps or Waze for that
+// stop. Delivered (tapped twice, so a bump can't send an invoice) sends the invoice, texts
+// "delivered" and "you're my next stop", and heads to the next stop. The old screen was an
+// unsorted list with a route-planner website link. Everything sent while driving goes through a queue
+// kept on this phone, so a weak signal or a slow Google never keeps her at the curb.
+var RT_PLAN_KEY = 'ls_route_plan', RT_DRIVE_KEY = 'ls_drive', RT_JOBS_KEY = 'ls_route_jobs', RT_NAV_KEY = 'ls_nav_app';
+var RT_PLAN = null, RT_DRIVE = null, RT_JOBS = [], RT_BUSY = false, RT_PLANNING = false;
+var RT_JOB_DELAYS = window.RT_JOB_DELAYS || [3000, 8000, 20000, 60000];
+
+function rtLoad(k){ try{ return JSON.parse(localStorage.getItem(k)||'null'); }catch(e){ return null; } }
+function rtSave(k, v){ try{ if(v == null) localStorage.removeItem(k); else localStorage.setItem(k, JSON.stringify(v)); }catch(e){} }
+function routeClearWeek(){ RT_PLAN = null; RT_DRIVE = null; rtSave(RT_PLAN_KEY, null); rtSave(RT_DRIVE_KEY, null); }
+(function(){
+  RT_PLAN = rtLoad(RT_PLAN_KEY); RT_DRIVE = rtLoad(RT_DRIVE_KEY); RT_JOBS = rtLoad(RT_JOBS_KEY) || [];
+  // Yesterday's plan is stale; a drive left open lasts until the next morning.
+  var age = RT_PLAN ? Date.now() - new Date(RT_PLAN.planned).getTime() : 0;
+  if(RT_PLAN && (age > 36*3600*1000 || (age > 20*3600*1000 && !(RT_DRIVE && !RT_DRIVE.finished)))) routeClearWeek();
+  if(!RT_PLAN) RT_DRIVE = null;
+  RT_JOBS = RT_JOBS.filter(function(j){ return j.state !== 'done' || Date.now() - (j.at||0) < 36*3600*1000; });
+  RT_JOBS.forEach(function(j){ j.resting = false; });
+})();
+
+function rtNavApp(){ try{ return localStorage.getItem(RT_NAV_KEY) || 'google'; }catch(e){ return 'google'; } }
+function rtSetNav(a){ try{ localStorage.setItem(RT_NAV_KEY, a); }catch(e){} buildRoutePlanner(); if(rtDriveOpen()) renderDrive(); }
+function rtMins(sec){
+  var m = Math.max(1, Math.round((sec||0)/60));
+  return m < 60 ? m + ' min' : Math.floor(m/60) + ' h' + (m%60 ? ' ' + (m%60) + ' min' : '');
+}
+function rtMiles(m){ var mi = (m||0)/1609.34; return (mi < 10 ? mi.toFixed(1) : Math.round(mi)) + ' mi'; }
+function rtMoney(n){ return '$' + (Number(n)||0).toFixed(2); }
+function rtPhone(p){ var d = (p||'').replace(/\D/g, ''); if(d.length === 10) d = '1' + d; return d.length === 11 ? '+' + d : ''; }
+function rtNavUrl(s){
+  if(rtNavApp() === 'waze') return (s.found && isFinite(s.lat))
+    ? 'https://waze.com/ul?ll=' + s.lat + ',' + s.lng + '&navigate=yes'
+    : 'https://waze.com/ul?q=' + encodeURIComponent(s.a) + '&navigate=yes';
+  return 'https://www.google.com/maps/dir/?api=1&travelmode=driving&dir_action=navigate&destination='
+    + encodeURIComponent(s.found && s.mapAddr ? s.mapAddr : s.a);
+}
+function rtSmsUrl(phone, body){ return 'sms:' + rtPhone(phone) + (body ? '?body=' + encodeURIComponent(body) : ''); }
+function rtHome(){ return { n: "Lia's Kitchen", a: RT_PLAN.home.a, mapAddr: RT_PLAN.home.a, found: true, lat: RT_PLAN.home.lat, lng: RT_PLAN.home.lng }; }
+function rtStop(key){ return RT_PLAN ? RT_PLAN.stops.filter(function(s){ return s.key === key; })[0] : null; }
+function rtIdx(key){ return RT_PLAN ? RT_PLAN.stops.map(function(s){ return s.key; }).indexOf(key) : -1; }
+// The next stop still to do after `key`: later in the order first, then any she skipped.
+function rtNextKey(key){
+  var st = RT_PLAN.stops, i = rtIdx(key), d = RT_DRIVE || { done:{}, skipped:{} };
+  for(var j = i + 1; j < st.length; j++) if(!d.done[st[j].key] && !d.skipped[st[j].key]) return st[j].key;
+  for(var k = 0; k < st.length; k++) if(k !== i && !d.done[st[k].key]) return st[k].key;
+  return null;
+}
+function rtDriveOpen(){ var el = $('drive'); return !!(el && !el.classList.contains('hidden')); }
+function rtSaveDrive(){ rtSave(RT_DRIVE_KEY, RT_DRIVE); }
+
+// ── Planning screen ──
+function buildRoutePlanner(){
+  var el = $('rt-body'); if(!el) return;
+  if(BACKEND_GS < 81){
+    el.innerHTML = '<div class="rt-card" style="font-size:13px;color:var(--t2);line-height:1.6">Route planning switches on once the '
+      + 'backend update (gs81) is live. If it has just been deployed, reload this page.</div>';
+    return;
+  }
+  var nav = rtNavApp(), h = '';
+  h += '<div class="rt-card"><div style="font-size:11px;font-weight:800;color:var(--t3);letter-spacing:.5px;margin-bottom:6px">NAVIGATE WITH</div>'
+    +  '<div class="rt-seg"><button class="' + (nav === 'google' ? 'on' : '') + '" onclick="rtSetNav(\'google\')">Google Maps</button>'
+    +  '<button class="' + (nav === 'waze' ? 'on' : '') + '" onclick="rtSetNav(\'waze\')">Waze</button></div></div>';
+  if(RT_PLANNING){
+    el.innerHTML = h + '<div class="rt-card" style="text-align:center;font-size:14px;color:var(--t2)">Planning… looking up addresses and asking Google for the best order.</div>';
+    return;
+  }
+  if(!RT_PLAN){
+    el.innerHTML = h + '<div class="rt-card"><p style="font-size:13px;color:var(--t2);margin:0 0 12px;line-height:1.5">One tap puts this week\'s orders in the '
+      + 'quickest order, starting and ending at the kitchen.</p><button class="rt-big" id="rt-plan-btn" onclick="planRoute()">🧭 Plan Monday\'s route</button></div>'
+      + '<div class="rt-status"></div>';
+    rtRefreshStatus();
+    return;
+  }
+  var p = RT_PLAN, st = p.stops, d = RT_DRIVE || { done:{}, skipped:{} };
+  var left = st.filter(function(s){ return !d.done[s.key]; }).length;
+  var cash = st.filter(function(s){ return s.pay === 'cash' && !d.done[s.key]; }).reduce(function(a, s){ return a + (Number(s.total)||0); }, 0);
+  h += '<div class="rt-card"><div style="display:flex;gap:14px;flex-wrap:wrap;font-size:13px;color:var(--t2)">'
+    +  '<div><strong style="font-size:22px;color:var(--f)">' + st.length + '</strong> stops</div>'
+    +  '<div><strong style="font-size:22px;color:var(--f)">' + rtMins(p.totalSec) + '</strong> driving</div>'
+    +  '<div><strong style="font-size:22px;color:var(--f)">' + rtMiles(p.totalM) + '</strong></div>'
+    +  (cash ? '<div><strong style="font-size:22px;color:var(--f)">' + rtMoney(cash) + '</strong> cash to collect</div>' : '')
+    +  '</div><div style="font-size:11px;color:var(--t3);margin-top:6px">Kitchen and back · planned '
+    +  new Date(p.planned).toLocaleTimeString('en-US', { hour:'numeric', minute:'2-digit' })
+    +  (p.custom ? ' · your order' : ' · best order') + (p.delivered ? ' · ' + p.delivered + ' already delivered' : '') + '</div></div>';
+  var off = st.filter(function(s){ return !s.found; }), chk = st.filter(function(s){ return s.found && s.check; });
+  if(off.length) h += '<div class="rt-warn"><strong>Google couldn\'t find ' + (off.length === 1 ? 'this address' : 'these addresses') + '</strong> (they\'re at the end, without drive times):<br>'
+    + off.map(function(s){ return esc(s.n) + ' — ' + esc(s.a); }).join('<br>') + '</div>';
+  if(chk.length) h += '<div class="rt-warn"><strong>Worth a look:</strong> Google only roughly matched '
+    + chk.map(function(s){ return esc(s.n) + ' (' + esc(s.a) + ' → ' + esc(s.mapAddr) + ')'; }).join(', ') + '.</div>';
+  if(p.noAddress && p.noAddress.length) h += '<div class="rt-warn"><strong>No address on the order:</strong> ' + p.noAddress.map(esc).join(', ') + '</div>';
+  h += '<div style="font-size:12px;color:var(--t3);margin:0 2px 10px;line-height:1.5">'
+    +  (p.textsAuto ? '💬 Texts go out by themselves: "you\'re my next stop" and "delivered".'
+                    : '💬 When you tap Delivered, your Messages app opens with "delivered" and "you\'re my next stop" ready. Just tap Send.')
+    +  '</div>';
+  if(RT_DRIVE && !RT_DRIVE.finished){
+    h += '<button class="rt-big go" onclick="openDrive()">▶ Resume — ' + left + ' stop' + (left === 1 ? '' : 's') + ' left</button>';
+  } else {
+    h += '<button class="rt-big go" onclick="startDrive()"' + (st.length ? '' : ' disabled') + '>▶ Start delivering</button>';
+  }
+  if(p.moved) h += '<button class="rt-big alt" style="margin-top:8px" onclick="planRoute(true)">Update drive times for my order</button>';
+  h += '<div class="rt-card" style="margin-top:12px"><div style="font-size:11px;color:var(--t3);margin-bottom:4px">Use ▲ ▼ to move a stop (for example someone who needs it early).</div>';
+  st.forEach(function(s, i){
+    var done = !!d.done[s.key];
+    h += '<div class="rt-stop"><div class="rt-num ' + (done ? 'done' : !s.found ? 'off' : '') + '">' + (done ? '✓' : i + 1) + '</div>'
+      +  '<div class="rt-inf"><strong>' + esc(s.n) + (s.gift ? ' 🎁' : '') + '</strong><span>' + esc(s.a) + '</span>'
+      +  '<span>' + esc(s.it || '') + ' · ' + (s.pay === 'cash' ? 'Cash ' : 'Venmo ') + rtMoney(s.total) + '</span>'
+      +  (s.found && !p.moved ? '<span>🚗 ' + rtMins(s.legSec) + ' · ' + rtMiles(s.legM) + (i === 0 ? ' from the kitchen' : '') + '</span>' : '')
+      +  (s.note ? '<span style="color:var(--cl);font-style:italic">' + esc(s.note) + '</span>' : '')
+      +  '</div><div class="rt-mv"><button aria-label="Move up" onclick="rtMove(' + i + ',-1)"' + (i === 0 ? ' disabled' : '') + '>▲</button>'
+      +  '<button aria-label="Move down" onclick="rtMove(' + i + ',1)"' + (i === st.length - 1 ? ' disabled' : '') + '>▼</button></div></div>';
+  });
+  h += '</div><div style="text-align:center;margin-top:4px"><button onclick="planRoute()" style="background:none;border:none;color:var(--f);font-size:13px;font-weight:700;text-decoration:underline;cursor:pointer">'
+    +  (p.custom || p.moved ? 'Back to the best order' : 'Plan again (new orders?)') + '</button></div><div class="rt-status"></div>';
+  el.innerHTML = h;
+  rtRefreshStatus();
+}
+
+function planRoute(keepOrder){
+  if(RT_PLANNING) return;
+  var body = { type:'plan_route' };
+  if(keepOrder && RT_PLAN) body.order = RT_PLAN.stops.map(function(s){ return s.key; });
+  RT_PLANNING = true; buildRoutePlanner();
+  fetch(APPS_SCRIPT_URL, { method:'POST', headers:{ 'Content-Type':'text/plain' }, body: JSON.stringify(body) })
+    .then(function(r){ if(!r.ok) throw new Error('Google did not answer'); return r.json(); })
+    .then(function(d){
+      if(!d || !d.success) throw new Error((d && d.error) || 'no answer');
+      RT_PLAN = d; rtSave(RT_PLAN_KEY, d);
+      RT_PLANNING = false; buildRoutePlanner();
+      toast('🧭 ' + d.stops.length + ' stops planned · ' + rtMins(d.totalSec) + ' driving');
+    })
+    .catch(function(e){
+      RT_PLANNING = false; buildRoutePlanner();
+      toast('Could not plan the route: ' + e.message + '. Try again in a minute.');
+    });
+}
+
+function rtMove(i, dir){
+  var st = RT_PLAN.stops, j = i + dir;
+  if(j < 0 || j >= st.length) return;
+  var t = st[i]; st[i] = st[j]; st[j] = t;
+  RT_PLAN.moved = true; RT_PLAN.custom = true;
+  rtSave(RT_PLAN_KEY, RT_PLAN); buildRoutePlanner();
+}
+
+// ── Driving screen ──
+function openDrive(){ var el = $('drive'); if(el) el.classList.remove('hidden'); renderDrive(); rtRunJobs(); }
+function closeDrive(){ var el = $('drive'); if(el) el.classList.add('hidden'); buildRoutePlanner(); }
+function rtLegMins(s){ return s && s.found ? Math.max(1, Math.round((s.legSec||0)/60)) : 0; }
+
+function startDrive(){
+  if(!RT_PLAN || !RT_PLAN.stops.length) return;
+  RT_DRIVE = { started: new Date().toISOString(), done:{}, skipped:{}, tapped:{}, cur: null, prev: null, phase:'stop' };
+  RT_DRIVE.cur = RT_PLAN.stops[0].key;
+  var first = rtStop(RT_DRIVE.cur);
+  if(RT_PLAN.textsAuto) rtQueue({ type:'route_text', texts:[{ kind:'next', key:first.key, mins:rtLegMins(first) }] });
+  else if(rtPhone(first.phone)) RT_DRIVE.phase = 'texts';
+  rtSaveDrive(); openDrive();
+}
+
+function renderDrive(){
+  var el = $('drive'); if(!el) return;
+  if(!RT_PLAN || !RT_DRIVE){ el.classList.add('hidden'); return; }
+  var st = RT_PLAN.stops, d = RT_DRIVE, doneN = st.filter(function(s){ return d.done[s.key]; }).length;
+  var top = '<div class="dv-top"><span>' + (d.cur ? 'Stop ' + (doneN + 1) + ' of ' + st.length : 'All ' + st.length + ' stops done') + '</span>'
+    + '<button onclick="closeDrive()" style="background:#fff;border:1.5px solid var(--bd);border-radius:9px;padding:6px 12px;font-weight:700;cursor:pointer">✕ Close</button></div>';
+  var h = top;
+  var s = d.cur ? rtStop(d.cur) : null, prev = d.prev ? rtStop(d.prev) : null;
+
+  if(!s){   // every stop done
+    h += '<div class="rt-card" style="text-align:center"><div style="font-size:44px">🎉</div><div class="dv-name">All done!</div>'
+      +  '<p style="font-size:14px;color:var(--t2)">' + st.length + ' deliveries. Great job, Lia.</p></div>';
+    if(d.phase === 'texts' && prev && rtPhone(prev.phone) && !RT_PLAN.textsAuto) h += rtTextBtn(prev, 'done');
+    h += '<a class="rt-big nav" href="' + esc(rtNavUrl(rtHome())) + '" target="_blank" rel="noopener">🏠 Navigate home</a>'
+      +  '<button class="rt-big alt" style="margin-top:10px" onclick="finishDrive()">Finish</button>';
+  } else if(d.phase === 'texts'){   // texts from Lia's own phone, then on to the stop
+    h += '<div class="rt-card">' + (prev ? '<div style="font-size:14px;color:#15803d;font-weight:800;margin-bottom:10px">✓ ' + esc(prev.n) + ' delivered. The invoice is on its way.</div>' : '')
+      +  '<div style="font-size:13px;color:var(--t2);margin-bottom:10px">Tap each one, then Send in Messages:</div>';
+    if(prev && rtPhone(prev.phone)) h += rtTextBtn(prev, 'done');
+    if(rtPhone(s.phone)) h += rtTextBtn(s, 'next'); else h += '<div class="dv-step">No phone number for ' + esc(s.n) + '.</div>';
+    h += '</div><a class="rt-big nav" href="' + esc(rtNavUrl(s)) + '" target="_blank" rel="noopener" onclick="rtArrive()">🧭 Navigate to ' + esc(s.n.split(' ')[0]) + '</a>';
+  } else {
+    var payBox = s.pay === 'cash'
+      ? '<div class="dv-pay" style="background:#fef3c7;color:#92400e">💵 Collect ' + rtMoney(s.total) + ' cash</div>'
+      : '<div class="dv-pay" style="background:#e8f4ff;color:#0b5cad">💙 Venmo · ' + rtMoney(s.total) + '</div>';
+    h += '<div class="dv-name">' + esc(s.n) + (s.gift ? ' 🎁' : '') + '</div>'
+      +  '<div class="dv-addr">' + esc(s.a) + (s.found ? '' : '<br><span style="color:#dc2626;font-size:13px">Google couldn\'t place this address. Check it before driving.</span>') + '</div>'
+      +  (s.note ? '<div class="rt-warn" style="font-size:14px">📝 ' + esc(s.note) + '</div>' : '')
+      +  '<div class="rt-card" style="font-size:15px;padding:12px">📦 ' + esc(s.it || '') + '</div>'
+      +  payBox
+      +  '<a class="rt-big nav" href="' + esc(rtNavUrl(s)) + '" target="_blank" rel="noopener">🧭 Navigate</a>'
+      +  '<div class="dv-row">'
+      +  (rtPhone(s.phone) ? '<a class="rt-big alt" href="tel:' + rtPhone(s.phone) + '">📞 Call</a><a class="rt-big alt" href="' + esc(rtSmsUrl(s.phone)) + '">💬 Text</a>'
+                           : '<div class="dv-step">No phone number on this order.</div>')
+      +  '</div>'
+      +  '<button class="rt-big go" id="dv-done" style="padding:20px;font-size:18px" onclick="driveDelivered(this)">✓ Delivered</button>'
+      +  '<div style="display:flex;justify-content:space-between;margin-top:12px">'
+      +  '<button onclick="driveSkip()" style="background:none;border:none;color:var(--t3);font-size:13px;text-decoration:underline;cursor:pointer">Skip for now</button>'
+      +  '<span style="font-size:12px;color:var(--t3)">' + (s.found ? '🚗 ' + rtMins(s.legSec) + (rtIdx(s.key) === 0 ? ' from the kitchen' : ' from the last stop') : '') + '</span></div>';
+  }
+  h += '<div class="rt-status" style="margin-top:14px"></div>';
+  el.innerHTML = h;
+  rtRefreshStatus();
+}
+function rtTextBtn(s, kind){
+  var tapped = RT_DRIVE.tapped[kind + '|' + s.key];
+  var label = kind === 'next' ? 'Text ' + s.n.split(' ')[0] + ': "you\'re my next stop"' : 'Text ' + s.n.split(' ')[0] + ': "delivered"';
+  return '<a class="rt-big alt" style="margin-bottom:8px' + (tapped ? ';opacity:.6' : '') + '" href="' + esc(rtSmsUrl(s.phone, kind === 'next' ? s.msgNext : s.msgDone))
+    + '" onclick="rtTapped(\'' + kind + '\',' + rtIdx(s.key) + ')">' + (tapped ? '✓ ' : '💬 ') + esc(label) + '</a>';
+}
+function rtTapped(kind, i){
+  var s = RT_PLAN.stops[i]; if(!s) return;
+  RT_DRIVE.tapped[kind + '|' + s.key] = true; rtSaveDrive();
+  setTimeout(renderDrive, 600);   // after Messages has opened
+}
+function rtArrive(){ RT_DRIVE.phase = 'stop'; rtSaveDrive(); setTimeout(renderDrive, 600); }
+
+function driveDelivered(btn){
+  // Two taps: an invoice email can't be taken back.
+  if(!btn.dataset.armed){
+    btn.dataset.armed = '1'; btn.textContent = 'Tap again to confirm'; btn.style.background = '#14532d';
+    setTimeout(function(){ if(btn.isConnected && btn.dataset.armed){ delete btn.dataset.armed; btn.textContent = '✓ Delivered'; btn.style.background = ''; } }, 4000);
+    return;
+  }
+  var s = rtStop(RT_DRIVE.cur); if(!s) return;
+  RT_DRIVE.done[s.key] = true; delete RT_DRIVE.skipped[s.key];
+  var nk = rtNextKey(s.key), nxt = nk ? rtStop(nk) : null;
+  if(nxt) delete RT_DRIVE.skipped[nxt.key];
+  // The "next" text is the one that can't wait, so it goes first; then the invoice.
+  if(RT_PLAN.textsAuto){
+    var texts = [{ kind:'done', key:s.key }];
+    if(nxt) texts.push({ kind:'next', key:nxt.key, mins:rtLegMins(nxt) });
+    rtQueue({ type:'route_text', texts:texts });
+  }
+  rtQueue({ type:'mark_delivered', email:s.email, key:s.key, tab:'Soup orders' }, s.n);
+  RT_DRIVE.prev = s.key; RT_DRIVE.cur = nk;
+  var phoneTexts = !RT_PLAN.textsAuto && (rtPhone(s.phone) || (nxt && rtPhone(nxt.phone)));
+  RT_DRIVE.phase = phoneTexts ? 'texts' : 'stop';
+  rtSaveDrive(); renderDrive(); buildRoutePlanner();
+  // Straight on to the next stop when the texts need nothing from her.
+  if(nxt && !phoneTexts) window.open(rtNavUrl(nxt), '_blank');
+}
+function driveSkip(){
+  var k = RT_DRIVE.cur, nk = rtNextKey(k);
+  if(!nk){ toast('This is the last stop left'); return; }
+  RT_DRIVE.skipped[k] = true; RT_DRIVE.cur = nk; delete RT_DRIVE.skipped[nk]; RT_DRIVE.phase = 'stop';
+  rtSaveDrive(); renderDrive();
+  toast('Skipped. It comes back at the end.');
+}
+function finishDrive(){
+  RT_DRIVE.finished = true; rtSaveDrive(); closeDrive();
+  var failed = RT_JOBS.filter(function(j){ return j.state === 'failed'; }).length;
+  toast(failed ? '⚠️ Route finished. ' + failed + ' item(s) still need attention below.' : '🎉 Route finished.');
+}
+
+// ── Sending queue (kept on the phone) ──
+function rtQueue(body, label){
+  RT_JOBS.push({ id: Date.now().toString(36) + Math.random().toString(36).slice(2, 6), body: body, label: label || '',
+                 tries: 0, state: 'waiting', at: Date.now() });
+  rtSave(RT_JOBS_KEY, RT_JOBS); rtRunJobs();
+}
+// A job that failed waits (job.resting) until its timer runs out. After a reload every
+// waiting job starts ready again (the page load clears the flag).
+function rtRunJobs(){
+  if(RT_BUSY) return;
+  var job = RT_JOBS.filter(function(j){ return j.state === 'waiting' && !j.resting; })[0];
+  if(!job) return;
+  RT_BUSY = true;
+  function rest(ms){
+    job.resting = true;
+    setTimeout(function(){ job.resting = false; rtRunJobs(); }, ms);
+  }
+  function retry(msg, ms){
+    job.tries++; job.error = msg;
+    if(job.tries >= 12){ job.state = 'failed'; job.error = 'Google did not answer'; return; }
+    rest(ms || RT_JOB_DELAYS[Math.min(job.tries - 1, RT_JOB_DELAYS.length - 1)]);
+  }
+  fetch(APPS_SCRIPT_URL, { method:'POST', headers:{ 'Content-Type':'text/plain' }, body: JSON.stringify(job.body) })
+    .then(function(r){ if(!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
+    .then(function(d){
+      if(d && (d.success || d.already)){
+        job.state = 'done'; job.at = Date.now(); job.error = '';
+        if(job.body.type === 'mark_delivered') rememberDelivered(job.body.key);
+        if(job.body.type === 'route_text') job.texts = d.texts || [];
+      } else if(d && d.noTwilio){
+        // Twilio was switched off: from now on her own phone sends them.
+        job.state = 'done'; job.at = Date.now(); job.texts = [];
+        if(RT_PLAN){ RT_PLAN.textsAuto = false; rtSave(RT_PLAN_KEY, RT_PLAN); }
+      } else if(d && d.authRequired){
+        job.tries--; retry('Sign in again (PIN) to send this', 30000);   // waiting for her PIN is not a failure
+      } else if(d && /still reaching the Sheet/i.test(d.error || '')){
+        retry('Waiting for earlier changes');
+      } else {
+        job.state = 'failed'; job.error = (d && d.error) || 'unknown error';
+      }
+    })
+    .catch(function(){ retry('No answer yet, trying again'); })
+    .then(function(){
+      RT_BUSY = false; rtSave(RT_JOBS_KEY, RT_JOBS); rtRefreshStatus(); rtRunJobs();
+    });
+}
+function rtRetryJob(id){
+  RT_JOBS.forEach(function(j){ if(j.id === id){ j.state = 'waiting'; j.tries = 0; j.resting = false; j.error = ''; } });
+  rtSave(RT_JOBS_KEY, RT_JOBS); rtRunJobs(); rtRefreshStatus();
+}
+function rtRefreshStatus(){
+  var inv = RT_JOBS.filter(function(j){ return j.body.type === 'mark_delivered'; });
+  var txt = [].concat.apply([], RT_JOBS.filter(function(j){ return j.body.type === 'route_text' && j.state === 'done'; }).map(function(j){ return j.texts || []; }));
+  var sent = inv.filter(function(j){ return j.state === 'done'; }).length, wait = inv.filter(function(j){ return j.state === 'waiting'; });
+  var failed = RT_JOBS.filter(function(j){ return j.state === 'failed'; });
+  var textWait = RT_JOBS.filter(function(j){ return j.body.type === 'route_text' && j.state === 'waiting'; }).length;
+  var h = '';
+  if(inv.length || textWait || txt.length){
+    h += '<div style="font-size:12px;color:var(--t3);line-height:1.6">'
+      + (inv.length ? '📧 Invoices: ' + sent + ' sent' + (wait.length ? ' · ' + wait.length + ' sending' : '') : '')
+      + (txt.length || textWait ? '<br>💬 Texts: ' + txt.filter(function(t){ return t.status === 'sent' || t.status === 'already'; }).length + ' sent'
+          + (textWait ? ' · sending' : '')
+          + (txt.some(function(t){ return t.status === 'no_phone'; }) ? ' · some had no phone number' : '')
+          + (txt.some(function(t){ return t.status === 'failed'; }) ? ' · some failed' : '') : '')
+      + (wait.length && wait[0].error ? '<br>' + esc(wait[0].error) : '')
+      + '</div>';
+  }
+  failed.forEach(function(j){
+    h += '<div class="rt-warn" style="margin-top:8px">' + (j.body.type === 'mark_delivered' ? 'Invoice for ' + esc(j.label || j.body.email) : 'Texts')
+      + ' didn\'t go: ' + esc(j.error || '') + ' <button onclick="rtRetryJob(\'' + j.id + '\')" style="margin-left:6px;border:none;background:var(--f);color:#fff;border-radius:7px;padding:4px 10px;font-weight:700;cursor:pointer">Retry</button></div>';
+  });
+  document.querySelectorAll('.rt-status').forEach(function(el){ el.innerHTML = h; });
+}
+document.addEventListener('visibilitychange', function(){ if(!document.hidden && RT_JOBS.length) rtRunJobs(); });
+setTimeout(function(){ if(RT_JOBS.some(function(j){ return j.state === 'waiting'; })) rtRunJobs(); }, 2500);
 
 // ════ ADD ITEM MODAL ════
 var _aiCat = 'soup';
@@ -9068,32 +9267,6 @@ function extractStreet(addr){
   var cleaned2 = words.filter(function(w){ return w.length > 1; }).join(' ');
   return cleaned2.length > 2 ? cleaned2 : '';
 }
-function buildRoute(){
-  var _rt=$('rtstops');if(!_rt)return;
-  // Update route summary stats
-  var stops=ROUTE.filter(function(s){return !s.lbl;}).length;
-  var cashAmt=0, venmoAmt=0;
-  ROUTE.forEach(function(s){
-    if(!s.lbl){
-      var tot=parseInt((s.tot||s.ord||'').replace(/[^0-9]/g,''))||0;
-      if(s.pay==='cash') cashAmt+=tot; else if(s.pay==='venmo') venmoAmt+=tot;
-    }
-  });
-  if($('route-stops')) $('route-stops').textContent=stops;
-  if($('route-all-hd')) $('route-all-hd').textContent='All '+stops+' Stops';
-  if($('route-cash'))  $('route-cash').textContent='$'+(cashAmt||0);
-  if($('route-venmo')) $('route-venmo').textContent='$'+(venmoAmt||0);
-  if($('route-del'))   $('route-del').textContent='$'+(stops*5);
-  _rt.innerHTML=ROUTE.map(s=>`
-  <div class="rstop">
-    <div class="sn ${s.lbl||''}">${s.num}</div>
-    <div class="sinf">
-      <strong>${s.n} ${s.pay==='venmo'?'<span class="spay" style="background:#e8f4ff;color:#0066cc">Venmo</span>':s.pay==='cash'?'<span class="spay" style="background:#f5f5f5;color:#555">Cash</span>':''}</strong>
-      <span>${s.a}</span>
-      ${s.note?`<div class="snote">📝 ${s.note}</div>`:''}
-      ${s.ord?`<div class="sord">📦 ${s.ord}</div>`:''}
-    </div>
-  </div>`).join('');}
 async function genPost(){
   // Get current platform selection
   const activePlt = document.querySelector('.pb.active');
