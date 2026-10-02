@@ -165,6 +165,7 @@ header{background:var(--f);padding:10px 14px;min-height:88px;display:flex;align-
 .hero h1{font-family:'Cormorant Garamond',serif;font-size:26px;line-height:1.15;margin-bottom:6px;}
 .hero h1 em{color:var(--am);}
 .hero p{font-size:13px;opacity:.82;line-height:1.5;}
+.hero-menu-btn{position:relative;margin-top:12px;background:var(--am);color:var(--f);border:none;border-radius:20px;padding:9px 18px;font-size:14px;font-weight:800;font-family:inherit;cursor:pointer;}
 .dl{background:#fff;border-radius:12px;padding:12px 14px;display:flex;align-items:center;gap:12px;margin-bottom:12px;box-shadow:var(--sh);}
 .dlt strong{display:block;font-size:14px;color:var(--f);}
 .dlt span{font-size:12px;color:var(--t3);}
@@ -268,6 +269,9 @@ header{background:var(--f);padding:10px 14px;min-height:88px;display:flex;align-
 .ciinf span{font-size:11px;color:var(--t3);}
 .cip{font-weight:700;color:var(--f);}
 .cirm{background:none;border:none;color:var(--t3);font-size:16px;cursor:pointer;}
+.cistep{display:flex;align-items:center;gap:6px;}
+.cistep button{width:30px;height:30px;border-radius:50%;border:1.5px solid var(--bd);background:#fff;color:var(--f);font-size:17px;font-weight:700;line-height:1;cursor:pointer;font-family:inherit;}
+.cistep b{min-width:16px;text-align:center;font-size:14px;}
 .cfee{display:flex;justify-content:space-between;padding:7px 0;font-size:13px;color:var(--t3);}
 .ctot{display:flex;justify-content:space-between;font-size:17px;font-weight:700;color:var(--f);padding:12px 0;}
 .vbtn{width:100%;padding:13px;border-radius:12px;background:#008CFF;color:#fff;border:none;font-size:15px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:9px;}
@@ -541,7 +545,7 @@ header{background:var(--f);padding:10px 14px;min-height:88px;display:flex;align-
   <div class="anniv-confetti"><i class="anniv-cf"></i><i class="anniv-cf"></i><i class="anniv-cf"></i><i class="anniv-cf"></i><i class="anniv-cf"></i><i class="anniv-cf"></i><i class="anniv-cf"></i><i class="anniv-cf"></i><i class="anniv-cf"></i><i class="anniv-cf"></i><i class="anniv-cf"></i><i class="anniv-cf"></i><i class="anniv-cf"></i><i class="anniv-cf"></i><i class="anniv-cf"></i><i class="anniv-cf"></i><i class="anniv-cf"></i><i class="anniv-cf"></i><i class="anniv-cf"></i><i class="anniv-cf"></i><i class="anniv-cf"></i><i class="anniv-cf"></i><i class="anniv-cf"></i><i class="anniv-cf"></i><i class="anniv-cf"></i><i class="anniv-cf"></i><i class="anniv-cf"></i><i class="anniv-cf"></i><i class="anniv-cf"></i><i class="anniv-cf"></i></div>
   <div style="position:absolute;left:14px;top:50%;transform:translateY(-50%);display:flex;align-items:center;z-index:2">
     <div class="anniv-wrap"><svg viewBox="0 0 30 50" width="24" height="40" aria-hidden="true" style="flex-shrink:0"><g><g fill="currentColor"><ellipse cx="14.0" cy="44.0" rx="5.2" ry="2.5" transform="rotate(-62 14.0 44.0)"/><ellipse cx="20.6" cy="45.5" rx="4.7" ry="2.2" transform="rotate(-4 20.6 45.5)"/><ellipse cx="12.8" cy="39.2" rx="5.0" ry="2.4" transform="rotate(-56 12.8 39.2)"/><ellipse cx="19.4" cy="40.8" rx="4.5" ry="2.2" transform="rotate(2 19.4 40.8)"/><ellipse cx="11.5" cy="34.5" rx="4.8" ry="2.3" transform="rotate(-50 11.5 34.5)"/><ellipse cx="18.1" cy="36.0" rx="4.3" ry="2.1" transform="rotate(8 18.1 36.0)"/><ellipse cx="10.2" cy="29.8" rx="4.6" ry="2.2" transform="rotate(-45 10.2 29.8)"/><ellipse cx="16.9" cy="31.2" rx="4.1" ry="2.0" transform="rotate(13 16.9 31.2)"/><ellipse cx="9.0" cy="25.0" rx="4.4" ry="2.1" transform="rotate(-39 9.0 25.0)"/><ellipse cx="15.6" cy="26.5" rx="3.9" ry="1.9" transform="rotate(19 15.6 26.5)"/><ellipse cx="7.8" cy="20.2" rx="4.1" ry="2.1" transform="rotate(-33 7.8 20.2)"/><ellipse cx="14.3" cy="21.8" rx="3.7" ry="1.9" transform="rotate(25 14.3 21.8)"/><ellipse cx="6.5" cy="15.5" rx="3.9" ry="2.0" transform="rotate(-28 6.5 15.5)"/><ellipse cx="13.1" cy="17.0" rx="3.5" ry="1.8" transform="rotate(30 13.1 17.0)"/><ellipse cx="5.2" cy="10.8" rx="3.7" ry="1.9" transform="rotate(-22 5.2 10.8)"/><ellipse cx="11.8" cy="12.2" rx="3.3" ry="1.7" transform="rotate(36 11.8 12.2)"/><ellipse cx="4.0" cy="6.0" rx="3.5" ry="1.8" transform="rotate(-16 4.0 6.0)"/><ellipse cx="10.6" cy="7.5" rx="3.1" ry="1.6" transform="rotate(42 10.6 7.5)"/><path d="M15 46 Q10 26 5 7" stroke="currentColor" stroke-width="1.6" fill="none" stroke-linecap="round"/></g></g></svg><div class="anniv-txt"><span class="a1">Celebrating</span><span class="a2">Two Years</span><span class="a3">In Business</span></div><svg viewBox="0 0 30 50" width="24" height="40" aria-hidden="true" style="flex-shrink:0"><g transform="scale(-1,1) translate(-30,0)"><g fill="currentColor"><ellipse cx="14.0" cy="44.0" rx="5.2" ry="2.5" transform="rotate(-62 14.0 44.0)"/><ellipse cx="20.6" cy="45.5" rx="4.7" ry="2.2" transform="rotate(-4 20.6 45.5)"/><ellipse cx="12.8" cy="39.2" rx="5.0" ry="2.4" transform="rotate(-56 12.8 39.2)"/><ellipse cx="19.4" cy="40.8" rx="4.5" ry="2.2" transform="rotate(2 19.4 40.8)"/><ellipse cx="11.5" cy="34.5" rx="4.8" ry="2.3" transform="rotate(-50 11.5 34.5)"/><ellipse cx="18.1" cy="36.0" rx="4.3" ry="2.1" transform="rotate(8 18.1 36.0)"/><ellipse cx="10.2" cy="29.8" rx="4.6" ry="2.2" transform="rotate(-45 10.2 29.8)"/><ellipse cx="16.9" cy="31.2" rx="4.1" ry="2.0" transform="rotate(13 16.9 31.2)"/><ellipse cx="9.0" cy="25.0" rx="4.4" ry="2.1" transform="rotate(-39 9.0 25.0)"/><ellipse cx="15.6" cy="26.5" rx="3.9" ry="1.9" transform="rotate(19 15.6 26.5)"/><ellipse cx="7.8" cy="20.2" rx="4.1" ry="2.1" transform="rotate(-33 7.8 20.2)"/><ellipse cx="14.3" cy="21.8" rx="3.7" ry="1.9" transform="rotate(25 14.3 21.8)"/><ellipse cx="6.5" cy="15.5" rx="3.9" ry="2.0" transform="rotate(-28 6.5 15.5)"/><ellipse cx="13.1" cy="17.0" rx="3.5" ry="1.8" transform="rotate(30 13.1 17.0)"/><ellipse cx="5.2" cy="10.8" rx="3.7" ry="1.9" transform="rotate(-22 5.2 10.8)"/><ellipse cx="11.8" cy="12.2" rx="3.3" ry="1.7" transform="rotate(36 11.8 12.2)"/><ellipse cx="4.0" cy="6.0" rx="3.5" ry="1.8" transform="rotate(-16 4.0 6.0)"/><ellipse cx="10.6" cy="7.5" rx="3.1" ry="1.6" transform="rotate(42 10.6 7.5)"/><path d="M15 46 Q10 26 5 7" stroke="currentColor" stroke-width="1.6" fill="none" stroke-linecap="round"/></g></g></svg></div>
-    <div class="hdr-tag" style="color:#7FFF00;font-size:10px;letter-spacing:1.5px;text-transform:uppercase;font-weight:700;line-height:1.4;"><span class="hdr-tagtxt">Homemade<br>Soups &amp; Salads<br></span><span style="font-size:8px;opacity:0.6;letter-spacing:1px">v257</span></div>
+    <div class="hdr-tag" style="color:#7FFF00;font-size:10px;letter-spacing:1.5px;text-transform:uppercase;font-weight:700;line-height:1.4;"><span class="hdr-tagtxt">Homemade<br>Soups &amp; Salads<br></span><span style="font-size:8px;opacity:0.6;letter-spacing:1px">v258</span></div>
   </div>
   <img id="hdr-logo" class="hdr-logo" src="img/logo.png" style="display:block;height:auto;max-height:66px;max-width:70%;" alt="Ladle &amp; Spoon">
   <div class="hdr-deliv" style="position:absolute;right:14px;top:8px;color:#7FFF00;font-size:10px;letter-spacing:1px;font-weight:600;line-height:1.4;text-align:right;z-index:2">Delivered Directly from<br>Our Kitchen to Your Door</div>
@@ -561,6 +565,7 @@ header{background:var(--f);padding:10px 14px;min-height:88px;display:flex;align-
     <div class="wkt" id="hero-wkt">WEEK OF APR 27, 2026</div>
     <h1 id="hero-h1" onclick="if(typeof sw!=='undefined')sw('menu',$('nav-menu'))" style="cursor:pointer;">This week's menu<br>is <em>live!</em></h1>
     <p id="hero-deadline-txt">Fresh soups &amp; salads made with love.<br>Order by Friday 7 PM · Delivered Monday.</p>
+    <button class="hero-menu-btn" id="hero-menu-btn" style="display:none" onclick="sw('menu',$('nav-menu'))">See this week's menu →</button>
   </div>
   <div class="dl">
     <span style="font-size:26px">⏰</span>
@@ -1286,126 +1291,126 @@ header{background:var(--f);padding:10px 14px;min-height:88px;display:flex;align-
 // ════════════════════════════════════════════════
 
 const ALL_SOUPS = [
-  {id:"s0",n:'Chicken Noodle',em:"🍗",cat:"soup",desc:'A timeless classic — tender chicken, egg noodles, carrots and celery in a golden broth. Comfort in every sip.',tags:[],rev:1120,rating:5.0,reviews:[{name:"You",stars:5,text:"Best chicken noodle I have ever had. Period. — Mary Ellen R."}]},
-  {id:"s1",n:'Chicken Pot Pie',em:"🥧",cat:"soup",desc:'All the flavors of chicken pot pie in a rich, creamy soup. Filled with chicken, peas, carrots and a flaky crust crumble on top.',tags:[],rev:987,rating:5.0,reviews:[{name:"You",stars:5,text:"Ordered 3 quarts. No regrets. The crust croutons are genius! — Tracey L."}]},
-  {id:"s2",n:'Chicken Tortilla',em:"🌮",cat:"soup",desc:'Smoky, bold and slightly spicy. Shredded chicken, black beans, corn and tomatoes in a zesty chicken broth with warm tortilla vibes.',tags:["gf"],rev:910,rating:5.0,reviews:[{name:"You",stars:5,text:"I make this my order every single time it appears! — Pamela D."}]},
-  {id:"s3",n:'Chicken Lemon Rice',em:"🍋",cat:"soup",desc:'Bright and lemony with tender chicken, long-grain rice, spinach and a fresh herby finish. Light yet satisfying.',tags:["gf"],rev:903,rating:5.0,reviews:[{name:"You",stars:5,text:"My all-time favorite. SO comforting. — Loren B."}]},
-  {id:"s4",n:'Broccoli Cheddar',em:"🥦",cat:"soup",desc:'Velvety smooth broccoli florets blended into a rich cheddar cream base. A crowd favorite that never gets old.',tags:[],rev:840,rating:5.0,reviews:[{name:"You",stars:5,text:"My kids beg for this one every week! — Casey K."}]},
-  {id:"s5",n:'Marry Me Chicken',em:"💒",cat:"soup",desc:'Creamy sun-dried tomato and parmesan broth with tender chicken. So good it\'ll make you want to propose. Rich, indulgent, unforgettable.',tags:[],rev:763,rating:5.0,reviews:[{name:"You",stars:5,text:"The soup I would marry. 10/10 no notes. — Melissa W."}]},
-  {id:"s6",n:'Italian Wedding',em:"💍",cat:"soup",desc:'Savory chicken broth with tiny meatballs, spinach, and acini di pepe pasta. An Italian Sunday dinner in a bowl.',tags:[],rev:781,rating:5.0,reviews:[{name:"You",stars:5,text:"A masterpiece. The meatballs are perfect. — Terry B."}]},
-  {id:"s7",n:'Tuscan Minestrone',em:"🫘",cat:"soup",desc:'A hearty Italian vegetable medley with white beans, pasta and a rich tomato herb broth. Rustic and deeply satisfying.',tags:["vegan"],rev:754,rating:5.0,reviews:[{name:"You",stars:5,text:"Loaded with vegetables and so flavorful. — Donald N."}]},
-  {id:"s8",n:'Corn Chowder',em:"🌽",cat:"soup",desc:'Sweet summer corn, potatoes and cream in a smoky, chowder-style base. Warm and deeply comforting.',tags:[],rev:714,rating:5.0,reviews:[{name:"You",stars:5,text:"I ordered four quarts. Absolutely no shame. — Donald N."}]},
-  {id:"s9",n:'Lemony Chicken Feta Meatball',em:"🍋",cat:"soup",desc:'Tender chicken meatballs with bright lemon, feta and fresh herbs in a light broth. Fresh, vibrant and surprisingly filling.',tags:[],rev:781,rating:5.0,reviews:[{name:"You",stars:5,text:"Meatballs melt in your mouth. This is 10/10. — Michele R."}]},
-  {id:"s10",n:'Shrimp Ceviche',em:"🦐",cat:"salad",desc:'Fresh and bright shrimp ceviche with citrus, jalapeño, red onion and cilantro. Chilled and refreshing — a summer favorite.',tags:["gf"],rev:663,rating:5.0,reviews:[{name:"You",stars:5,text:"Unique and delicious — nothing else like it! — Morgan R."}],sz:[{l:'Small',o:'serves 1',p:15},{l:'Large',o:'serves 2-3',p:28}]},
-  {id:"s11",n:'Cheeseburger',em:"🍔",cat:"soup",desc:'All the fixings of a juicy cheeseburger in a rich, hearty soup. Ground beef, cheddar, pickles and a creamy base.',tags:[],rev:588,rating:5.0,reviews:[{name:"You",stars:5,text:"My kids demolished this. They LOVED it! — Terry B."}]},
-  {id:"s12",n:'Beef Stroganoff',em:"🥩",cat:"soup",desc:'Tender beef in a silky, tangy sour cream sauce over egg noodles. A cozy Eastern European classic.',tags:[],rev:616,rating:5.0,reviews:[{name:"You",stars:5,text:"Absolutely incredible. Rich and satisfying! — Shelby S."}]},
-  {id:"s13",n:'Dill Pickle',em:"🥒",cat:"soup",desc:'Creamy potato soup with the bold tang of dill pickles throughout. Surprisingly addictive — a dill lover\'s dream.',tags:[],rev:402,rating:5.0,reviews:[{name:"You",stars:5,text:"I was skeptical. I was WRONG. Order this immediately. — Raimi B."}]},
-  {id:"s14",n:'French Onion',em:"🧅",cat:"soup",desc:'Slowly caramelized onions in a deep, savory beef broth topped with melted gruyère. A French bistro classic.',tags:[],rev:504,rating:5.0,reviews:[{name:"You",stars:5,text:"Tastes exactly like a Parisian bistro! — Mary Anne W."}]},
-  {id:"s15",n:'Kielbasa Potato',em:"🥔",cat:"soup",desc:'Smoky kielbasa sausage with tender potatoes and vegetables in a hearty, warming broth. A Michigan winter staple.',tags:["gf"],rev:525,rating:5.0,reviews:[{name:"You",stars:5,text:"Perfectly smoky and satisfying. A winter staple. — Loren B."}]},
-  {id:"s16",n:'Garden Tortellini',em:"🌿",cat:"soup",desc:'Cheese tortellini floating in a garden-fresh vegetable broth with tomatoes, zucchini and herbs. Light and lovely.',tags:[],rev:434,rating:5.0,reviews:[]},
-  {id:"s17",n:'Chicken Wonton w/ Bok Choy',em:"🍜",cat:"soup",desc:'Delicate wontons and bok choy in a savory ginger-soy chicken broth. A comforting Asian-inspired bowl.',tags:[],rev:406,rating:5.0,reviews:[{name:"You",stars:5,text:"Incredibly flavorful. Please make this every week! — Heather Z."}]},
-  {id:"s18",n:'Chicken Piccata',em:"🍋",cat:"soup",desc:'Tender chicken in a bright, lemony caper sauce reminiscent of the classic Italian dish. Elegant and vibrant.',tags:[],rev:399,rating:5.0,reviews:[]},
-  {id:"s19",n:'Stuffed Cabbage',em:"🥬",cat:"soup",desc:'Tender cabbage rolls deconstructed into a hearty soup — ground beef, rice, tomatoes and sweet cabbage.',tags:[],rev:399,rating:5.0,reviews:[]},
-  {id:"s20",n:'Stuffed Pepper',em:"🫑",cat:"soup",desc:'All the flavors of a stuffed pepper — ground beef, rice, peppers and tomatoes — in one comforting bowl.',tags:["gf"],rev:431,rating:5.0,reviews:[{name:"You",stars:5,text:"Great flavor. Filling and satisfying every time. — Vance V."}]},
-  {id:"s21",n:'Chili',em:"🌶️",cat:"soup",desc:'Thick, hearty chili with ground beef, kidney beans, tomatoes and warm spices. A cold-weather essential.',tags:["gf"],rev:412,rating:5.0,reviews:[]},
-  {id:"s22",n:'Loaded Potato',em:"🥔",cat:"soup",desc:'Loaded with potato, cheddar, bacon and sour cream. Every spoonful tastes like a fully dressed baked potato.',tags:[],rev:504,rating:5.0,reviews:[{name:"You",stars:5,text:"Ordered this every time it appears. Never disappoints. — Penny R."}]},
-  {id:"s23",n:'Very Veggie',em:"🥕",cat:"soup",desc:'A rainbow of fresh vegetables in a light, herb-seasoned broth. Nutritious, colorful and surprisingly filling.',tags:["vegan","gf"],rev:392,rating:5.0,reviews:[]},
-  {id:"s24",n:'Caribbean Potato',em:"🌴",cat:"soup",desc:'A unique blend of Caribbean spices with potato, coconut notes and warming heat. Adventurous and comforting.',tags:["vegan"],rev:292,rating:5.0,reviews:[]},
-  {id:"s25",n:'Creamy Chicken & Wild Rice',em:"🌾",cat:"soup",desc:'Tender chicken and wild rice in a velvety cream base with earthy mushrooms and herbs. Rich and nourishing.',tags:[],rev:364,rating:5.0,reviews:[]},
-  {id:"s26",n:'Creamy Swiss Onion',em:"🧅",cat:"soup",desc:'Deeply savory caramelized onion and Swiss cheese in a creamy broth. Like French onion soup\'s indulgent cousin.',tags:[],rev:322,rating:5.0,reviews:[{name:"You",stars:5,text:"I could literally drink this by the gallon! — Jen F."}]},
-  {id:"s27",n:'Classic Cabbage',em:"🥬",cat:"soup",desc:'Tender cabbage, ground beef and tomatoes in a simple, warming broth. Old-world comfort food at its finest.',tags:[],rev:191,rating:5.0,reviews:[]},
-  {id:"s28",n:'Creamy Pumpkin',em:"🎃",cat:"soup",desc:'Silky roasted pumpkin with warm spices, a touch of cream and savory depth. Perfect for fall and beyond.',tags:["gf"],rev:266,rating:5.0,reviews:[]},
-  {id:"s29",n:'Mushroom Barley',em:"🍄",cat:"soup",desc:'Earthy mushrooms and chewy barley in a rich, deeply savory broth. Rustic, satisfying and deeply nourishing.',tags:["vegan"],rev:266,rating:5.0,reviews:[]},
-  {id:"s30",n:'Cream of Mushroom',em:"🍄",cat:"soup",desc:'Velvety cream of mushroom made from scratch — nothing canned here. Earthy, rich and luxuriously smooth.',tags:[],rev:305,rating:5.0,reviews:[]},
-  {id:"s31",n:'Potato Leek & Cheddar',em:"🥔",cat:"soup",desc:'Creamy, slightly sharp cheddar with silky leeks and tender potatoes. Sophisticated and wonderfully warming.',tags:[],rev:259,rating:5.0,reviews:[]},
-  {id:"s32",n:'Spicy Carrot Ginger',em:"🥕",cat:"soup",desc:'Sweet roasted carrots and fresh ginger in a vibrant, spiced puree. Bold, warming and beautifully bright.',tags:["vegan","gf"],rev:245,rating:5.0,reviews:[]},
-  {id:"s33",n:'Creamy White Chicken Chili',em:"🌶️",cat:"soup",desc:'Creamy white chili with chicken, white beans, green chiles and a hint of spice. Milder than traditional chili but equally satisfying.',tags:[],rev:238,rating:5.0,reviews:[]},
-  {id:"s34",n:'Lasagna w/ Herbed Ricotta',em:"🍝",cat:"soup",desc:'All the layers of a classic lasagna — meat, ricotta, tomato sauce — in a rich, hearty soup form.',tags:[],rev:196,rating:5.0,reviews:[{name:"You",stars:5,text:"Lasagna soup should not work — and yet!! — Carrie W."}]},
-  {id:"s35",n:'Lemony Turkey-Feta Meatball',em:"🍋",cat:"soup",desc:'Bright and lemony turkey meatballs with creamy feta and orzo. A lighter spin on the classic meatball soup.',tags:[],rev:196,rating:5.0,reviews:[]},
-  {id:"s36",n:'Healthy Cabbage',em:"🥬",cat:"soup",desc:'A lighter take on cabbage soup — loaded with vegetables and lean protein. Feel-good food at its best.',tags:["vegan","gf"],rev:260,rating:5.0,reviews:[]},
-  {id:"s37",n:'Italian Chicken Pastina',em:"🍝",cat:"soup",desc:'Tiny pasta, tender chicken, Parmesan and fresh herbs in a classic Italian broth. Simple, pure and deeply satisfying.',tags:[],rev:76,rating:5.0,reviews:[]},
-  {id:"s38",n:'Split Pea w/ Bacon',em:"🥣",cat:"soup",desc:'Slow-simmered split peas with smoky bacon and vegetables. A thick, hearty cold-weather essential.',tags:[],rev:368,rating:5.0,reviews:[{name:"You",stars:5,text:"Ordered this every time. Never disappoints. — Penny R."}]},
-  {id:"s39",n:'Chicken Dumpling',em:"🥟",cat:"soup",desc:'Fluffy dumplings nestled in a rich chicken broth with vegetables. Old-fashioned comfort in every bite.',tags:[],rev:137,rating:5.0,reviews:[]},
-  {id:"s40",n:'Macaroni & Cheese',em:"🧀",cat:"soup",desc:'Creamy, velvety macaroni and cheese soup with sharp cheddar and a hint of mustard. Pure nostalgic comfort.',tags:[],rev:189,rating:5.0,reviews:[]},
-  {id:"s41",n:'Creamy Tomato',em:"🍅",cat:"soup",desc:'Ripe tomatoes slow-roasted and blended into a silky bisque. Classic, warming and endlessly craveable.',tags:["vegan","gf"],rev:112,rating:5.0,reviews:[]},
-  {id:"s42",n:'Pizza',em:"🍕",cat:"soup",desc:'All your favorite pizza toppings — pepperoni, mozzarella, tomatoes — in a rich, Italian-seasoned soup.',tags:[],rev:293,rating:5.0,reviews:[{name:"You",stars:5,text:"My kids lost their minds over this one! — Kaitlyn D."}]},
-  {id:"s43",n:'Ham & Potato',em:"🥔",cat:"soup",desc:'Tender ham, diced potatoes and vegetables in a creamy, savory broth. Hearty and deeply satisfying.',tags:[],rev:116,rating:5.0,reviews:[]},
-  {id:"s44",n:'Butternut Squash',em:"🎃",cat:"soup",desc:'Roasted butternut squash blended into a silky, slightly sweet soup with warm spice. A fall must-have.',tags:["vegan","gf"],rev:91,rating:5.0,reviews:[]},
-  {id:"s45",n:'Bean with Bacon',em:"🫘",cat:"soup",desc:'Creamy white beans and smoky bacon in a flavorful broth. Simple, filling and deeply satisfying.',tags:[],rev:168,rating:5.0,reviews:[]},
-  {id:"s46",n:'Bean with Ham',em:"🫘",cat:"soup",desc:'Tender white beans and smoky ham in a rich, savory broth. A classic diner staple made from scratch.',tags:[],rev:91,rating:5.0,reviews:[]},
-  {id:"s47",n:'Lentil',em:"🫘",cat:"soup",desc:'Earthy French or green lentils slow-simmered with vegetables and warming spices. Nutritious and deeply satisfying.',tags:["vegan","gf"],rev:140,rating:5.0,reviews:[]},
-  {id:"s48",n:'Goulash',em:"🥩",cat:"soup",desc:'Hungarian-inspired paprika-spiced beef with tender vegetables in a rich, warming broth. Bold and comforting.',tags:[],rev:153,rating:5.0,reviews:[]},
-  {id:"s49",n:'Black Bean Chili',em:"🌶️",cat:"soup",desc:'Rich black beans with smoky chipotle, ground beef and warm Mexican spices. A darker, bolder chili.',tags:["vegan"],rev:126,rating:5.0,reviews:[]},
-  {id:"s50",n:'Bacon Beer Cheese',em:"🍺",cat:"soup",desc:'Sharp cheddar and crispy bacon in a creamy, malty beer-cheese broth. A pub-inspired indulgence.',tags:[],rev:140,rating:5.0,reviews:[]},
-  {id:"s51",n:'Canadian Cheese',em:"🧀",cat:"soup",desc:'A Canadian-style thick, creamy cheese soup with smoky notes. Rich, warming and wonderfully savory.',tags:[],rev:140,rating:5.0,reviews:[]},
-  {id:"s52",n:'Jambalaya',em:"🎷",cat:"soup",desc:'Spicy andouille sausage, chicken and shrimp with rice in a bold Cajun broth. New Orleans in a bowl.',tags:["gf"],rev:168,rating:5.0,reviews:[],sz:[{l:'Pint',o:'serves 1-2',p:11},{l:'Quart',o:'serves 3-4',p:20}]},
-  {id:"s53",n:'Kielbasa & Cabbage',em:"🥬",cat:"soup",desc:'Tender cabbage and smoky kielbasa simmered in a simple, savory broth. Hearty Eastern European comfort.',tags:["gf"],rev:168,rating:5.0,reviews:[]},
-  {id:"s54",n:'Navy Bean w/ Kielbasa',em:"🫘",cat:"soup",desc:'Creamy navy beans and smoky kielbasa in a thick, satisfying soup. A new take on a classic pairing.',tags:["gf"],rev:98,rating:5.0,reviews:[]},
-  {id:"s55",n:'Wisconsin Beer Cheese',em:"🍺",cat:"soup",desc:'Wisconsin sharp cheddar and a splash of beer in a velvety, indulgent broth. Rich enough to be a meal.',tags:[],rev:76,rating:5.0,reviews:[]},
-  {id:"s56",n:'Sausage Gnocchi',em:"🥟",cat:"soup",desc:'Pillowy potato gnocchi and Italian sausage in a savory, herbed broth. Hearty and deeply comforting.',tags:[],rev:72,rating:5.0,reviews:[]},
-  {id:"s57",n:'Mushroom Onion Tortellini',em:"🍄",cat:"soup",desc:'Cheese tortellini and earthy mushrooms in a savory onion and herb-based broth. Rustic Italian perfection.',tags:[],rev:75,rating:5.0,reviews:[]},
-  {id:"s58",n:'Butternut Squash & Sausage Lasagna',em:"🍝",cat:"soup",desc:'The flavors of a butternut squash and sausage lasagna transformed into a rich, creamy soup.',tags:[],rev:70,rating:5.0,reviews:[]},
-  {id:"s59",n:'Reuben',em:"🥩",cat:"soup",desc:'All the bold flavors of a Reuben sandwich — corned beef, sauerkraut, Swiss — in a creamy broth.',tags:[],rev:70,rating:5.0,reviews:[]},
-  {id:"s60",n:'Turkey Reuben',em:"🦃",cat:"soup",desc:'Turkey, sauerkraut and Swiss cheese in a tangy, creamy broth. A lighter spin on the classic Reuben.',tags:[],rev:196,rating:5.0,reviews:[]},
-  {id:"s61",n:'White Chicken Lasagna w/ Broccoli',em:"🍝",cat:"soup",desc:'Tender chicken and broccoli in a rich, creamy white lasagna-inspired sauce with pasta.',tags:[],rev:119,rating:5.0,reviews:[]},
-  {id:"s62",n:'Chicken Stroganoff',em:"🍝",cat:"soup",desc:'Tender chicken strips in a silky sour cream and mushroom sauce with egg noodles. A lighter stroganoff.',tags:[],rev:63,rating:5.0,reviews:[]},
-  {id:"s63",n:'Chicken Cordon Bleu',em:"🐓",cat:"soup",desc:'The elegant flavors of chicken cordon bleu — chicken, ham and Swiss — in a creamy, indulgent soup.',tags:[],rev:54,rating:5.0,reviews:[]},
-  {id:"s64",n:'Creamy Cheesy Onion',em:"🧅",cat:"soup",desc:'Slow-caramelized onions in an extra-creamy, cheesy base. Like French onion turned up to 11.',tags:[],rev:126,rating:5.0,reviews:[]},
-  {id:"s65",n:'Creamy Vegetable',em:"🥕",cat:"soup",desc:'A medley of fresh vegetables in a light, creamy base. Comforting without being heavy.',tags:["vegan"],rev:98,rating:5.0,reviews:[]},
-  {id:"s66",n:'Chicken Bone Broth & Extra Noodles',em:"🍗",cat:"soup",desc:'Pure, healing chicken bone broth loaded with extra egg noodles. Simple, restorative and nourishing.',tags:["gf"],rev:84,rating:5.0,reviews:[]},
-  {id:"s67",n:'Chicken Alfredo w/ Broccoli',em:"🍝",cat:"soup",desc:'Creamy alfredo sauce with tender chicken and broccoli florets. A pasta dish reimagined as soup.',tags:[],rev:84,rating:5.0,reviews:[]},
-  {id:"s68",n:'Chicken and Spring Vegetable',em:"🌿",cat:"soup",desc:'Tender chicken with bright spring vegetables — peas, asparagus, carrots — in a light, herbed broth.',tags:["gf"],rev:182,rating:5.0,reviews:[]},
-  {id:"s69",n:'Creamy Southwest Chicken Noodle',em:"🌮",cat:"soup",desc:'Creamy southwest-spiced chicken noodle with green chiles, corn and a smoky kick.',tags:[],rev:0,rating:5.0,reviews:[]},
-  {id:"s70",n:'Creamy Chicken Gnocchi',em:"🥟",cat:"soup",desc:'Tender chicken and pillowy potato gnocchi in a rich, herbed cream sauce. Indulgent and cozy.',tags:[],rev:0,rating:5.0,reviews:[]},
-  {id:"s71",n:'Creamy Pierogi',em:"🥟",cat:"soup",desc:'All the flavors of a potato and cheddar pierogi in a creamy, comforting soup. Eastern European comfort.',tags:[],rev:0,rating:5.0,reviews:[]},
-  {id:"s72",n:'Swamp',em:"🌿",cat:"soup",desc:'A fun, murky green blend of spinach, broccoli and herbs. Don\'t let the color fool you — it\'s delicious.',tags:[],rev:98,rating:5.0,reviews:[{name:"You",stars:5,text:"It sounds scary. It is AMAZING. Trust the process! — Tracey L."}]},
-  {id:"s73",n:'Whiskey Onion Beef Bone Broth',em:"🥃",cat:"soup",desc:'Rich beef bone broth with sweet caramelized onions and a splash of whiskey. Deep, warming and complex.',tags:["gf"],rev:98,rating:5.0,reviews:[]},
-  {id:"s74",n:'Clam Chowder',em:"🦪",cat:"soup",desc:'Thick and creamy New England-style clam chowder with tender clams, potatoes and smoky bacon.',tags:[],rev:0,rating:5.0,reviews:[]},
-  {id:"s75",n:'African Peanut',em:"🥜",cat:"soup",desc:'Creamy West African-inspired peanut soup with tomatoes, sweet potato and warming spices. Bold and unique.',tags:["vegan"],rev:47,rating:5.0,reviews:[]},
-  {id:"s76",n:'Cucumber Avocado',em:"🥑",cat:"soup",desc:'Chilled and refreshing — cool cucumber and creamy avocado blended into a smooth summer soup.',tags:["vegan","gf"],rev:168,rating:5.0,reviews:[]},
-  {id:"s77",n:'Gazpacho',em:"🍅",cat:"soup",desc:'A chilled Spanish classic — blended fresh tomatoes, cucumber, peppers and olive oil. Summer in a bowl.',tags:["vegan","gf"],rev:112,rating:5.0,reviews:[]},
-  {id:"s78",n:'Chilled Cantaloupe',em:"🍈",cat:"soup",desc:'Sweet chilled cantaloupe soup with a hint of mint and citrus. Light, fragrant and surprisingly refreshing.',tags:[],rev:84,rating:5.0,reviews:[]},
-  {id:"s79",n:'Egg Drop',em:"🥚",cat:"soup",desc:'Delicate silky egg ribbons in a savory chicken broth with green onions. Simple Chinese comfort food.',tags:["gf"],rev:98,rating:5.0,reviews:[]},
-  {id:"s80",n:'Cowboy Caviar',em:"🤠",cat:"salad",desc:'Fresh and colorful black-eyed peas, corn, peppers and avocado in a zesty lime dressing. Served chilled.',tags:["gf","vegan"],rev:112,rating:5.0,reviews:[],sz:[{l:'Single',o:'serves 2-3',p:15}]},
-  {id:"s81",n:'Ground Turkey Pumpkin Chili',em:"🎃",cat:"soup",desc:'Ground turkey with pumpkin, black beans and warm fall spices. A lighter, seasonal twist on classic chili.',tags:["gf"],rev:112,rating:5.0,reviews:[]},
-  {id:"s82",n:'Sweet Potato & Lentil',em:"🍠",cat:"soup",desc:'Earthy sweet potato and French lentils in a warming, spiced broth. Nutritious and beautifully satisfying.',tags:["vegan","gf"],rev:112,rating:5.0,reviews:[]},
-  {id:"s83",n:'Sopa De Fideo',em:"🍝",cat:"soup",desc:'Thin vermicelli noodles in a rich tomato-based broth with warm Mexican spices. Cozy and deeply comforting.',tags:[],rev:42,rating:5.0,reviews:[]},
-  {id:"s84",n:'Tomato Bisque',em:"🍅",cat:"soup",desc:'Ripe tomatoes slow-roasted and blended with cream and herbs into a velvety bisque. Classic and warming.',tags:["vegan","gf"],rev:42,rating:5.0,reviews:[]},
-  {id:"s85",n:'Roasted Pepper Tomato Bisque',em:"🍅",cat:"soup",desc:'Roasted red peppers and tomatoes in a rich, smoky bisque. A bold twist on the classic tomato soup.',tags:["vegan","gf"],rev:46,rating:5.0,reviews:[]},
-  {id:"s86",n:'Veggie Enchilada',em:"🌮",cat:"soup",desc:'Enchilada-spiced vegetables in a rich tomato broth with black beans and corn. Vegetarian and satisfying.',tags:["vegan"],rev:84,rating:5.0,reviews:[]},
-  {id:"s87",n:'Mexican Veggie & Meatball',em:"🌮",cat:"soup",desc:'Ground beef meatballs and fresh vegetables in a Mexican-spiced broth. Hearty and full of flavor.',tags:[],rev:84,rating:5.0,reviews:[]},
-  {id:"s88",n:'Southwest Cheesy Beef',em:"🌮",cat:"soup",desc:'Ground beef, roasted peppers and melted cheddar in a bold, smoky southwest broth.',tags:["gf"],rev:154,rating:5.0,reviews:[]},
-  {id:"s89",n:'Stracciatella',em:"🍳",cat:"soup",desc:'Classic Italian egg-drop soup — eggs swirled into a rich Parmesan-spiked broth. Simple and elegant.',tags:["gf"],rev:91,rating:5.0,reviews:[]},
-  {id:"s90",n:'Cream of Asparagus',em:"🌱",cat:"soup",desc:'Tender fresh asparagus blended into a silky spring cream soup. Light, elegant and seasonal.',tags:["vegan"],rev:154,rating:5.0,reviews:[]},
-  {id:"s91",n:'Cream of Broccoli w/ Ham',em:"🥦",cat:"soup",desc:'Velvety cream of broccoli elevated with smoky diced ham. Rich, hearty and packed with flavor.',tags:[],rev:182,rating:5.0,reviews:[]},
-  {id:"s92",n:'Jarcuterie',em:"🫙",cat:"soup",desc:'A fun charcuterie-inspired soup — meats, cheeses and pickled vegetables in a savory broth. Unique and fun.',tags:[],rev:189,rating:5.0,reviews:[]},
-  {id:"s93",n:'Lasagna',em:"🍝",cat:"soup",desc:'Every layer of a classic beef lasagna — meat sauce, ricotta, noodles — in a rich, hearty soup.',tags:[],rev:196,rating:5.0,reviews:[]},
-  {id:"s94",n:'Spring Chicken Vegetable',em:"🌿",cat:"soup",desc:'Tender chicken with bright spring vegetables and fresh herbs in a light, clean broth.',tags:["gf"],rev:0,rating:5.0,reviews:[]},
-  {id:"s95",n:'Zucchini',em:"🥒",cat:"soup",desc:'Fresh zucchini blended or chunked in a light, herb-seasoned broth. Simple, summery and satisfying.',tags:["vegan","gf"],rev:42,rating:5.0,reviews:[]},
-  {id:"s96",n:'of Turkey Slop',em:"🦃",cat:"soup",desc:'A hearty turkey and vegetable medley in a savory broth. Comforting, simple and satisfying.',tags:[],rev:60,rating:5.0,reviews:[]},
-  {id:"s97",n:'Asian Layered Salad',em:"🥗",cat:"salad",desc:'A vibrant layered salad with Asian-inspired flavors — crunchy noodles, edamame, mandarin and sesame ginger dressing.',tags:[],rev:195,rating:5.0,reviews:[{name:"You",stars:5,text:"Fresh and flavorful. Love the crunch factor! — Pamela D."}]},
-  {id:"s98",n:'Goat Cheese Blueberry Salad',em:"🫐",cat:"salad",desc:'Mixed greens, candied walnuts and creamy goat cheese with a honey balsamic drizzle. Elegant and fresh.',tags:[],rev:195,rating:5.0,reviews:[{name:"You",stars:5,text:"This salad is absolutely gorgeous and delicious! — Tracey L."}]},
-  {id:"s99",n:'Mexican Chicken Salad',em:"🌮",cat:"salad",desc:'Seasoned chicken, black beans, corn, peppers and crispy tortilla strips with a creamy cilantro-lime dressing.',tags:["gf"],rev:221,rating:5.0,reviews:[{name:"You",stars:5,text:"Super fresh and filling. Great for lunch all week! — Carrie W."}]},
-  {id:"s100",n:'Southwest Layered Salad',em:"🌵",cat:"salad",desc:'A hearty southwest layered salad with romaine, black beans, corn, jalapeño and chipotle ranch.',tags:["gf"],rev:182,rating:5.0,reviews:[]},
-  {id:"s101",n:'Chicken Greek Pasta Salad',em:"🫒",cat:"salad",desc:'Grilled chicken, olives, feta and fresh vegetables over pasta with a bright Greek herb dressing.',tags:[],rev:182,rating:5.0,reviews:[]},
-  {id:"s102",n:'Italian Chopped Layered Salad',em:"🇮🇹",cat:"salad",desc:'An Italian-style chopped salad with salami, pepperoncini, provolone and fresh vegetables in a zesty vinaigrette.',tags:[],rev:143,rating:5.0,reviews:[]},
+  {id:"s0",n:'Chicken Noodle',em:"🍗",cat:"soup",desc:'A timeless classic — tender chicken, egg noodles, carrots and celery in a golden broth. Comfort in every sip.',tags:[],rev:1120,rating:0,reviews:[]},
+  {id:"s1",n:'Chicken Pot Pie',em:"🥧",cat:"soup",desc:'All the flavors of chicken pot pie in a rich, creamy soup. Filled with chicken, peas, carrots and a flaky crust crumble on top.',tags:[],rev:987,rating:0,reviews:[]},
+  {id:"s2",n:'Chicken Tortilla',em:"🌮",cat:"soup",desc:'Smoky, bold and slightly spicy. Shredded chicken, black beans, corn and tomatoes in a zesty chicken broth with warm tortilla vibes.',tags:["gf"],rev:910,rating:0,reviews:[]},
+  {id:"s3",n:'Chicken Lemon Rice',em:"🍋",cat:"soup",desc:'Bright and lemony with tender chicken, long-grain rice, spinach and a fresh herby finish. Light yet satisfying.',tags:["gf"],rev:903,rating:0,reviews:[]},
+  {id:"s4",n:'Broccoli Cheddar',em:"🥦",cat:"soup",desc:'Velvety smooth broccoli florets blended into a rich cheddar cream base. A crowd favorite that never gets old.',tags:[],rev:840,rating:0,reviews:[]},
+  {id:"s5",n:'Marry Me Chicken',em:"💒",cat:"soup",desc:'Creamy sun-dried tomato and parmesan broth with tender chicken. So good it\'ll make you want to propose. Rich, indulgent, unforgettable.',tags:[],rev:763,rating:0,reviews:[]},
+  {id:"s6",n:'Italian Wedding',em:"💍",cat:"soup",desc:'Savory chicken broth with tiny meatballs, spinach, and acini di pepe pasta. An Italian Sunday dinner in a bowl.',tags:[],rev:781,rating:0,reviews:[]},
+  {id:"s7",n:'Tuscan Minestrone',em:"🫘",cat:"soup",desc:'A hearty Italian vegetable medley with white beans, pasta and a rich tomato herb broth. Rustic and deeply satisfying.',tags:["vegan"],rev:754,rating:0,reviews:[]},
+  {id:"s8",n:'Corn Chowder',em:"🌽",cat:"soup",desc:'Sweet summer corn, potatoes and cream in a smoky, chowder-style base. Warm and deeply comforting.',tags:[],rev:714,rating:0,reviews:[]},
+  {id:"s9",n:'Lemony Chicken Feta Meatball',em:"🍋",cat:"soup",desc:'Tender chicken meatballs with bright lemon, feta and fresh herbs in a light broth. Fresh, vibrant and surprisingly filling.',tags:[],rev:781,rating:0,reviews:[]},
+  {id:"s10",n:'Shrimp Ceviche',em:"🦐",cat:"salad",desc:'Fresh and bright shrimp ceviche with citrus, jalapeño, red onion and cilantro. Chilled and refreshing — a summer favorite.',tags:["gf"],rev:663,rating:0,reviews:[],sz:[{l:'Small',o:'serves 1',p:15},{l:'Large',o:'serves 2-3',p:28}]},
+  {id:"s11",n:'Cheeseburger',em:"🍔",cat:"soup",desc:'All the fixings of a juicy cheeseburger in a rich, hearty soup. Ground beef, cheddar, pickles and a creamy base.',tags:[],rev:588,rating:0,reviews:[]},
+  {id:"s12",n:'Beef Stroganoff',em:"🥩",cat:"soup",desc:'Tender beef in a silky, tangy sour cream sauce over egg noodles. A cozy Eastern European classic.',tags:[],rev:616,rating:0,reviews:[]},
+  {id:"s13",n:'Dill Pickle',em:"🥒",cat:"soup",desc:'Creamy potato soup with the bold tang of dill pickles throughout. Surprisingly addictive — a dill lover\'s dream.',tags:[],rev:402,rating:0,reviews:[]},
+  {id:"s14",n:'French Onion',em:"🧅",cat:"soup",desc:'Slowly caramelized onions in a deep, savory beef broth topped with melted gruyère. A French bistro classic.',tags:[],rev:504,rating:0,reviews:[]},
+  {id:"s15",n:'Kielbasa Potato',em:"🥔",cat:"soup",desc:'Smoky kielbasa sausage with tender potatoes and vegetables in a hearty, warming broth. A Michigan winter staple.',tags:["gf"],rev:525,rating:0,reviews:[]},
+  {id:"s16",n:'Garden Tortellini',em:"🌿",cat:"soup",desc:'Cheese tortellini floating in a garden-fresh vegetable broth with tomatoes, zucchini and herbs. Light and lovely.',tags:[],rev:434,rating:0,reviews:[]},
+  {id:"s17",n:'Chicken Wonton w/ Bok Choy',em:"🍜",cat:"soup",desc:'Delicate wontons and bok choy in a savory ginger-soy chicken broth. A comforting Asian-inspired bowl.',tags:[],rev:406,rating:0,reviews:[]},
+  {id:"s18",n:'Chicken Piccata',em:"🍋",cat:"soup",desc:'Tender chicken in a bright, lemony caper sauce reminiscent of the classic Italian dish. Elegant and vibrant.',tags:[],rev:399,rating:0,reviews:[]},
+  {id:"s19",n:'Stuffed Cabbage',em:"🥬",cat:"soup",desc:'Tender cabbage rolls deconstructed into a hearty soup — ground beef, rice, tomatoes and sweet cabbage.',tags:[],rev:399,rating:0,reviews:[]},
+  {id:"s20",n:'Stuffed Pepper',em:"🫑",cat:"soup",desc:'All the flavors of a stuffed pepper — ground beef, rice, peppers and tomatoes — in one comforting bowl.',tags:["gf"],rev:431,rating:0,reviews:[]},
+  {id:"s21",n:'Chili',em:"🌶️",cat:"soup",desc:'Thick, hearty chili with ground beef, kidney beans, tomatoes and warm spices. A cold-weather essential.',tags:["gf"],rev:412,rating:0,reviews:[]},
+  {id:"s22",n:'Loaded Potato',em:"🥔",cat:"soup",desc:'Loaded with potato, cheddar, bacon and sour cream. Every spoonful tastes like a fully dressed baked potato.',tags:[],rev:504,rating:0,reviews:[]},
+  {id:"s23",n:'Very Veggie',em:"🥕",cat:"soup",desc:'A rainbow of fresh vegetables in a light, herb-seasoned broth. Nutritious, colorful and surprisingly filling.',tags:["vegan","gf"],rev:392,rating:0,reviews:[]},
+  {id:"s24",n:'Caribbean Potato',em:"🌴",cat:"soup",desc:'A unique blend of Caribbean spices with potato, coconut notes and warming heat. Adventurous and comforting.',tags:["vegan"],rev:292,rating:0,reviews:[]},
+  {id:"s25",n:'Creamy Chicken & Wild Rice',em:"🌾",cat:"soup",desc:'Tender chicken and wild rice in a velvety cream base with earthy mushrooms and herbs. Rich and nourishing.',tags:[],rev:364,rating:0,reviews:[]},
+  {id:"s26",n:'Creamy Swiss Onion',em:"🧅",cat:"soup",desc:'Deeply savory caramelized onion and Swiss cheese in a creamy broth. Like French onion soup\'s indulgent cousin.',tags:[],rev:322,rating:0,reviews:[]},
+  {id:"s27",n:'Classic Cabbage',em:"🥬",cat:"soup",desc:'Tender cabbage, ground beef and tomatoes in a simple, warming broth. Old-world comfort food at its finest.',tags:[],rev:191,rating:0,reviews:[]},
+  {id:"s28",n:'Creamy Pumpkin',em:"🎃",cat:"soup",desc:'Silky roasted pumpkin with warm spices, a touch of cream and savory depth. Perfect for fall and beyond.',tags:["gf"],rev:266,rating:0,reviews:[]},
+  {id:"s29",n:'Mushroom Barley',em:"🍄",cat:"soup",desc:'Earthy mushrooms and chewy barley in a rich, deeply savory broth. Rustic, satisfying and deeply nourishing.',tags:["vegan"],rev:266,rating:0,reviews:[]},
+  {id:"s30",n:'Cream of Mushroom',em:"🍄",cat:"soup",desc:'Velvety cream of mushroom made from scratch — nothing canned here. Earthy, rich and luxuriously smooth.',tags:[],rev:305,rating:0,reviews:[]},
+  {id:"s31",n:'Potato Leek & Cheddar',em:"🥔",cat:"soup",desc:'Creamy, slightly sharp cheddar with silky leeks and tender potatoes. Sophisticated and wonderfully warming.',tags:[],rev:259,rating:0,reviews:[]},
+  {id:"s32",n:'Spicy Carrot Ginger',em:"🥕",cat:"soup",desc:'Sweet roasted carrots and fresh ginger in a vibrant, spiced puree. Bold, warming and beautifully bright.',tags:["vegan","gf"],rev:245,rating:0,reviews:[]},
+  {id:"s33",n:'Creamy White Chicken Chili',em:"🌶️",cat:"soup",desc:'Creamy white chili with chicken, white beans, green chiles and a hint of spice. Milder than traditional chili but equally satisfying.',tags:[],rev:238,rating:0,reviews:[]},
+  {id:"s34",n:'Lasagna w/ Herbed Ricotta',em:"🍝",cat:"soup",desc:'All the layers of a classic lasagna — meat, ricotta, tomato sauce — in a rich, hearty soup form.',tags:[],rev:196,rating:0,reviews:[]},
+  {id:"s35",n:'Lemony Turkey-Feta Meatball',em:"🍋",cat:"soup",desc:'Bright and lemony turkey meatballs with creamy feta and orzo. A lighter spin on the classic meatball soup.',tags:[],rev:196,rating:0,reviews:[]},
+  {id:"s36",n:'Healthy Cabbage',em:"🥬",cat:"soup",desc:'A lighter take on cabbage soup — loaded with vegetables and lean protein. Feel-good food at its best.',tags:["vegan","gf"],rev:260,rating:0,reviews:[]},
+  {id:"s37",n:'Italian Chicken Pastina',em:"🍝",cat:"soup",desc:'Tiny pasta, tender chicken, Parmesan and fresh herbs in a classic Italian broth. Simple, pure and deeply satisfying.',tags:[],rev:76,rating:0,reviews:[]},
+  {id:"s38",n:'Split Pea w/ Bacon',em:"🥣",cat:"soup",desc:'Slow-simmered split peas with smoky bacon and vegetables. A thick, hearty cold-weather essential.',tags:[],rev:368,rating:0,reviews:[]},
+  {id:"s39",n:'Chicken Dumpling',em:"🥟",cat:"soup",desc:'Fluffy dumplings nestled in a rich chicken broth with vegetables. Old-fashioned comfort in every bite.',tags:[],rev:137,rating:0,reviews:[]},
+  {id:"s40",n:'Macaroni & Cheese',em:"🧀",cat:"soup",desc:'Creamy, velvety macaroni and cheese soup with sharp cheddar and a hint of mustard. Pure nostalgic comfort.',tags:[],rev:189,rating:0,reviews:[]},
+  {id:"s41",n:'Creamy Tomato',em:"🍅",cat:"soup",desc:'Ripe tomatoes slow-roasted and blended into a silky bisque. Classic, warming and endlessly craveable.',tags:["vegan","gf"],rev:112,rating:0,reviews:[]},
+  {id:"s42",n:'Pizza',em:"🍕",cat:"soup",desc:'All your favorite pizza toppings — pepperoni, mozzarella, tomatoes — in a rich, Italian-seasoned soup.',tags:[],rev:293,rating:0,reviews:[]},
+  {id:"s43",n:'Ham & Potato',em:"🥔",cat:"soup",desc:'Tender ham, diced potatoes and vegetables in a creamy, savory broth. Hearty and deeply satisfying.',tags:[],rev:116,rating:0,reviews:[]},
+  {id:"s44",n:'Butternut Squash',em:"🎃",cat:"soup",desc:'Roasted butternut squash blended into a silky, slightly sweet soup with warm spice. A fall must-have.',tags:["vegan","gf"],rev:91,rating:0,reviews:[]},
+  {id:"s45",n:'Bean with Bacon',em:"🫘",cat:"soup",desc:'Creamy white beans and smoky bacon in a flavorful broth. Simple, filling and deeply satisfying.',tags:[],rev:168,rating:0,reviews:[]},
+  {id:"s46",n:'Bean with Ham',em:"🫘",cat:"soup",desc:'Tender white beans and smoky ham in a rich, savory broth. A classic diner staple made from scratch.',tags:[],rev:91,rating:0,reviews:[]},
+  {id:"s47",n:'Lentil',em:"🫘",cat:"soup",desc:'Earthy French or green lentils slow-simmered with vegetables and warming spices. Nutritious and deeply satisfying.',tags:["vegan","gf"],rev:140,rating:0,reviews:[]},
+  {id:"s48",n:'Goulash',em:"🥩",cat:"soup",desc:'Hungarian-inspired paprika-spiced beef with tender vegetables in a rich, warming broth. Bold and comforting.',tags:[],rev:153,rating:0,reviews:[]},
+  {id:"s49",n:'Black Bean Chili',em:"🌶️",cat:"soup",desc:'Rich black beans with smoky chipotle, ground beef and warm Mexican spices. A darker, bolder chili.',tags:["vegan"],rev:126,rating:0,reviews:[]},
+  {id:"s50",n:'Bacon Beer Cheese',em:"🍺",cat:"soup",desc:'Sharp cheddar and crispy bacon in a creamy, malty beer-cheese broth. A pub-inspired indulgence.',tags:[],rev:140,rating:0,reviews:[]},
+  {id:"s51",n:'Canadian Cheese',em:"🧀",cat:"soup",desc:'A Canadian-style thick, creamy cheese soup with smoky notes. Rich, warming and wonderfully savory.',tags:[],rev:140,rating:0,reviews:[]},
+  {id:"s52",n:'Jambalaya',em:"🎷",cat:"soup",desc:'Spicy andouille sausage, chicken and shrimp with rice in a bold Cajun broth. New Orleans in a bowl.',tags:["gf"],rev:168,rating:0,reviews:[],sz:[{l:'Pint',o:'serves 1-2',p:11},{l:'Quart',o:'serves 3-4',p:20}]},
+  {id:"s53",n:'Kielbasa & Cabbage',em:"🥬",cat:"soup",desc:'Tender cabbage and smoky kielbasa simmered in a simple, savory broth. Hearty Eastern European comfort.',tags:["gf"],rev:168,rating:0,reviews:[]},
+  {id:"s54",n:'Navy Bean w/ Kielbasa',em:"🫘",cat:"soup",desc:'Creamy navy beans and smoky kielbasa in a thick, satisfying soup. A new take on a classic pairing.',tags:["gf"],rev:98,rating:0,reviews:[]},
+  {id:"s55",n:'Wisconsin Beer Cheese',em:"🍺",cat:"soup",desc:'Wisconsin sharp cheddar and a splash of beer in a velvety, indulgent broth. Rich enough to be a meal.',tags:[],rev:76,rating:0,reviews:[]},
+  {id:"s56",n:'Sausage Gnocchi',em:"🥟",cat:"soup",desc:'Pillowy potato gnocchi and Italian sausage in a savory, herbed broth. Hearty and deeply comforting.',tags:[],rev:72,rating:0,reviews:[]},
+  {id:"s57",n:'Mushroom Onion Tortellini',em:"🍄",cat:"soup",desc:'Cheese tortellini and earthy mushrooms in a savory onion and herb-based broth. Rustic Italian perfection.',tags:[],rev:75,rating:0,reviews:[]},
+  {id:"s58",n:'Butternut Squash & Sausage Lasagna',em:"🍝",cat:"soup",desc:'The flavors of a butternut squash and sausage lasagna transformed into a rich, creamy soup.',tags:[],rev:70,rating:0,reviews:[]},
+  {id:"s59",n:'Reuben',em:"🥩",cat:"soup",desc:'All the bold flavors of a Reuben sandwich — corned beef, sauerkraut, Swiss — in a creamy broth.',tags:[],rev:70,rating:0,reviews:[]},
+  {id:"s60",n:'Turkey Reuben',em:"🦃",cat:"soup",desc:'Turkey, sauerkraut and Swiss cheese in a tangy, creamy broth. A lighter spin on the classic Reuben.',tags:[],rev:196,rating:0,reviews:[]},
+  {id:"s61",n:'White Chicken Lasagna w/ Broccoli',em:"🍝",cat:"soup",desc:'Tender chicken and broccoli in a rich, creamy white lasagna-inspired sauce with pasta.',tags:[],rev:119,rating:0,reviews:[]},
+  {id:"s62",n:'Chicken Stroganoff',em:"🍝",cat:"soup",desc:'Tender chicken strips in a silky sour cream and mushroom sauce with egg noodles. A lighter stroganoff.',tags:[],rev:63,rating:0,reviews:[]},
+  {id:"s63",n:'Chicken Cordon Bleu',em:"🐓",cat:"soup",desc:'The elegant flavors of chicken cordon bleu — chicken, ham and Swiss — in a creamy, indulgent soup.',tags:[],rev:54,rating:0,reviews:[]},
+  {id:"s64",n:'Creamy Cheesy Onion',em:"🧅",cat:"soup",desc:'Slow-caramelized onions in an extra-creamy, cheesy base. Like French onion turned up to 11.',tags:[],rev:126,rating:0,reviews:[]},
+  {id:"s65",n:'Creamy Vegetable',em:"🥕",cat:"soup",desc:'A medley of fresh vegetables in a light, creamy base. Comforting without being heavy.',tags:["vegan"],rev:98,rating:0,reviews:[]},
+  {id:"s66",n:'Chicken Bone Broth & Extra Noodles',em:"🍗",cat:"soup",desc:'Pure, healing chicken bone broth loaded with extra egg noodles. Simple, restorative and nourishing.',tags:["gf"],rev:84,rating:0,reviews:[]},
+  {id:"s67",n:'Chicken Alfredo w/ Broccoli',em:"🍝",cat:"soup",desc:'Creamy alfredo sauce with tender chicken and broccoli florets. A pasta dish reimagined as soup.',tags:[],rev:84,rating:0,reviews:[]},
+  {id:"s68",n:'Chicken and Spring Vegetable',em:"🌿",cat:"soup",desc:'Tender chicken with bright spring vegetables — peas, asparagus, carrots — in a light, herbed broth.',tags:["gf"],rev:182,rating:0,reviews:[]},
+  {id:"s69",n:'Creamy Southwest Chicken Noodle',em:"🌮",cat:"soup",desc:'Creamy southwest-spiced chicken noodle with green chiles, corn and a smoky kick.',tags:[],rev:0,rating:0,reviews:[]},
+  {id:"s70",n:'Creamy Chicken Gnocchi',em:"🥟",cat:"soup",desc:'Tender chicken and pillowy potato gnocchi in a rich, herbed cream sauce. Indulgent and cozy.',tags:[],rev:0,rating:0,reviews:[]},
+  {id:"s71",n:'Creamy Pierogi',em:"🥟",cat:"soup",desc:'All the flavors of a potato and cheddar pierogi in a creamy, comforting soup. Eastern European comfort.',tags:[],rev:0,rating:0,reviews:[]},
+  {id:"s72",n:'Swamp',em:"🌿",cat:"soup",desc:'A fun, murky green blend of spinach, broccoli and herbs. Don\'t let the color fool you — it\'s delicious.',tags:[],rev:98,rating:0,reviews:[]},
+  {id:"s73",n:'Whiskey Onion Beef Bone Broth',em:"🥃",cat:"soup",desc:'Rich beef bone broth with sweet caramelized onions and a splash of whiskey. Deep, warming and complex.',tags:["gf"],rev:98,rating:0,reviews:[]},
+  {id:"s74",n:'Clam Chowder',em:"🦪",cat:"soup",desc:'Thick and creamy New England-style clam chowder with tender clams, potatoes and smoky bacon.',tags:[],rev:0,rating:0,reviews:[]},
+  {id:"s75",n:'African Peanut',em:"🥜",cat:"soup",desc:'Creamy West African-inspired peanut soup with tomatoes, sweet potato and warming spices. Bold and unique.',tags:["vegan"],rev:47,rating:0,reviews:[]},
+  {id:"s76",n:'Cucumber Avocado',em:"🥑",cat:"soup",desc:'Chilled and refreshing — cool cucumber and creamy avocado blended into a smooth summer soup.',tags:["vegan","gf"],rev:168,rating:0,reviews:[]},
+  {id:"s77",n:'Gazpacho',em:"🍅",cat:"soup",desc:'A chilled Spanish classic — blended fresh tomatoes, cucumber, peppers and olive oil. Summer in a bowl.',tags:["vegan","gf"],rev:112,rating:0,reviews:[]},
+  {id:"s78",n:'Chilled Cantaloupe',em:"🍈",cat:"soup",desc:'Sweet chilled cantaloupe soup with a hint of mint and citrus. Light, fragrant and surprisingly refreshing.',tags:[],rev:84,rating:0,reviews:[]},
+  {id:"s79",n:'Egg Drop',em:"🥚",cat:"soup",desc:'Delicate silky egg ribbons in a savory chicken broth with green onions. Simple Chinese comfort food.',tags:["gf"],rev:98,rating:0,reviews:[]},
+  {id:"s80",n:'Cowboy Caviar',em:"🤠",cat:"salad",desc:'Fresh and colorful black-eyed peas, corn, peppers and avocado in a zesty lime dressing. Served chilled.',tags:["gf","vegan"],rev:112,rating:0,reviews:[],sz:[{l:'Single',o:'serves 2-3',p:15}]},
+  {id:"s81",n:'Ground Turkey Pumpkin Chili',em:"🎃",cat:"soup",desc:'Ground turkey with pumpkin, black beans and warm fall spices. A lighter, seasonal twist on classic chili.',tags:["gf"],rev:112,rating:0,reviews:[]},
+  {id:"s82",n:'Sweet Potato & Lentil',em:"🍠",cat:"soup",desc:'Earthy sweet potato and French lentils in a warming, spiced broth. Nutritious and beautifully satisfying.',tags:["vegan","gf"],rev:112,rating:0,reviews:[]},
+  {id:"s83",n:'Sopa De Fideo',em:"🍝",cat:"soup",desc:'Thin vermicelli noodles in a rich tomato-based broth with warm Mexican spices. Cozy and deeply comforting.',tags:[],rev:42,rating:0,reviews:[]},
+  {id:"s84",n:'Tomato Bisque',em:"🍅",cat:"soup",desc:'Ripe tomatoes slow-roasted and blended with cream and herbs into a velvety bisque. Classic and warming.',tags:["vegan","gf"],rev:42,rating:0,reviews:[]},
+  {id:"s85",n:'Roasted Pepper Tomato Bisque',em:"🍅",cat:"soup",desc:'Roasted red peppers and tomatoes in a rich, smoky bisque. A bold twist on the classic tomato soup.',tags:["vegan","gf"],rev:46,rating:0,reviews:[]},
+  {id:"s86",n:'Veggie Enchilada',em:"🌮",cat:"soup",desc:'Enchilada-spiced vegetables in a rich tomato broth with black beans and corn. Vegetarian and satisfying.',tags:["vegan"],rev:84,rating:0,reviews:[]},
+  {id:"s87",n:'Mexican Veggie & Meatball',em:"🌮",cat:"soup",desc:'Ground beef meatballs and fresh vegetables in a Mexican-spiced broth. Hearty and full of flavor.',tags:[],rev:84,rating:0,reviews:[]},
+  {id:"s88",n:'Southwest Cheesy Beef',em:"🌮",cat:"soup",desc:'Ground beef, roasted peppers and melted cheddar in a bold, smoky southwest broth.',tags:["gf"],rev:154,rating:0,reviews:[]},
+  {id:"s89",n:'Stracciatella',em:"🍳",cat:"soup",desc:'Classic Italian egg-drop soup — eggs swirled into a rich Parmesan-spiked broth. Simple and elegant.',tags:["gf"],rev:91,rating:0,reviews:[]},
+  {id:"s90",n:'Cream of Asparagus',em:"🌱",cat:"soup",desc:'Tender fresh asparagus blended into a silky spring cream soup. Light, elegant and seasonal.',tags:["vegan"],rev:154,rating:0,reviews:[]},
+  {id:"s91",n:'Cream of Broccoli w/ Ham',em:"🥦",cat:"soup",desc:'Velvety cream of broccoli elevated with smoky diced ham. Rich, hearty and packed with flavor.',tags:[],rev:182,rating:0,reviews:[]},
+  {id:"s92",n:'Jarcuterie',em:"🫙",cat:"soup",desc:'A fun charcuterie-inspired soup — meats, cheeses and pickled vegetables in a savory broth. Unique and fun.',tags:[],rev:189,rating:0,reviews:[]},
+  {id:"s93",n:'Lasagna',em:"🍝",cat:"soup",desc:'Every layer of a classic beef lasagna — meat sauce, ricotta, noodles — in a rich, hearty soup.',tags:[],rev:196,rating:0,reviews:[]},
+  {id:"s94",n:'Spring Chicken Vegetable',em:"🌿",cat:"soup",desc:'Tender chicken with bright spring vegetables and fresh herbs in a light, clean broth.',tags:["gf"],rev:0,rating:0,reviews:[]},
+  {id:"s95",n:'Zucchini',em:"🥒",cat:"soup",desc:'Fresh zucchini blended or chunked in a light, herb-seasoned broth. Simple, summery and satisfying.',tags:["vegan","gf"],rev:42,rating:0,reviews:[]},
+  {id:"s96",n:'of Turkey Slop',em:"🦃",cat:"soup",desc:'A hearty turkey and vegetable medley in a savory broth. Comforting, simple and satisfying.',tags:[],rev:60,rating:0,reviews:[]},
+  {id:"s97",n:'Asian Layered Salad',em:"🥗",cat:"salad",desc:'A vibrant layered salad with Asian-inspired flavors — crunchy noodles, edamame, mandarin and sesame ginger dressing.',tags:[],rev:195,rating:0,reviews:[]},
+  {id:"s98",n:'Goat Cheese Blueberry Salad',em:"🫐",cat:"salad",desc:'Mixed greens, candied walnuts and creamy goat cheese with a honey balsamic drizzle. Elegant and fresh.',tags:[],rev:195,rating:0,reviews:[]},
+  {id:"s99",n:'Mexican Chicken Salad',em:"🌮",cat:"salad",desc:'Seasoned chicken, black beans, corn, peppers and crispy tortilla strips with a creamy cilantro-lime dressing.',tags:["gf"],rev:221,rating:0,reviews:[]},
+  {id:"s100",n:'Southwest Layered Salad',em:"🌵",cat:"salad",desc:'A hearty southwest layered salad with romaine, black beans, corn, jalapeño and chipotle ranch.',tags:["gf"],rev:182,rating:0,reviews:[]},
+  {id:"s101",n:'Chicken Greek Pasta Salad',em:"🫒",cat:"salad",desc:'Grilled chicken, olives, feta and fresh vegetables over pasta with a bright Greek herb dressing.',tags:[],rev:182,rating:0,reviews:[]},
+  {id:"s102",n:'Italian Chopped Layered Salad',em:"🇮🇹",cat:"salad",desc:'An Italian-style chopped salad with salami, pepperoncini, provolone and fresh vegetables in a zesty vinaigrette.',tags:[],rev:143,rating:0,reviews:[]},
   {id:"s110",n:'Modern Waldorf Salad',em:"🍎",cat:"salad",desc:'A fresh twist on the classic — crisp apples, candied walnuts, celery and grapes over greens with a light honey yogurt dressing.',tags:[],rev:0,rating:0,reviews:[]},
   {id:"s109",n:'Berry Crunch Salad',em:"🍓",cat:"salad",desc:'A fresh mix of seasonal berries with candied nuts and a light honey vinaigrette. Sweet, crunchy and refreshing.',tags:[],rev:0,rating:0,reviews:[],sz:[{l:'Single',o:'serves 1-2',p:15}],soldout:false,al:[],soupId:'s109'},
-  {id:"s103",n:'Strawberry Layered Salad',em:"🍓",cat:"salad",desc:'Fresh strawberries, candied pecans, red onion and spinach with a honey poppy seed dressing. Bright and sweet.',tags:[],rev:143,rating:5.0,reviews:[{name:"You",stars:5,text:"Stunning. Incredible flavor balance! — Mary Ellen R."}]},
-  {id:"s104",n:'Mediterranean Quinoa Layered Salad',em:"🌿",cat:"salad",desc:'Protein-packed quinoa with Mediterranean vegetables, olives, feta and a lemon herb dressing.',tags:["vegan","gf"],rev:117,rating:5.0,reviews:[]},
-  {id:"s105",n:'Greek Village Salad',em:"🫒",cat:"salad",desc:'Tomatoes, cucumber, olives, red onion and feta in a clean olive oil and herb dressing. Authentic Greek.',tags:["vegan","gf"],rev:117,rating:5.0,reviews:[]},
-  {id:"s106",n:'Orzo Pesto Salad',em:"🌿",cat:"salad",desc:'Orzo pasta tossed with pesto, fresh vegetables, sun-dried tomatoes and Parmesan. Bright and herby.',tags:[],rev:91,rating:5.0,reviews:[]},
-  {id:"s107",n:'Tuna Macaroni Salad',em:"🐟",cat:"salad",desc:'A classic deli-style tuna macaroni salad — creamy, comforting and perfect for warm days.',tags:[],rev:104,rating:5.0,reviews:[]},
+  {id:"s103",n:'Strawberry Layered Salad',em:"🍓",cat:"salad",desc:'Fresh strawberries, candied pecans, red onion and spinach with a honey poppy seed dressing. Bright and sweet.',tags:[],rev:143,rating:0,reviews:[]},
+  {id:"s104",n:'Mediterranean Quinoa Layered Salad',em:"🌿",cat:"salad",desc:'Protein-packed quinoa with Mediterranean vegetables, olives, feta and a lemon herb dressing.',tags:["vegan","gf"],rev:117,rating:0,reviews:[]},
+  {id:"s105",n:'Greek Village Salad',em:"🫒",cat:"salad",desc:'Tomatoes, cucumber, olives, red onion and feta in a clean olive oil and herb dressing. Authentic Greek.',tags:["vegan","gf"],rev:117,rating:0,reviews:[]},
+  {id:"s106",n:'Orzo Pesto Salad',em:"🌿",cat:"salad",desc:'Orzo pasta tossed with pesto, fresh vegetables, sun-dried tomatoes and Parmesan. Bright and herby.',tags:[],rev:91,rating:0,reviews:[]},
+  {id:"s107",n:'Tuna Macaroni Salad',em:"🐟",cat:"salad",desc:'A classic deli-style tuna macaroni salad — creamy, comforting and perfect for warm days.',tags:[],rev:104,rating:0,reviews:[]},
   
-  {id:"s110",n:'Broccoli Layered Salad',em:"🥦",cat:"salad",desc:'Crisp broccoli florets, sharp cheddar, bacon and sunflower seeds in a creamy dressing. Crunchy and savory.',tags:[],rev:0,rating:5.0,reviews:[]},
-  {id:"s111",n:'Celery Apple Layered Salad',em:"🍎",cat:"salad",desc:'Crisp celery, sweet apples, walnuts and dried cranberries in a light creamy dressing. Fresh and crunchy.',tags:["vegan"],rev:0,rating:5.0,reviews:[]},
-  {id:"s118",n:'Cheeseburger Layered Salad',em:"🍔",cat:"salad",desc:'All the fixings of a cheeseburger — beef, cheddar, pickles, tomato — in layered salad form.',tags:[],rev:0,rating:5.0,reviews:[]},
-  {id:"s112",n:'Crispy Pepperoni Layered Salad',em:"🍕",cat:"salad",desc:'Crispy pepperoni, mozzarella, olives and Italian vegetables with a tangy vinaigrette. Pizza salad vibes.',tags:[],rev:0,rating:5.0,reviews:[]},
-  {id:"s113",n:'Irish Pub Layered Salad',em:"☘️",cat:"salad",desc:'A pub-inspired salad with corned beef, Swiss, sauerkraut and Thousand Island dressing. Reuben in a bowl.',tags:[],rev:0,rating:5.0,reviews:[]},
-  {id:"s114",n:'Nicoise Layered Salad',em:"🐟",cat:"salad",desc:'A classic French Niçoise with tuna, olives, green beans, hard-boiled eggs and a Dijon vinaigrette.',tags:["gf"],rev:0,rating:5.0,reviews:[]},
-  {id:"s115",n:'Salad Bar Layered Salad',em:"🥗",cat:"salad",desc:'A customizable salad bar-style layered salad with all the classic toppings and a creamy house dressing.',tags:[],rev:65,rating:5.0,reviews:[]},
-  {id:"s116",n:'Shaved Brussel Sprout Layered Salad',em:"🥦",cat:"salad",desc:'Shaved Brussels sprouts with bacon, Parmesan, lemon and toasted almonds. Nutty, crispy and delicious.',tags:[],rev:0,rating:5.0,reviews:[]},
-  {id:"s117",n:'Village Salad',em:"🥗",cat:"salad",desc:'A simple Greek-style salad with tomatoes, cucumber, red onion, olives and feta in a lemon vinaigrette.',tags:["vegan","gf"],rev:52,rating:5.0,reviews:[]},
+  {id:"s110",n:'Broccoli Layered Salad',em:"🥦",cat:"salad",desc:'Crisp broccoli florets, sharp cheddar, bacon and sunflower seeds in a creamy dressing. Crunchy and savory.',tags:[],rev:0,rating:0,reviews:[]},
+  {id:"s111",n:'Celery Apple Layered Salad',em:"🍎",cat:"salad",desc:'Crisp celery, sweet apples, walnuts and dried cranberries in a light creamy dressing. Fresh and crunchy.',tags:["vegan"],rev:0,rating:0,reviews:[]},
+  {id:"s118",n:'Cheeseburger Layered Salad',em:"🍔",cat:"salad",desc:'All the fixings of a cheeseburger — beef, cheddar, pickles, tomato — in layered salad form.',tags:[],rev:0,rating:0,reviews:[]},
+  {id:"s112",n:'Crispy Pepperoni Layered Salad',em:"🍕",cat:"salad",desc:'Crispy pepperoni, mozzarella, olives and Italian vegetables with a tangy vinaigrette. Pizza salad vibes.',tags:[],rev:0,rating:0,reviews:[]},
+  {id:"s113",n:'Irish Pub Layered Salad',em:"☘️",cat:"salad",desc:'A pub-inspired salad with corned beef, Swiss, sauerkraut and Thousand Island dressing. Reuben in a bowl.',tags:[],rev:0,rating:0,reviews:[]},
+  {id:"s114",n:'Nicoise Layered Salad',em:"🐟",cat:"salad",desc:'A classic French Niçoise with tuna, olives, green beans, hard-boiled eggs and a Dijon vinaigrette.',tags:["gf"],rev:0,rating:0,reviews:[]},
+  {id:"s115",n:'Salad Bar Layered Salad',em:"🥗",cat:"salad",desc:'A customizable salad bar-style layered salad with all the classic toppings and a creamy house dressing.',tags:[],rev:65,rating:0,reviews:[]},
+  {id:"s116",n:'Shaved Brussel Sprout Layered Salad',em:"🥦",cat:"salad",desc:'Shaved Brussels sprouts with bacon, Parmesan, lemon and toasted almonds. Nutty, crispy and delicious.',tags:[],rev:0,rating:0,reviews:[]},
+  {id:"s117",n:'Village Salad',em:"🥗",cat:"salad",desc:'A simple Greek-style salad with tomatoes, cucumber, red onion, olives and feta in a lemon vinaigrette.',tags:["vegan","gf"],rev:52,rating:0,reviews:[]},
 ];
 
 const SOUP_PHOTOS = {
@@ -1726,7 +1731,7 @@ const FIREBASE_CONFIG = {
   appId: "1:432229384791:web:4db16a355c485a91a95912"
 };
 const VAPID_KEY = 'BJFMSeMr6wjx_D0GfnH3dolcN_PQFgQh6xP9RuUKSJ2GLUwq-1fv8GUwWJg36LMSQy6U6kLk4FHNjaF4zpM1Ikk'; // ← paste Web App URL after deploying
-let cart=[], szi={}, isAdmin=false, starPending={};
+let cart=[], szi={}, isAdmin=false;
 
 // ════ SCHEDULE (vacation mode + special deadline) ════
 var SCHEDULE = (function(){
@@ -2029,6 +2034,8 @@ function toggleGiftOrder(){
   if(addr) addr.placeholder = on
     ? 'THEIR street address *'
     : 'Street address (e.g. 1247 Bielby St, Waterford) *';
+  // Don't let the phone offer the buyer's own address for the recipient's door (S-021).
+  if(addr) addr.setAttribute('autocomplete', on ? 'section-gift street-address' : 'street-address');
   var tog = $('addr-toggle');
   if(tog && on) tog.style.display='none';   // saved home/alt addresses are the buyer's
 }
@@ -3138,6 +3145,29 @@ function resendUnsentOrder(){
   }, function(e){ console.warn('Unsent order still not sent:', e && e.message); });
 }
 
+// S-019: the confirmation only had a QR code, which can't be scanned by the phone showing
+// it — and most customers order on their phone. This opens Venmo with Lia, the amount and
+// a note (name + order number, so Lia can match it on Monday) already filled in.
+var VENMO_USER = 'Lia-Merritt2282';
+function venmoPayUrl(o){
+  var note = (o.name ? o.name + ' · ' : '') + 'Ladle & Spoon order ' + o.id;
+  return 'https://venmo.com/' + VENMO_USER + '?txn=pay&amount=' + Number(o.total).toFixed(2) + '&note=' + encodeURIComponent(note);
+}
+function venmoPayButton(o){
+  if(!(o.total > 0)) return '';
+  return '<a class="bp" id="venmo-pay" href="' + esc(venmoPayUrl(o)) + '" target="_blank" rel="noopener" style="display:block;box-sizing:border-box;text-decoration:none;background:#008CFF;color:#fff;text-align:center">Pay $' + Number(o.total).toFixed(2) + ' in Venmo</a>';
+}
+// "Sausage Gnocchi Pint x2", not "… x1, … x1" (S-022).
+function groupedItemList(items){
+  var out = [], at = {};
+  (items||[]).forEach(function(i){
+    var k = i.box ? null : i.name + '|' + i.size;
+    if(k !== null && at[k] !== undefined){ out[at[k]].qty += (i.qty||1); return; }
+    if(k !== null) at[k] = out.length;
+    out.push({ name:i.name, size:i.size, qty:(i.qty||1) });
+  });
+  return out.map(function(i){ return esc(i.name) + ' ' + esc(i.size) + ' x' + i.qty; }).join(', ');
+}
 function showOrderConfirmation(o){
   // Surface what the certificate covered. Captured at submit, because GIFT_CODE is
   // cleared straight afterwards so a refresh cannot re-apply a spent certificate.
@@ -3163,14 +3193,14 @@ function showOrderConfirmation(o){
       <h2 style="font-family:'Cormorant Garamond',serif;font-size:26px;color:var(--f);margin-bottom:8px">Order Placed!</h2>
       <p style="color:var(--t3);font-size:14px;margin-bottom:20px">Order ${o.id} · ${o.name}</p>
       <div style="background:var(--cr);border-radius:12px;padding:14px;text-align:left;margin-bottom:18px;font-size:13px">
-        <div style="margin-bottom:6px"><strong>Items:</strong> ${(o.items||[]).map(function(i){return i.name+' '+i.size+' x'+i.qty;}).join(', ')}</div>
+        <div style="margin-bottom:6px"><strong>Items:</strong> ${groupedItemList(o.items)}</div>
         <div style="margin-bottom:6px"><strong>Address:</strong> ${o.address||'—'}</div>
         <div style="margin-bottom:6px"><strong>Payment:</strong> ${o.payment==='venmo'?'💙 Venmo':'💵 Cash'}</div>
         ${o.giftApplied>0?`<div style="margin-bottom:6px;color:var(--f)"><strong>🎁 Gift certificate:</strong> -$${o.giftApplied.toFixed(2)}${o.giftRemaining>0?` <span style="color:var(--t3);font-weight:400">($${o.giftRemaining.toFixed(2)} left for next time)</span>`:''}</div>`:''}
         <div><strong>Total:</strong> $${o.total.toFixed(2)}</div>
       </div>
       <div style="background:#fef3c7;border-radius:10px;padding:12px;font-size:13px;margin-bottom:18px">
-        ${o.payment==='venmo'?'<div style="text-align:center"><img src="data:image/png;base64,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" style="width:160px;height:160px;border-radius:8px;margin:4px auto;display:block" alt="Venmo QR"><div style="font-size:13px;font-weight:700;color:#1B3D1C;margin-top:6px">Scan to pay @Lia-Merritt2282</div><div style="font-size:11px;color:var(--t3);margin-top:2px">$'+o.total.toFixed(2)+' · Use your name as the note</div><div style="font-size:11px;color:var(--t3);margin-top:2px">Venmo last 4 of phone: <strong>5132</strong></div></div>':'<strong>Please have $'+o.total.toFixed(2)+' cash ready for delivery</strong>'}
+        ${o.payment==='venmo'?'<div style="text-align:center">'+venmoPayButton(o)+'<div style="font-size:11px;color:var(--t3);margin:12px 0 2px">Paying from another device? Scan this:</div><img src="data:image/png;base64,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" style="width:120px;height:120px;border-radius:8px;margin:4px auto;display:block" alt="Venmo QR code for @Lia-Merritt2282"><div style="font-size:12px;font-weight:700;color:#1B3D1C;margin-top:6px">Venmo @Lia-Merritt2282</div><div style="font-size:11px;color:var(--t3);margin-top:2px">$'+o.total.toFixed(2)+' · Use your name as the note</div><div style="font-size:11px;color:var(--t3);margin-top:2px">Venmo last 4 of phone: <strong>5132</strong></div><div style="font-size:11px;color:var(--t3);margin-top:8px">Your confirmation email has the final total. If it\'s different, the email is right.</div></div>':'<strong>Please have $'+o.total.toFixed(2)+' cash ready for delivery</strong>'}
       </div>
       ${_oRefHtml}
       <button class="bp" onclick="closeOv('ov-cart')">Done ✓</button>
@@ -4157,6 +4187,9 @@ function initNotifUI(){
 function updateHeroState(){
   var h1 = document.getElementById('hero-h1');
   if(!h1) return;
+  // S-023: the headline was the only way to the menu from Home and looked like plain text.
+  var menuBtn = $('hero-menu-btn');
+  if(menuBtn) menuBtn.style.display = 'none';
 
   if(isVacationActive()){
     h1.innerHTML = 'On Vacation<br><em style="font-size:16px">🏖️ No deliveries this week</em>';
@@ -4192,14 +4225,16 @@ function updateHeroState(){
     h1.innerHTML = 'This week\'s menu<br>is <em>live!</em><br><span style="font-size:15px;font-weight:700;color:#7FFF00;font-style:normal;text-shadow:0 0 8px rgba(127,255,0,0.5)">📦 Delivering Monday, ' + monShort + '</span>';
     h1.onclick = function(){ if(typeof sw!=='undefined') sw('menu',$('nav-menu')); };
     h1.style.cursor = 'pointer';
+    if(menuBtn) menuBtn.style.display = '';
   } else if(dow === 6){ // Saturday
     h1.innerHTML = 'Menu closed<br><em style="font-size:16px">🍳 Cooking up Monday\'s delivery!</em><br><span style="font-size:14px;font-weight:700;color:#7FFF00;font-style:normal;text-shadow:0 0 8px rgba(127,255,0,0.5)">Arriving ' + monLabel + '</span>';
     h1.onclick = null; h1.style.cursor = 'default';
   } else if(dow === 0){ // Sunday
     h1.innerHTML = 'Menu closed<br><em style="font-size:16px">🥣 Soups are simmering!</em><br><span style="font-size:14px;font-weight:700;color:#7FFF00;font-style:normal;text-shadow:0 0 8px rgba(127,255,0,0.5)">Delivering tomorrow, ' + monShort + '</span>';
     h1.onclick = null; h1.style.cursor = 'default';
-  } else if(dow === 1){ // Monday
-    h1.innerHTML = 'Finalizing today\'s<br><em>delivery!</em><br><span style="font-size:14px;font-weight:700;color:#7FFF00;font-style:normal;text-shadow:0 0 8px rgba(127,255,0,0.5)">🚗 On the way — ' + monLabel + '</span>';
+  } else if(dow === 1){ // Monday: today's delivery (nextMon is a week away on a Monday)
+    var todayLabel = now.toLocaleDateString('en-US',{weekday:'long', month:'long', day:'numeric'});
+    h1.innerHTML = 'Finalizing today\'s<br><em>delivery!</em><br><span style="font-size:14px;font-weight:700;color:#7FFF00;font-style:normal;text-shadow:0 0 8px rgba(127,255,0,0.5)">🚗 On the way — ' + todayLabel + '</span>';
     h1.onclick = null; h1.style.cursor = 'default';
   }
 }
@@ -4380,6 +4415,12 @@ function maybeShowWelcome(){
 function dismissWelcome(){
   try{localStorage.setItem('ladle_welcome_shown','1');}catch(e){}
   closeOv('ov-welcome');
+  // S-023: "Let's See the Menu!" used to leave a new visitor on Home, which has no soups
+  // on it. Open the menu, unless there is none to see yet (before Lia publishes, or on vacation).
+  try{
+    var menuToShow = !isVacationActive() && (MENU_LOADING || (MENU_ITEMS && MENU_ITEMS.length > 0));
+    if(menuToShow) sw('menu', $('nav-menu'));
+  }catch(e){}
 }
 
 // ── REFERRAL SHARING ──
@@ -4418,7 +4459,7 @@ function refShareNative(code,fname){
 }
 
 window.onload = () => {
-  console.log("APP VERSION: 2026-10-02-v257-speed-reliability");
+  console.log("APP VERSION: 2026-10-02-v258-ordering-on-a-phone");
   // One-time cleanup: remove legacy subscription data from localStorage
   try{ localStorage.removeItem('my_sub'); localStorage.removeItem('my_swap'); }catch(e){}
   startMenuEarly();   // normally already running since DOMContentLoaded — see below
@@ -5489,11 +5530,14 @@ function countdown(){
     dead.setDate(now.getDate() + daysToFriday);
     dead.setHours(ORDER_CUTOFF_HOUR,0,0,0);
   }
-  // Update week label
+  // Week label: the delivery this week's orders are for. It used to say "WEEK OF" this
+  // week's Monday (Sep 28) right above "Delivering Monday, Oct 5" (S-023).
   const mon = new Date(now);
-  mon.setDate(now.getDate() - (dow === 0 ? 6 : dow - 1));
+  mon.setDate(now.getDate() + (dow === 1 ? 0 : dow === 0 ? 1 : 8 - dow));
   const wktEl = document.querySelector('.wkt');
-  if(wktEl) wktEl.textContent = 'WEEK OF ' + mon.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}).toUpperCase();
+  if(wktEl) wktEl.textContent = SCHEDULE.specialDeliveryLabel
+    ? ('DELIVERY ' + String(SCHEDULE.specialDeliveryLabel).toUpperCase())
+    : ('DELIVERY ' + mon.toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric'}).toUpperCase());
   // Update deadline display
   const dlEl = document.querySelector('.dlt span');
   if(dlEl){
@@ -5633,7 +5677,7 @@ function showItem(id){
   szi[id] = szi[id]||0;
   const revHTML = s.reviews.length
     ? s.reviews.map(revCard).join('')
-    : '<p style="font-size:13px;color:var(--t3)">No reviews yet — be the first!</p>';
+    : '<p style="font-size:13px;color:var(--t3)">No reviews yet.</p>';
   const ph = photoUrl(getSoupPhoto(it.n, it.soupId));
   var _itDescs={}; try{_itDescs=JSON.parse(localStorage.getItem('custom_descs')||'{}');}catch(e){}
   const itDesc = it.desc || _itDescs[it.soupId] || _itDescs[it.n.toLowerCase()] || '';
@@ -5664,14 +5708,7 @@ function showItem(id){
       <div class="rev-section">
         <h4>⭐ Ratings &amp; Reviews${s.rating>0?' · '+s.rating+' avg ('+ratingCount(s)+')':''}</h4>
         ${revHTML}
-        <div style="margin-top:14px;padding-top:14px;border-top:1px solid var(--bd)">
-          <p style="font-size:13px;font-weight:700;color:var(--f);margin-bottom:9px">Leave a Review</p>
-          <div class="star-row" id="sr2-${id}">
-            ${[1,2,3,4,5].map(n=>`<button class="sbtn" onclick="setStar('${id}','${it.soupId}',${n})">⭐</button>`).join('')}
-          </div>
-          <textarea class="rev-ta" id="rtxt-${id}" placeholder="Tell Lia what you thought…"></textarea>
-          <button class="bp am" onclick="submitRev('${id}','${it.soupId}')">Submit Review</button>
-        </div>
+        ${rateInviteHTML(it.n)}
       </div>
     </div>`;
   openOv('ov-item');
@@ -5713,23 +5750,20 @@ function qAddSized(id, sizeIdx){
 function updCart(){var _cc=$('cc');if(_cc)_cc.textContent=cart.reduce((a,b)=>a+b.qty,0);}
 
 // ════ RATINGS ════
-function setStar(menuId, soupId, n){
-  starPending[menuId]={soupId,stars:n};
-  document.querySelectorAll(`#sr2-${menuId} .sbtn`).forEach((b,i)=>b.classList.toggle('on',i<n));
-}
-function submitRev(menuId, soupId){
-  const sp = starPending[menuId]; if(!sp){toast('Please tap a star rating first!');return;}
-  const txt = $('rtxt-'+menuId)?.value||'';
-  const s = ALL_SOUPS.find(x=>x.id===soupId);
-  if(s){
-    if(s.count)s.count++;
-    s.reviews.push({name:'You',stars:sp.stars,text:txt||'Great soup!'});
-    s.rating = s.reviews.reduce((a,r)=>a+r.stars,0)/s.reviews.length;
+// S-020: the item screen and Best Sellers each had a "Leave a Review" box that only changed
+// this phone's copy and thanked the customer; nothing reached Lia. Ratings now go through
+// the one flow that does reach her: the order's rating screen (invoice link, Home card).
+function rateInviteHTML(dishName){
+  var box = '<div class="rate-invite" style="margin-top:14px;padding-top:14px;border-top:1px solid var(--bd)">';
+  if(_pendingRating){
+    var had = (_pendingRating.items||[]).some(function(i){ return (i.name||'').toLowerCase() === (dishName||'').toLowerCase(); });
+    return box + '<button class="bp am" onclick="rateFromDish()">⭐ ' + (had ? 'Had this recently? Rate it →' : 'Rate your last order →') + '</button></div>';
   }
-  delete starPending[menuId];
-  closeOv('ov-item');
-  buildMenu(); buildRatings();
-  toast('⭐ Review submitted! Lia loves the feedback — thank you!');
+  return box + '<p style="font-size:13px;color:var(--t3)">Had this one? A link to rate it comes with your delivery invoice.</p></div>';
+}
+function rateFromDish(){
+  closeOv('ov-item'); closeOv('ov-rec');
+  openPendingRating();
 }
 
 // ════ CART ════
@@ -5771,12 +5805,13 @@ function showCart(){
       <div class="sh"><div class="st">Your Order</div><button onclick="closeOv('ov-cart')" style="font-size:12px;font-weight:700;color:var(--f);background:transparent;border:1.5px solid var(--f);border-radius:8px;padding:4px 10px;cursor:pointer">+ Continue Shopping</button></div>
       ${cart.length===0
         ?'<div style="text-align:center;padding:30px 0;font-size:44px">🛒<p style="color:var(--t3);font-size:14px;margin-top:10px">Your cart is empty</p></div>'
-        :cart.map((c,i)=>`<div class="ci">
+        :cartGroups().map((g,gi)=>{ const c=g.c; return `<div class="ci">
           <div class="ciem">${c.em}</div>
-          <div class="ciinf"><strong>${c.n}</strong><span>${c.sz.l}${c.sz.o ? ' · ' + c.sz.o : ''} × ${c.qty}</span></div>
-          <div class="cip">$${(c.sz.p*c.qty).toFixed(2)}</div>
-          <button class="cirm" onclick="rmItem(${i})">✕</button>
-        </div>`).join('')}
+          <div class="ciinf"><strong>${c.n}</strong><span>${c.sz.l}${c.sz.o ? ' · ' + c.sz.o : ''}${g.box ? '' : ' · $' + Number(c.sz.p).toFixed(2) + ' each'}</span></div>
+          ${g.box
+            ? `<div class="cip">$${(c.sz.p*c.qty).toFixed(2)}</div><button class="cirm" aria-label="Remove" onclick="rmItem(${g.idx[0]})">✕</button>`
+            : `<div class="cistep"><button aria-label="One fewer" onclick="cartStep(${gi},-1)">−</button><b>${g.qty}</b><button aria-label="One more" onclick="cartStep(${gi},1)">+</button></div><div class="cip" style="min-width:58px;text-align:right">$${g.total.toFixed(2)}</div>`}
+        </div>`; }).join('')}
       ${cart.length>0?`
         <div style="background:#f0faf0;border:1.5px solid var(--f);border-radius:10px;padding:10px 12px;margin-bottom:12px;font-size:12px;font-weight:700;color:var(--f)">🔥 ${streakLabel}</div>
         ${proj.resetting&&CART_USE_CREDIT!=='protect_streak'?`<div style="background:#fff3f0;border-radius:10px;padding:10px 12px;margin-bottom:12px;font-size:12px;color:#9a3412">Missed ${proj.weeksSkipped} week${proj.weeksSkipped>1?'s':''} — your streak will reset to Week 1 unless you protect it below.</div>`:''}
@@ -5794,19 +5829,19 @@ function showCart(){
         <div style="margin:14px 0 8px;font-size:13px;font-weight:700;color:var(--t2)">Gift Certificate</div>
         ${GIFT_CODE
           ? `<div style="display:flex;align-items:center;justify-content:space-between;background:#f0faf0;border:1.5px solid var(--f);border-radius:10px;padding:9px 12px;margin-bottom:14px;font-size:12px;color:var(--t2)"><span>✓ <strong style="font-family:monospace">${GIFT_CODE}</strong> · $${GIFT_BALANCE.toFixed(2)} available</span><button onclick="clearGiftCode()" style="background:transparent;border:none;color:var(--f);font-weight:700;cursor:pointer;font-size:12px">Remove</button></div>`
-          : `<div style="display:flex;gap:7px;margin-bottom:6px"><input id="gift-inp" placeholder="LS-XXXX-XXXX" style="flex:1;padding:9px;border-radius:8px;border:1.5px solid var(--bd);font-size:13px;font-family:monospace;text-transform:uppercase;outline:none" onkeydown="if(event.key==='Enter')applyGiftCode()"><button onclick="applyGiftCode()" style="padding:9px 15px;border-radius:8px;border:none;background:var(--f);color:#fff;font-size:12px;font-weight:700;cursor:pointer">Apply</button></div>
+          : `<div style="display:flex;gap:7px;margin-bottom:6px"><input id="gift-inp" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="LS-XXXX-XXXX" style="flex:1;padding:9px;border-radius:8px;border:1.5px solid var(--bd);font-size:13px;font-family:monospace;text-transform:uppercase;outline:none" onkeydown="if(event.key==='Enter')applyGiftCode()"><button onclick="applyGiftCode()" style="padding:9px 15px;border-radius:8px;border:none;background:var(--f);color:#fff;font-size:12px;font-weight:700;cursor:pointer">Apply</button></div>
              <div id="gift-msg" style="font-size:11px;color:var(--cl);min-height:14px;margin-bottom:10px">${GIFT_MSG}</div>`}
         <div style="margin:14px 0 8px;font-size:13px;font-weight:700;color:var(--t2)">Coupon Code</div>
         <div style="display:flex;gap:7px;margin-bottom:14px">
-          <input id="coupon-inp" class="fi-sel" placeholder="Enter promo code" style="flex:1;padding:10px;border-radius:10px;border:2px solid var(--bd);font-size:13px;outline:none">
+          <input id="coupon-inp" class="fi-sel" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="Enter promo code" style="flex:1;padding:10px;border-radius:10px;border:2px solid var(--bd);font-size:13px;outline:none">
           <button onclick="applyCoupon()" style="padding:10px 14px;background:var(--f);color:#fff;border:none;border-radius:10px;font-weight:700;cursor:pointer">Apply</button>
         </div>
         <div id="coupon-msg" style="font-size:12px;color:var(--sg);margin-bottom:10px;display:none"></div>
         <div style="margin:0 0 8px;font-size:13px;font-weight:700;color:var(--t2)">Complete Your Order</div>
         <div style="display:grid;gap:9px;margin-bottom:14px">
-          <input id="ord-name" class="fi-sel" placeholder="Full name *" style="padding:10px;border-radius:10px;border:2px solid var(--bd);font-size:13px;outline:none;width:100%">
-          <input id="ord-email" class="fi-sel" placeholder="Email address *" type="email" style="padding:10px;border-radius:10px;border:2px solid var(--bd);font-size:13px;outline:none;width:100%">
-          <input id="ord-phone" class="fi-sel" placeholder="Phone number *" type="tel" style="padding:10px;border-radius:10px;border:2px solid var(--bd);font-size:13px;outline:none;width:100%">
+          <input id="ord-name" name="name" class="fi-sel" autocomplete="name" placeholder="Full name *" style="padding:10px;border-radius:10px;border:2px solid var(--bd);font-size:13px;outline:none;width:100%">
+          <input id="ord-email" name="email" class="fi-sel" autocomplete="email" inputmode="email" autocapitalize="off" spellcheck="false" placeholder="Email address *" type="email" style="padding:10px;border-radius:10px;border:2px solid var(--bd);font-size:13px;outline:none;width:100%">
+          <input id="ord-phone" name="tel" class="fi-sel" autocomplete="tel" placeholder="Phone number *" type="tel" style="padding:10px;border-radius:10px;border:2px solid var(--bd);font-size:13px;outline:none;width:100%">
           <div id="addr-toggle" style="display:none;margin-bottom:6px;gap:8px"><button type="button" id="addr-btn-home" onclick="switchAddr('home')" style="flex:1;padding:7px;border-radius:8px;border:2px solid var(--f);background:var(--f);color:#fff;font-size:11px;font-weight:700;cursor:pointer">🏠 Home</button><button type="button" id="addr-btn-alt" onclick="switchAddr('alt')" style="flex:1;padding:7px;border-radius:8px;border:2px solid #e5e7eb;background:#fff;color:#666;font-size:11px;font-weight:700;cursor:pointer">🏢 Alternate</button></div>
           <div id="src-ask" style="display:none;background:#f0f6ff;border-radius:10px;padding:11px 13px">
             <div style="font-size:12px;font-weight:700;color:var(--t2);margin-bottom:6px">How did you hear about Ladle &amp; Spoon?</div>
@@ -5833,18 +5868,18 @@ function showCart(){
           </label>
           <div id="gift-order-fields" style="display:none;gap:9px;grid-template-columns:1fr">
             <div style="font-size:11px;color:var(--t3);line-height:1.5">We&rsquo;ll deliver to them and email the receipt to you. Your name goes on the card.</div>
-            <input id="gift-to-name" class="fi-sel" placeholder="Their name *" style="padding:10px;border-radius:10px;border:2px solid var(--bd);font-size:13px;outline:none;width:100%">
-            <input id="gift-to-phone" class="fi-sel" placeholder="Their phone (in case Lia can't find the door)" type="tel" style="padding:10px;border-radius:10px;border:2px solid var(--bd);font-size:13px;outline:none;width:100%">
-            <input id="gift-to-email" class="fi-sel" placeholder="Their email (optional, so they hear about next week's menu)" type="email" style="padding:10px;border-radius:10px;border:2px solid var(--bd);font-size:13px;outline:none;width:100%">
+            <input id="gift-to-name" class="fi-sel" autocomplete="section-gift name" placeholder="Their name *" style="padding:10px;border-radius:10px;border:2px solid var(--bd);font-size:13px;outline:none;width:100%">
+            <input id="gift-to-phone" class="fi-sel" autocomplete="section-gift tel" placeholder="Their phone (in case Lia can't find the door)" type="tel" style="padding:10px;border-radius:10px;border:2px solid var(--bd);font-size:13px;outline:none;width:100%">
+            <input id="gift-to-email" class="fi-sel" autocomplete="section-gift email" autocapitalize="off" spellcheck="false" placeholder="Their email (optional, so they hear about next week's menu)" type="email" style="padding:10px;border-radius:10px;border:2px solid var(--bd);font-size:13px;outline:none;width:100%">
             <textarea id="gift-to-msg" rows="2" placeholder="A note to go with it (optional)" style="padding:10px;border-radius:10px;border:2px solid var(--bd);font-size:13px;outline:none;width:100%;box-sizing:border-box;font-family:inherit"></textarea>
           </div>
-          <input id="ord-addr" class="fi-sel" placeholder="Street address (e.g. 1247 Bielby St, Waterford) *" oninput="this.style.borderColor=''" style="padding:10px;border-radius:10px;border:2px solid var(--bd);font-size:13px;outline:none;width:100%">
+          <input id="ord-addr" name="street-address" class="fi-sel" autocomplete="street-address" placeholder="Street address (e.g. 1247 Bielby St, Waterford) *" oninput="this.style.borderColor=''" style="padding:10px;border-radius:10px;border:2px solid var(--bd);font-size:13px;outline:none;width:100%">
           <a id="ref-code-link" href="#" onclick="$('ref-code-row').style.display='';this.style.display='none';$('ord-ref-code').focus();return false;" style="font-size:12px;color:var(--f);font-weight:600;text-decoration:underline;align-self:flex-start">Have a referral code from a friend?</a>
           <div id="ref-code-row" style="display:none">
-            <input id="ord-ref-code" class="fi-sel" type="tel" placeholder="Referral code from a friend? (optional)" style="padding:10px;border-radius:10px;border:2px solid var(--bd);font-size:13px;outline:none;width:100%">
+            <input id="ord-ref-code" class="fi-sel" type="text" inputmode="numeric" autocomplete="off" placeholder="Referral code from a friend? (optional)" style="padding:10px;border-radius:10px;border:2px solid var(--bd);font-size:13px;outline:none;width:100%">
           </div>
           <select id="ord-pay" class="fi-sel" style="padding:10px;border-radius:10px;border:2px solid var(--bd);font-size:13px;outline:none;width:100%;background:#fff">
-            <option value="venmo">Venmo (QR Code Provided Here)</option>
+            <option value="venmo">Venmo (one-tap pay link after ordering)</option>
             <option value="cash">Cash on Delivery</option>
           </select>
           <textarea id="ord-notes" class="fi-sel" placeholder="Comments or special instructions (delivery window, etc.)" rows="2" style="padding:10px;border-radius:10px;border:2px solid var(--bd);font-size:13px;outline:none;width:100%;resize:none"></textarea>
@@ -5889,6 +5924,29 @@ function showCart(){
 
 
 function rmItem(i){cart.splice(i,1);updCart();showCart();}
+// S-022: every tap adds its own cart entry (one per unit), which the order, the gift box and
+// the kitchen columns rely on. The cart only *shows* them grouped by dish and size, with
+// − / +. A gift box has its own contents, so it never groups.
+function cartLineKey(c, i){
+  return (c.boxItems || c.boxContents) ? 'box#' + i : c.id + '|' + c.sz.l + '|' + c.sz.p;
+}
+function cartGroups(list){
+  list = list || cart;
+  var groups = [], at = {};
+  list.forEach(function(c, i){
+    var k = cartLineKey(c, i);
+    if(at[k] === undefined){ at[k] = groups.length; groups.push({ key:k, c:c, idx:[], qty:0, total:0, box:k.indexOf('box#') === 0 }); }
+    var g = groups[at[k]];
+    g.idx.push(i); g.qty += (c.qty || 1); g.total += c.sz.p * (c.qty || 1);
+  });
+  return groups;
+}
+function cartStep(gi, d){
+  var g = cartGroups()[gi]; if(!g || g.box) return;
+  if(d > 0) cart.push(Object.assign({}, g.c, { sz:Object.assign({}, g.c.sz), qty:1 }));
+  else cart.splice(g.idx[g.idx.length - 1], 1);
+  updCart(); showCart();
+}
 
 // ════ AUDIT ════
 // Load monthly detail directly from Sheet tabs — no dependency on audit
@@ -6067,30 +6125,10 @@ function showSoupDetail(id){
       <div class="rev-section" style="padding-top:0;margin-top:0;border-top:none">
         <h4>Customer Reviews</h4>
         ${revHTML}
-        <div style="margin-top:14px;padding-top:14px;border-top:1px solid var(--bd)">
-          <p style="font-size:13px;font-weight:700;color:var(--f);margin-bottom:9px">Leave a Review</p>
-          <div class="star-row" id="rsr-${id}">
-            ${[1,2,3,4,5].map(n=>`<button class="sbtn" onclick="setRepoStar('${id}',${n})">⭐</button>`).join('')}
-          </div>
-          <textarea class="rev-ta" id="rrtxt-${id}" placeholder="What did you think of this soup?"></textarea>
-          <button class="bp am" onclick="submitRepoRev('${id}')">Submit Review</button>
-        </div>
+        ${rateInviteHTML(r.n)}
       </div>
     </div>`;
   openOv('ov-rec');
-}
-function setRepoStar(id,n){
-  starPending['repo_'+id]={soupId:id,stars:n};
-  document.querySelectorAll(`#rsr-${id} .sbtn`).forEach((b,i)=>b.classList.toggle('on',i<n));
-}
-function submitRepoRev(id){
-  const sp=starPending['repo_'+id];if(!sp){toast('Please tap a star rating first!');return;}
-  const txt=$('rrtxt-'+id)?.value||'';
-  const s=ALL_SOUPS.find(x=>x.id===id);
-  if(s){if(s.count)s.count++;s.reviews.push({name:'You',stars:sp.stars,text:txt||'Love this soup!'});s.rating=s.reviews.reduce((a,r)=>a+r.stars,0)/s.reviews.length;}
-  delete starPending['repo_'+id];
-  closeOv('ov-rec');buildRepo();buildRatings();
-  toast('⭐ Review submitted — thank you!');
 }
 
 // ════ ADMIN ════
@@ -8342,7 +8380,8 @@ function sendRatingRequests(btn){
 }
 
 function buildRatings(){
-  const rated=ALL_SOUPS.filter(s=>s.reviews.length>0).sort((a,b)=>b.rating-a.rating);
+  // Every dish with real ratings, written review or not (the recipe list's made-up 5.0s are gone, S-020).
+  const rated=ALL_SOUPS.filter(s=>s.rating>0).sort((a,b)=>b.rating-a.rating);
   $('ratings-list').innerHTML = rated.length
     ? rated.map(s=>`<div class="rat-row">
         <span style="font-size:20px">${s.em}</span>
