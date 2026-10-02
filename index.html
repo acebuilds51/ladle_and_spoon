@@ -455,6 +455,8 @@ header{background:var(--f);padding:10px 14px;min-height:88px;display:flex;align-
 .dv-row>*{flex:1;}
 .dv-pay{border-radius:10px;padding:10px 12px;font-size:15px;font-weight:800;margin-bottom:10px;}
 .dv-step{font-size:12px;color:var(--t3);text-align:center;margin-top:6px;}
+.rt-look-btn{background:var(--f);color:#fff;border:none;border-radius:9px;padding:8px 12px;font-size:13px;font-weight:800;font-family:inherit;cursor:pointer;flex-shrink:0;}
+#rt-look{display:none;position:fixed;inset:0;z-index:9500;background:var(--cr);overflow-y:auto;padding:16px 16px 40px;box-sizing:border-box;}
 /* SOCIAL */
 .plt{display:flex;gap:8px;margin-bottom:12px;}
 .pb{flex:1;padding:9px 5px;border-radius:10px;border:2px solid var(--bd);background:#fff;font-size:11px;font-weight:700;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:3px;color:var(--t2);}
@@ -563,7 +565,7 @@ header{background:var(--f);padding:10px 14px;min-height:88px;display:flex;align-
   <div class="anniv-confetti"><i class="anniv-cf"></i><i class="anniv-cf"></i><i class="anniv-cf"></i><i class="anniv-cf"></i><i class="anniv-cf"></i><i class="anniv-cf"></i><i class="anniv-cf"></i><i class="anniv-cf"></i><i class="anniv-cf"></i><i class="anniv-cf"></i><i class="anniv-cf"></i><i class="anniv-cf"></i><i class="anniv-cf"></i><i class="anniv-cf"></i><i class="anniv-cf"></i><i class="anniv-cf"></i><i class="anniv-cf"></i><i class="anniv-cf"></i><i class="anniv-cf"></i><i class="anniv-cf"></i><i class="anniv-cf"></i><i class="anniv-cf"></i><i class="anniv-cf"></i><i class="anniv-cf"></i><i class="anniv-cf"></i><i class="anniv-cf"></i><i class="anniv-cf"></i><i class="anniv-cf"></i><i class="anniv-cf"></i><i class="anniv-cf"></i></div>
   <div style="position:absolute;left:14px;top:50%;transform:translateY(-50%);display:flex;align-items:center;z-index:2">
     <div class="anniv-wrap"><svg viewBox="0 0 30 50" width="24" height="40" aria-hidden="true" style="flex-shrink:0"><g><g fill="currentColor"><ellipse cx="14.0" cy="44.0" rx="5.2" ry="2.5" transform="rotate(-62 14.0 44.0)"/><ellipse cx="20.6" cy="45.5" rx="4.7" ry="2.2" transform="rotate(-4 20.6 45.5)"/><ellipse cx="12.8" cy="39.2" rx="5.0" ry="2.4" transform="rotate(-56 12.8 39.2)"/><ellipse cx="19.4" cy="40.8" rx="4.5" ry="2.2" transform="rotate(2 19.4 40.8)"/><ellipse cx="11.5" cy="34.5" rx="4.8" ry="2.3" transform="rotate(-50 11.5 34.5)"/><ellipse cx="18.1" cy="36.0" rx="4.3" ry="2.1" transform="rotate(8 18.1 36.0)"/><ellipse cx="10.2" cy="29.8" rx="4.6" ry="2.2" transform="rotate(-45 10.2 29.8)"/><ellipse cx="16.9" cy="31.2" rx="4.1" ry="2.0" transform="rotate(13 16.9 31.2)"/><ellipse cx="9.0" cy="25.0" rx="4.4" ry="2.1" transform="rotate(-39 9.0 25.0)"/><ellipse cx="15.6" cy="26.5" rx="3.9" ry="1.9" transform="rotate(19 15.6 26.5)"/><ellipse cx="7.8" cy="20.2" rx="4.1" ry="2.1" transform="rotate(-33 7.8 20.2)"/><ellipse cx="14.3" cy="21.8" rx="3.7" ry="1.9" transform="rotate(25 14.3 21.8)"/><ellipse cx="6.5" cy="15.5" rx="3.9" ry="2.0" transform="rotate(-28 6.5 15.5)"/><ellipse cx="13.1" cy="17.0" rx="3.5" ry="1.8" transform="rotate(30 13.1 17.0)"/><ellipse cx="5.2" cy="10.8" rx="3.7" ry="1.9" transform="rotate(-22 5.2 10.8)"/><ellipse cx="11.8" cy="12.2" rx="3.3" ry="1.7" transform="rotate(36 11.8 12.2)"/><ellipse cx="4.0" cy="6.0" rx="3.5" ry="1.8" transform="rotate(-16 4.0 6.0)"/><ellipse cx="10.6" cy="7.5" rx="3.1" ry="1.6" transform="rotate(42 10.6 7.5)"/><path d="M15 46 Q10 26 5 7" stroke="currentColor" stroke-width="1.6" fill="none" stroke-linecap="round"/></g></g></svg><div class="anniv-txt"><span class="a1">Celebrating</span><span class="a2">Two Years</span><span class="a3">In Business</span></div><svg viewBox="0 0 30 50" width="24" height="40" aria-hidden="true" style="flex-shrink:0"><g transform="scale(-1,1) translate(-30,0)"><g fill="currentColor"><ellipse cx="14.0" cy="44.0" rx="5.2" ry="2.5" transform="rotate(-62 14.0 44.0)"/><ellipse cx="20.6" cy="45.5" rx="4.7" ry="2.2" transform="rotate(-4 20.6 45.5)"/><ellipse cx="12.8" cy="39.2" rx="5.0" ry="2.4" transform="rotate(-56 12.8 39.2)"/><ellipse cx="19.4" cy="40.8" rx="4.5" ry="2.2" transform="rotate(2 19.4 40.8)"/><ellipse cx="11.5" cy="34.5" rx="4.8" ry="2.3" transform="rotate(-50 11.5 34.5)"/><ellipse cx="18.1" cy="36.0" rx="4.3" ry="2.1" transform="rotate(8 18.1 36.0)"/><ellipse cx="10.2" cy="29.8" rx="4.6" ry="2.2" transform="rotate(-45 10.2 29.8)"/><ellipse cx="16.9" cy="31.2" rx="4.1" ry="2.0" transform="rotate(13 16.9 31.2)"/><ellipse cx="9.0" cy="25.0" rx="4.4" ry="2.1" transform="rotate(-39 9.0 25.0)"/><ellipse cx="15.6" cy="26.5" rx="3.9" ry="1.9" transform="rotate(19 15.6 26.5)"/><ellipse cx="7.8" cy="20.2" rx="4.1" ry="2.1" transform="rotate(-33 7.8 20.2)"/><ellipse cx="14.3" cy="21.8" rx="3.7" ry="1.9" transform="rotate(25 14.3 21.8)"/><ellipse cx="6.5" cy="15.5" rx="3.9" ry="2.0" transform="rotate(-28 6.5 15.5)"/><ellipse cx="13.1" cy="17.0" rx="3.5" ry="1.8" transform="rotate(30 13.1 17.0)"/><ellipse cx="5.2" cy="10.8" rx="3.7" ry="1.9" transform="rotate(-22 5.2 10.8)"/><ellipse cx="11.8" cy="12.2" rx="3.3" ry="1.7" transform="rotate(36 11.8 12.2)"/><ellipse cx="4.0" cy="6.0" rx="3.5" ry="1.8" transform="rotate(-16 4.0 6.0)"/><ellipse cx="10.6" cy="7.5" rx="3.1" ry="1.6" transform="rotate(42 10.6 7.5)"/><path d="M15 46 Q10 26 5 7" stroke="currentColor" stroke-width="1.6" fill="none" stroke-linecap="round"/></g></g></svg></div>
-    <div class="hdr-tag" style="color:#7FFF00;font-size:10px;letter-spacing:1.5px;text-transform:uppercase;font-weight:700;line-height:1.4;"><span class="hdr-tagtxt">Homemade<br>Soups &amp; Salads<br></span><span style="font-size:8px;opacity:0.6;letter-spacing:1px">v259</span></div>
+    <div class="hdr-tag" style="color:#7FFF00;font-size:10px;letter-spacing:1.5px;text-transform:uppercase;font-weight:700;line-height:1.4;"><span class="hdr-tagtxt">Homemade<br>Soups &amp; Salads<br></span><span style="font-size:8px;opacity:0.6;letter-spacing:1px">v260</span></div>
   </div>
   <img id="hdr-logo" class="hdr-logo" src="img/logo.png" style="display:block;height:auto;max-height:66px;max-width:70%;" alt="Ladle &amp; Spoon">
   <div class="hdr-deliv" style="position:absolute;right:14px;top:8px;color:#7FFF00;font-size:10px;letter-spacing:1px;font-weight:600;line-height:1.4;text-align:right;z-index:2">Delivered Directly from<br>Our Kitchen to Your Door</div>
@@ -2028,10 +2030,12 @@ function toggleGiftOrder(){
   if(box) box.style.display = on ? 'grid' : 'none';
   var addr = $('ord-addr');
   if(addr) addr.placeholder = on
-    ? 'THEIR street address *'
-    : 'Street address (e.g. 1247 Bielby St, Waterford) *';
+    ? 'THEIR house number and street *'
+    : 'House number and street (e.g. 1247 Bielby St) *';
   // Don't let the phone offer the buyer's own address for the recipient's door (S-021).
-  if(addr) addr.setAttribute('autocomplete', on ? 'section-gift street-address' : 'street-address');
+  [['ord-addr', 'address-line1'], ['ord-city', 'address-level2'], ['ord-zip', 'postal-code']].forEach(function(f){
+    var el = $(f[0]); if(el) el.setAttribute('autocomplete', on ? 'section-gift ' + f[1] : f[1]);
+  });
   var tog = $('addr-toggle');
   if(tog && on) tog.style.display='none';   // saved home/alt addresses are the buyer's
 }
@@ -2874,7 +2878,11 @@ function submitOrder(){
   const name   = ($('ord-name') ||{value:''}).value.trim();
   const email  = ($('ord-email')||{value:''}).value.trim();
   const phone  = ($('ord-phone')||{value:''}).value.trim();
-  const addr   = ($('ord-addr') ||{value:''}).value.trim();
+  ordAddrSplitTyped();
+  const street = ($('ord-addr') ||{value:''}).value.trim().replace(/,\s*$/, '');
+  const city   = ($('ord-city') ||{value:''}).value.trim();
+  const zip    = ($('ord-zip')  ||{value:''}).value.trim();
+  const addr   = street && city && zip ? street + ', ' + city + ', MI ' + zip : street;
   const pay    = ($('ord-pay')  ||{value:'venmo'}).value;
   const notes  = ($('ord-notes')||{value:''}).value;
   // Only a hint: the server decides new vs returning from the order history.
@@ -2884,18 +2892,13 @@ function submitOrder(){
   if(!name){toast('⚠️ Please enter your name'); $('ord-name').focus(); return;}
   if(!email||!email.includes('@')){toast('⚠️ Please enter a valid email'); $('ord-email').focus(); return;}
   if(!phone||phone.replace(/\D/g,'').length<7){toast('Please enter a valid phone number'); $('ord-phone').focus(); return;}
-  // Require a real delivery address
-  if(!addr){
-    toast('Delivery address is required');
-    var el=$('ord-addr'); if(el){el.focus();el.style.borderColor='#e53e3e';}
-    return;
-  }
-  var addrErr = validateStreetAddress(addr);
-  if(addrErr){
-    toast(addrErr);
-    var el2=$('ord-addr'); if(el2){el2.focus();el2.style.borderColor='#e53e3e';}
-    return;
-  }
+  // Require a real, complete delivery address: street, city and ZIP.
+  function addrMissing(id, msg){ toast(msg); var el=$(id); if(el){ el.focus(); el.style.borderColor='#e53e3e'; } }
+  if(!street){ addrMissing('ord-addr', 'Delivery address is required'); return; }
+  var addrErr = validateStreetAddress(street);
+  if(addrErr){ addrMissing('ord-addr', addrErr); return; }
+  if(!/[A-Za-z]{2}/.test(city)){ addrMissing('ord-city', 'Please add your city (e.g. Waterford)'); return; }
+  if(!/^\d{5}(-\d{4})?$/.test(zip)){ addrMissing('ord-zip', 'Please add your 5-digit ZIP code'); return; }
   // Nudge a first-time customer who skipped the source question — once, and never
   // blocking. Knowing which channel won someone is worth one prompt; it is not worth
   // standing between them and their order.
@@ -2939,7 +2942,8 @@ function submitOrder(){
     return;
   }
   // A gift's address is the recipient's: it must not become the buyer's saved home.
-  var _ep=getProfile(); saveProfile(Object.assign({},_ep,{name:name,email:email,phone:phone}, _isGift ? {} : {addr:addr}));
+  var _ep=getProfile(); saveProfile(Object.assign({},_ep,{name:name,email:email,phone:phone},
+    _isGift ? {} : {addr:addr, street:street, city:city, state:'MI', zip:zip}));
 
   const orderData = {
     type:        'order',
@@ -3177,12 +3181,11 @@ function switchAddr(type){
   var prof=getProfile();
   var addrEl=$('ord-addr');
   var btnHome=$('addr-btn-home'), btnAlt=$('addr-btn-alt');
+  fillOrderAddress(profileAddressParts(prof, type==='home' ? '' : '2'), true);
   if(type==='home'){
-    if(addrEl) addrEl.value=prof.addr||'';
     if(btnHome){btnHome.style.background='var(--f)';btnHome.style.color='#fff';btnHome.style.borderColor='var(--f)';}
     if(btnAlt) {btnAlt.style.background='#fff';btnAlt.style.color='#666';btnAlt.style.borderColor='#e5e7eb';}
   } else {
-    if(addrEl) addrEl.value=prof.addr2||'';
     if(btnAlt) {btnAlt.style.background='var(--f)';btnAlt.style.color='#fff';btnAlt.style.borderColor='var(--f)';}
     if(btnHome){btnHome.style.background='#fff';btnHome.style.color='#666';btnHome.style.borderColor='#e5e7eb';}
   }
@@ -3263,6 +3266,38 @@ function saveProfileForm(){
   var btn=$('pfb'); if(btn) btn.textContent='👤 '+name.split(' ')[0];
 }
 
+// Checkout asks for street, city and ZIP separately (v260): a free-text address like
+// "412 Maple" could be in any of four towns, and Lia's route planner then guessed. A whole
+// address typed or pasted into the street box is split into the three boxes.
+function splitAddress(s){
+  s = (s || '').toString().trim();
+  var zip = '', city = '', street = s;
+  var m = s.match(/[\s,]*(\d{5})(?:-\d{4})?\s*$/);
+  if(m){ zip = m[1]; s = s.slice(0, m.index); }
+  s = s.replace(/[\s,]+(MI|Mich\.?|Michigan)\.?\s*$/i, '');
+  var parts = s.split(',').map(function(t){ return t.trim(); }).filter(Boolean);
+  if(parts.length > 1){ city = parts.pop(); street = parts.join(', '); } else street = parts[0] || '';
+  return { street: street, city: city, zip: zip };
+}
+// The saved profile's home ('') or alternate ('2') address as {street, city, zip}.
+function profileAddressParts(prof, n){
+  if(prof['street' + n]) return { street: prof['street' + n] || '', city: prof['city' + n] || '', zip: prof['zip' + n] || '' };
+  return splitAddress(prof['addr' + n] || '');
+}
+function fillOrderAddress(p, always){
+  [['ord-addr', p.street], ['ord-city', p.city], ['ord-zip', p.zip]].forEach(function(f){
+    var el = $(f[0]); if(el && (always || f[1])) el.value = f[1] || '';
+  });
+}
+// A whole address typed into the street box wins over the city/ZIP already there (from the
+// saved profile, say): the customer has just typed it, e.g. a gift recipient's address.
+function ordAddrSplitTyped(){
+  var st = $('ord-addr'), ci = $('ord-city'), zi = $('ord-zip');
+  if(!st || !ci || !zi) return;
+  var p = splitAddress(st.value);
+  if(p.zip){ st.value = p.street; zi.value = p.zip; if(p.city) ci.value = p.city; }
+  else if(p.city && !ci.value.trim()){ st.value = p.street; ci.value = p.city; }
+}
 function validateStreetAddress(addr){
   var a = addr.trim();
   // Reject obviously fake/incomplete entries
@@ -4332,7 +4367,7 @@ function refShareNative(code,fname){
 }
 
 window.onload = () => {
-  console.log("APP VERSION: 2026-10-02-v259-delivery-route");
+  console.log("APP VERSION: 2026-10-02-v260-full-addresses");
   // One-time cleanup: remove legacy subscription data from localStorage
   try{ localStorage.removeItem('my_sub'); localStorage.removeItem('my_swap'); }catch(e){}
   startMenuEarly();   // normally already running since DOMContentLoaded — see below
@@ -5732,7 +5767,11 @@ function showCart(){
             <input id="gift-to-email" class="fi-sel" autocomplete="section-gift email" autocapitalize="off" spellcheck="false" placeholder="Their email (optional, so they hear about next week's menu)" type="email" style="padding:10px;border-radius:10px;border:2px solid var(--bd);font-size:13px;outline:none;width:100%">
             <textarea id="gift-to-msg" rows="2" placeholder="A note to go with it (optional)" style="padding:10px;border-radius:10px;border:2px solid var(--bd);font-size:13px;outline:none;width:100%;box-sizing:border-box;font-family:inherit"></textarea>
           </div>
-          <input id="ord-addr" name="street-address" class="fi-sel" autocomplete="street-address" placeholder="Street address (e.g. 1247 Bielby St, Waterford) *" oninput="this.style.borderColor=''" style="padding:10px;border-radius:10px;border:2px solid var(--bd);font-size:13px;outline:none;width:100%">
+          <input id="ord-addr" name="address-line1" class="fi-sel" autocomplete="address-line1" placeholder="House number and street (e.g. 1247 Bielby St) *" oninput="this.style.borderColor=''" onchange="ordAddrSplitTyped()" style="padding:10px;border-radius:10px;border:2px solid var(--bd);font-size:13px;outline:none;width:100%">
+          <div style="display:flex;gap:8px">
+            <input id="ord-city" name="address-level2" class="fi-sel" autocomplete="address-level2" placeholder="City *" oninput="this.style.borderColor=''" style="padding:10px;border-radius:10px;border:2px solid var(--bd);font-size:13px;outline:none;flex:3;min-width:0">
+            <input id="ord-zip" name="postal-code" class="fi-sel" autocomplete="postal-code" inputmode="numeric" maxlength="10" placeholder="ZIP *" oninput="this.style.borderColor=''" style="padding:10px;border-radius:10px;border:2px solid var(--bd);font-size:13px;outline:none;flex:2;min-width:0">
+          </div>
           <a id="ref-code-link" href="#" onclick="$('ref-code-row').style.display='';this.style.display='none';$('ord-ref-code').focus();return false;" style="font-size:12px;color:var(--f);font-weight:600;text-decoration:underline;align-self:flex-start">Have a referral code from a friend?</a>
           <div id="ref-code-row" style="display:none">
             <input id="ord-ref-code" class="fi-sel" type="text" inputmode="numeric" autocomplete="off" placeholder="Referral code from a friend? (optional)" style="padding:10px;border-radius:10px;border:2px solid var(--bd);font-size:13px;outline:none;width:100%">
@@ -5755,7 +5794,7 @@ function showCart(){
   if(prof.name&&$('ord-name'))$('ord-name').value=prof.name;
   if(prof.email&&$('ord-email'))$('ord-email').value=prof.email;
   if(prof.phone&&$('ord-phone'))$('ord-phone').value=prof.phone;
-  if(prof.addr&&$('ord-addr'))$('ord-addr').value=prof.addr;
+  fillOrderAddress(profileAddressParts(prof, ''));
   if(prof.pay&&$('ord-pay'))$('ord-pay').value=prof.pay;
   if(prof.notes&&$('ord-notes'))$('ord-notes').value=prof.notes;
   // Show address toggle if alt address exists
@@ -6816,12 +6855,18 @@ function buildRoutePlanner(){
     +  '</div><div style="font-size:11px;color:var(--t3);margin-top:6px">Kitchen and back · planned '
     +  new Date(p.planned).toLocaleTimeString('en-US', { hour:'numeric', minute:'2-digit' })
     +  (p.custom ? ' · your order' : ' · best order') + (p.delivered ? ' · ' + p.delivered + ' already delivered' : '') + '</div></div>';
-  var off = st.filter(function(s){ return !s.found; }), chk = st.filter(function(s){ return s.found && s.check; });
-  if(off.length) h += '<div class="rt-warn"><strong>Google couldn\'t find ' + (off.length === 1 ? 'this address' : 'these addresses') + '</strong> (they\'re at the end, without drive times):<br>'
-    + off.map(function(s){ return esc(s.n) + ' — ' + esc(s.a); }).join('<br>') + '</div>';
-  if(chk.length) h += '<div class="rt-warn"><strong>Worth a look:</strong> Google only roughly matched '
-    + chk.map(function(s){ return esc(s.n) + ' (' + esc(s.a) + ' → ' + esc(s.mapAddr) + ')'; }).join(', ') + '.</div>';
-  if(p.noAddress && p.noAddress.length) h += '<div class="rt-warn"><strong>No address on the order:</strong> ' + p.noAddress.map(esc).join(', ') + '</div>';
+  // gs82: every address that may send her to the wrong door, each with a Look up button.
+  var flagged = st.filter(function(s){ return !d.done[s.key] && rtAddrIssue(s); });
+  var noAddr = (p.noAddress || []).map(function(x){ return typeof x === 'string' ? { n: x } : x; });
+  if(flagged.length || noAddr.length){
+    h += '<div class="rt-warn"><strong>Check ' + (flagged.length + noAddr.length === 1 ? 'this address' : 'these addresses') + ' before you go</strong>';
+    flagged.concat(noAddr.map(function(x){ return { key: x.key, n: x.n, a: '', noAddr: true }; })).forEach(function(s){
+      h += '<div style="display:flex;gap:8px;align-items:center;margin-top:8px"><div style="flex:1;min-width:0"><strong>' + esc(s.n) + '</strong><br>'
+        +  (s.noAddr ? 'No address on the order' : esc(s.a) + ' · ' + rtAddrIssue(s)) + '</div>'
+        +  (s.key ? rtLookBtn(s.key) : '') + '</div>';
+    });
+    h += '</div>';
+  }
   h += '<div style="font-size:12px;color:var(--t3);margin:0 2px 10px;line-height:1.5">'
     +  (p.textsAuto ? '💬 Texts go out by themselves: "you\'re my next stop" and "delivered".'
                     : '💬 When you tap Delivered, your Messages app opens with "delivered" and "you\'re my next stop" ready. Just tap Send.')
@@ -6858,7 +6903,7 @@ function planRoute(keepOrder){
     .then(function(r){ if(!r.ok) throw new Error('Google did not answer'); return r.json(); })
     .then(function(d){
       if(!d || !d.success) throw new Error((d && d.error) || 'no answer');
-      RT_PLAN = d; rtSave(RT_PLAN_KEY, d);
+      rtAdoptPlan(d);
       RT_PLANNING = false; buildRoutePlanner();
       toast('🧭 ' + d.stops.length + ' stops planned · ' + rtMins(d.totalSec) + ' driving');
     })
@@ -6874,6 +6919,91 @@ function rtMove(i, dir){
   var t = st[i]; st[i] = st[j]; st[j] = t;
   RT_PLAN.moved = true; RT_PLAN.custom = true;
   rtSave(RT_PLAN_KEY, RT_PLAN); buildRoutePlanner();
+}
+
+// ── Addresses that look wrong: Look up (v260 + gs82) ──
+// Why an address may send her to the wrong door, or '' when it looks fine.
+function rtAddrIssue(s){
+  if(!s.found) return 'Google couldn\'t find it';
+  if(s.incomplete) return 'No town or ZIP';
+  if(s.check) return 'Google only matched the street';
+  return '';
+}
+// A new plan in the middle of a drive leaves out the stops already delivered; keep them
+// at the front so "Stop 3 of 12" still counts the whole day.
+function rtAdoptPlan(d){
+  if(RT_DRIVE && !RT_DRIVE.finished && RT_PLAN){
+    var kept = RT_PLAN.stops.filter(function(s){ return RT_DRIVE.done[s.key] && !d.stops.some(function(x){ return x.key === s.key; }); });
+    d.stops = kept.concat(d.stops);
+  }
+  RT_PLAN = d; rtSave(RT_PLAN_KEY, d);
+}
+var RT_LOOK = null;
+// Look up needs gs82 (gs81 would answer it with a plain re-plan).
+function rtLookBtn(key){ return BACKEND_GS >= 82 ? '<button class="rt-look-btn" data-key="' + esc(key) + '" onclick="rtLookup(this.dataset.key)">Look up</button>' : ''; }
+function rtLookup(key, q){
+  var s = rtStop(key) || ((RT_PLAN && RT_PLAN.noAddress) || []).filter(function(x){ return x.key === key; })[0] || {};
+  rtLookShow({ key: key, n: s.n || '', typed: s.a || '', loading: true, q: q || '' });
+  var body = { type:'plan_route', action:'lookup', key: key };
+  if(q) body.q = q;
+  fetch(APPS_SCRIPT_URL, { method:'POST', headers:{ 'Content-Type':'text/plain' }, body: JSON.stringify(body) })
+    .then(function(r){ if(!r.ok) throw new Error('Google did not answer'); return r.json(); })
+    .then(function(d){ if(!d || !d.success) throw new Error((d && d.error) || 'no answer'); rtLookShow(d); })
+    .catch(function(e){ rtLookShow({ key: key, n: s.n || '', typed: s.a || '', q: q || '', error: e.message }); });
+}
+function rtLookShow(st){
+  RT_LOOK = st;
+  var el = $('rt-look');
+  if(!el){ el = document.createElement('div'); el.id = 'rt-look'; document.body.appendChild(el); }
+  el.style.display = 'block';
+  var first = (st.n || '').split(' ')[0] || 'them';
+  var h = '<div class="dv-top"><span>Find the right address</span><button onclick="rtLookClose()" style="background:#fff;border:1.5px solid var(--bd);border-radius:9px;padding:6px 12px;font-weight:700;cursor:pointer">✕ Close</button></div>'
+    + '<div class="dv-name" style="font-size:24px">' + esc(st.n) + '</div>'
+    + '<div style="font-size:14px;color:var(--t2);margin-bottom:10px">On the order: <strong>' + (st.typed ? esc(st.typed) : 'no address') + '</strong></div>'
+    + '<div style="display:flex;gap:8px;margin-bottom:12px"><input id="rt-look-q" class="fi-sel" value="' + esc(st.q || st.typed || '') + '" placeholder="Type an address to search" '
+    + 'style="flex:1;min-width:0;padding:10px;border-radius:10px;border:2px solid var(--bd);font-size:15px" onkeydown="if(event.key===\'Enter\')rtLookSearch()">'
+    + '<button class="rt-look-btn" style="padding:10px 14px" onclick="rtLookSearch()">Search</button></div>';
+  if(st.loading) h += '<div class="rt-card" style="text-align:center;color:var(--t2)">Looking it up…</div>';
+  else if(st.error) h += '<div class="rt-warn">Couldn\'t look it up: ' + esc(st.error) + '. Try again in a minute.</div>';
+  else {
+    if(st.onFile) h += '<div class="rt-card"><div style="font-size:11px;font-weight:800;color:var(--t3);letter-spacing:.5px;margin-bottom:4px">ADDRESS ON FILE FROM AN EARLIER ORDER</div>'
+      + '<div style="font-size:15px;margin-bottom:8px">' + esc(st.onFile) + '</div><button class="rt-big alt" style="padding:10px" onclick="rtUseAddress(-1)">Use this</button></div>';
+    var c = st.candidates || [];
+    if(c.length) h += '<div style="font-size:12px;color:var(--t3);margin:4px 2px 8px">Google\'s matches near the kitchen. Tap <strong>See on map</strong> to check, then <strong>Use this</strong>.</div>';
+    c.forEach(function(x, i){
+      h += '<div class="rt-card" style="padding:12px"><div style="font-size:15px;font-weight:700">' + esc(x.a) + '</div>'
+        +  '<div style="font-size:12px;margin:3px 0 8px;color:' + (x.house ? '#15803d' : '#b45309') + '">' + (x.house ? 'Exact house' : 'Street only. Check the house number') + (x.mi != null ? '<span style="color:var(--t3)"> · ' + x.mi + ' mi from the kitchen</span>' : '') + '</div>'
+        +  '<div class="dv-row" style="margin:0"><a class="rt-big alt" style="padding:10px;font-size:14px" target="_blank" rel="noopener" href="https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(x.lat + ',' + x.lng) + '">See on map</a>'
+        +  '<button class="rt-big" style="padding:10px;font-size:14px" onclick="rtUseAddress(' + i + ')">Use this</button></div></div>';
+    });
+    if(!c.length && !st.onFile) h += '<div class="rt-warn">Google found nothing near the kitchen for that. Try adding the town or ZIP, or ask ' + esc(first) + '.</div>';
+    if(rtPhone(st.phone)) h += '<a class="rt-big alt" style="margin-top:6px" href="tel:' + rtPhone(st.phone) + '">📞 Call ' + esc(first) + '</a>';
+  }
+  el.innerHTML = h;
+}
+function rtLookClose(){ var el = $('rt-look'); if(el) el.style.display = 'none'; RT_LOOK = null; }
+function rtLookSearch(){
+  var q = (($('rt-look-q') || {}).value || '').trim();
+  if(q && RT_LOOK) rtLookup(RT_LOOK.key, q);
+}
+function rtUseAddress(i){
+  var st = RT_LOOK; if(!st) return;
+  var pick = i < 0 ? { a: st.onFile } : (st.candidates || [])[i];
+  if(!pick || !pick.a) return;
+  if(!confirm('Change ' + st.n + '\'s address to:\n\n' + pick.a + '\n\nThis also fixes the order on the Sheet.')) return;
+  var body = { type:'plan_route', action:'fix', key: st.key, address: pick.a };
+  if(pick.lat != null){ body.lat = pick.lat; body.lng = pick.lng; }
+  // Keep her order (and a drive in progress) rather than re-sorting the whole day.
+  if(RT_PLAN && (RT_PLAN.custom || RT_PLAN.moved || (RT_DRIVE && !RT_DRIVE.finished))) body.order = RT_PLAN.stops.map(function(s){ return s.key; });
+  rtLookShow(Object.assign({}, st, { loading: true }));
+  fetch(APPS_SCRIPT_URL, { method:'POST', headers:{ 'Content-Type':'text/plain' }, body: JSON.stringify(body) })
+    .then(function(r){ if(!r.ok) throw new Error('Google did not answer'); return r.json(); })
+    .then(function(d){
+      if(!d || !d.success) throw new Error((d && d.error) || 'no answer');
+      rtAdoptPlan(d); rtLookClose(); buildRoutePlanner(); if(rtDriveOpen()) renderDrive();
+      toast('📍 Address updated for ' + st.n);
+    })
+    .catch(function(e){ rtLookShow(Object.assign({}, st, { loading: false, error: e.message })); });
 }
 
 // ── Driving screen ──
@@ -6917,7 +7047,8 @@ function renderDrive(){
       ? '<div class="dv-pay" style="background:#fef3c7;color:#92400e">💵 Collect ' + rtMoney(s.total) + ' cash</div>'
       : '<div class="dv-pay" style="background:#e8f4ff;color:#0b5cad">💙 Venmo · ' + rtMoney(s.total) + '</div>';
     h += '<div class="dv-name">' + esc(s.n) + (s.gift ? ' 🎁' : '') + '</div>'
-      +  '<div class="dv-addr">' + esc(s.a) + (s.found ? '' : '<br><span style="color:#dc2626;font-size:13px">Google couldn\'t place this address. Check it before driving.</span>') + '</div>'
+      +  '<div class="dv-addr">' + esc(s.a) + (rtAddrIssue(s) ? '<br><span style="color:#dc2626;font-size:13px">' + rtAddrIssue(s) + '.</span> '
+           + rtLookBtn(s.key) : '') + '</div>'
       +  (s.note ? '<div class="rt-warn" style="font-size:14px">📝 ' + esc(s.note) + '</div>' : '')
       +  '<div class="rt-card" style="font-size:15px;padding:12px">📦 ' + esc(s.it || '') + '</div>'
       +  payBox
