@@ -5804,7 +5804,7 @@ function buildMenu(){
     grid.innerHTML = '<div id="menu-closed" style="grid-column:1/-1;text-align:center;padding:40px 20px">' +
       '<div style="font-size:48px;margin-bottom:12px">🍲</div>' +
       '<p style="font-family:\'Cormorant Garamond\',serif;font-size:22px;color:var(--f);margin-bottom:8px">This week\'s menu is closed</p>' +
-      '<p style="font-size:13px;color:var(--t3);line-height:1.6">Lia is cooking for Monday\'s delivery.<br>The next menu goes up <strong>' +
+      '<p style="font-size:13px;color:var(--t3);line-height:1.6">' + (new Date().getDay() === 1 ? 'Lia is out delivering today.' : 'Lia is cooking for Monday\'s delivery.') + '<br>The next menu goes up <strong>' +
       _w.reopens.toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric'}) +
       '</strong>. Turn on notifications on the Home tab to hear the moment it does.</p>' +
       '</div>';
