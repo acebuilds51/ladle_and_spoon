@@ -156,6 +156,16 @@ backend request as `?token=`.
   late September for an October delivery qualifies; one placed in late October for a
   November delivery does not.
 
+## Ordering window
+
+A week's ordering opens Tuesday 00:00. Until the deadline (Friday 7 PM, or Lia's special
+deadline if it falls in that week) orders go straight in. From the deadline to 11:59 PM that day
+they are "late": the app still takes them, and the backend holds them for Lia's Approve / Decline
+(the same email buttons and "Area Requests" tab as far addresses). From then until Tuesday the
+menu is closed and nothing can be ordered. `orderWindow()` in `index.html` and `orderWindowAt()`
+in the backend are the same rule; change both together. Lateness is judged by when the customer
+placed the order (the front door's `_placedAt`), not when Google processed it.
+
 ---
 
 ## Email budget
