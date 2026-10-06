@@ -196,7 +196,7 @@ earlier commit of this public repo until history is rewritten.
 **Keep images out of `index.html`.** Until v234 the page was ~4.3MB, ~88% of it base64
 images, and the menu took ~6s to appear on a 4G phone. They now live in `img/`
 (`logo.png`, `hero.jpg`, `soups/*.jpg`, referenced by relative path from `SOUP_PHOTOS`),
-and the page is ~0.5MB. The test suite fails if the page passes 0.6MB, embeds an image over
+and the page is ~0.5MB. The test suite fails if the page passes 0.65MB (raised from 0.6MB at v271 as admin features grew), embeds an image over
 8KB, references a missing or truncated `img/` file, or leaves an unused one there. Commit
 `img/` together with `index.html`: `deploy.sh` only copies `index.html` from Downloads.
 
