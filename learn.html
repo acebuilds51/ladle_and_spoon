@@ -95,6 +95,14 @@ button{font-family:inherit}
 .feel button{flex:1;background:#fff;border:2px solid var(--bd);border-radius:14px;padding:12px 4px;font-size:15px;cursor:pointer}
 .feel button b{display:block;font-size:34px}
 .feel button.on{border-color:var(--f);background:#f0f7ec}
+/* "how it works" cards (gs103) */
+.info{background:#fff;border:1.5px solid var(--bd);border-radius:18px;padding:18px;box-shadow:0 6px 20px rgba(0,0,0,.05)}
+.info .ii{font-size:44px;line-height:1}
+.info h3{font-family:'Cormorant Garamond',serif;font-size:26px;color:var(--f);margin:6px 0 8px;line-height:1.15}
+.info p{margin:0 0 10px;font-size:18px}
+.info .w{color:var(--t2);font-size:17px}
+.info .you{border-radius:12px;padding:10px 12px;font-size:16px;font-weight:700;background:#effaf1;color:#14532d}
+.info .you.act{background:#FCEFD6;color:#7a4f12}
 textarea{width:100%;border:1.5px solid var(--bd);border-radius:12px;padding:12px;font-size:17px;font-family:inherit;min-height:96px}
 .rd{font-size:15px;margin:4px 0}
 @media (prefers-reduced-motion:reduce){.glow{animation:none}}
@@ -109,9 +117,13 @@ textarea{width:100%;border:1.5px solid var(--bd);border-radius:12px;padding:12px
 var API = 'https://ladle-spoon-api.ladle-spoon-api.workers.dev/';
 var Q = new URLSearchParams(location.search), PREVIEW = Q.has('preview'), DAY = Q.get('d') || '';
 // The same schedule as LEARN_DAYS in the backend: each day's lessons, emailed at 7 AM that day.
+// Days with nothing on her list explain how things work instead (gs103).
 var DAYS = [
   { date: '2026-10-07', label: 'Wednesday', lessons: ['helper', 'facebook'] },
+  { date: '2026-10-08', label: 'Thursday · how things work', lessons: ['ordering', 'customers'] },
   { date: '2026-10-09', label: 'Friday',    lessons: ['texts', 'lastcall', 'approve'] },
+  { date: '2026-10-10', label: 'Saturday · how things work', lessons: ['auto', 'reports'] },
+  { date: '2026-10-11', label: 'Sunday · how things work',   lessons: ['money', 'handy'] },
   { date: '2026-10-12', label: 'Monday',    lessons: ['route1', 'route2', 'receipts'] },
   { date: '2026-10-13', label: 'Tuesday',   lessons: ['publish'] }
 ];
@@ -191,6 +203,13 @@ function readReply(text){
     else out.push({ ok: false, t: '“' + line + '”: I couldn’t find an amount. Try “Groceries 182.40”.' });
   });
   return out;
+}
+
+// A "how it works" card: what it is, why, and whether she needs to do anything (usually not).
+function info(icon, title, what, why, you){
+  return '<div class="info"><div class="ii">' + icon + '</div><h3>' + title + '</h3><p>' + what + '</p>'
+    + (why ? '<p class="w"><b>Why:</b> ' + why + '</p>' : '')
+    + '<div class="you' + (you ? ' act' : '') + '">' + (you ? '👉 ' + you : '✅ Nothing for you to do.') + '</div></div>';
 }
 
 // ── Lessons ──
@@ -359,6 +378,131 @@ publish: { icon: '📢', title: 'Tuesday: publish, and the 💡 Send button', mi
   { quiz: 'The email matched &ldquo;beef stroganoff, please&rdquo; to your <b>Chicken</b> Stroganoff. What do you tap?', opts: [
     ['Not a match', 1, 'Right. Nothing is sent, and their idea waits for the right dish.'],
     ['Send the thank-you', 0, 'They asked for beef, so tap <b>Not a match</b>. Nothing is sent, and their idea keeps waiting.'] ] }
+]},
+
+// ── How things work (the days with nothing on her list) ──
+ordering: { icon: '🗓️', title: 'How ordering works now', mins: 3, steps: [
+  { info: info('🗓️', 'When people can order', 'Ordering opens on Tuesday when you publish the menu, and closes <b>Friday at 7 PM</b>, just like always.') },
+  { info: info('🌙', 'Friday night, after 7 PM',
+      'People can still send an order until midnight. The app tells them you&rsquo;ll confirm it, and not to pay yet. You get a <b>&ldquo;Late order: approve?&rdquo;</b> email.',
+      'Before, the menu stayed open all weekend, so orders could come in after you&rsquo;d already shopped and planned. Now nothing gets added unless you say yes.',
+      'Tap Approve or Decline by Sunday night. Tomorrow&rsquo;s practice shows you how. If you&rsquo;d rather late orders just go straight in, tell Tony. It&rsquo;s your call.') },
+  { info: info('🔒', 'Saturday to Monday', 'The menu says <b>&ldquo;This week&rsquo;s menu is closed&rdquo;</b> and shows the day the next one goes up. Nobody can order until you publish on Tuesday.') },
+  { info: info('📍', 'Addresses far away',
+      'The app checks every address against <b>7 miles around the Meijer on Highland Rd</b>. Inside that, nothing changes. Farther out, the order waits and you get an <b>&ldquo;Approve an order?&rdquo;</b> email with a map link. Your regulars always go straight through.',
+      'Your menu now reaches a lot more people, and some live too far away. This way you decide before anyone is told yes.',
+      'Approve or Decline, ideally within a day. Once you approve an address, it goes straight through next time.') },
+  { info: info('✅', 'Orders can&rsquo;t get lost',
+      'A customer only sees <b>&ldquo;Order Placed!&rdquo;</b> once the order is really in your spreadsheet. If their internet hiccups, the app quietly tries again by itself.') },
+  { quiz: 'It&rsquo;s Saturday morning. Can a customer place an order?', opts: [
+    ['No. The menu is closed until you publish on Tuesday', 1, 'Right. Your weekend is yours.'],
+    ['Yes, it goes into next week', 0, 'From Saturday to Monday the menu is closed. Ordering opens again when you publish on Tuesday.'] ] },
+  { quiz: 'A brand-new customer 12 miles away places an order. What happens?', opts: [
+    ['It waits, and I get an email to approve or decline', 1, 'Exactly. You decide before they&rsquo;re told yes.'],
+    ['It goes straight in', 0, 'Farther than 7 miles, it waits for you: you get an &ldquo;Approve an order?&rdquo; email.'] ] }
+]},
+customers: { icon: '🛍️', title: 'What your customers see', mins: 4, steps: [
+  { info: info('💙', 'Paying by Venmo is one tap',
+      'After ordering, Venmo customers get a <b>&ldquo;Pay $30 in Venmo&rdquo;</b> button. It opens Venmo with your name, the amount, and their name and order number in the note.',
+      'Payments are easy to match up with orders.') },
+  { info: info('📝', 'Easier checkout',
+      'Phones fill in their name, address and phone. The address asks for street, city and ZIP, so your Monday addresses are complete. In the cart they can change &ldquo;2 quarts&rdquo; with <b>+</b> and <b>&minus;</b>.') },
+  { info: info('🔁', '&ldquo;You ordered this before&rdquo;',
+      'When a dish someone ordered before is back on the menu, it&rsquo;s marked for them (&ldquo;You ordered this Sep 21&rdquo;) and shown near the top. Their order history has an <b>Add again</b> button.',
+      'Regulars spot their favorites in two seconds, and it&rsquo;s easy to order again.') },
+  { info: info('💡', 'Customer requested',
+      'When you put a dish on the menu that someone suggested, it shows <b>&ldquo;💡 Customer requested&rdquo;</b>, and that person gets a thank-you email from you.',
+      'Customers see that you really read their ideas.', 'Just tap Send in the 💡 email. You&rsquo;ll practise it on Tuesday.') },
+  { info: info('🤝', 'Sharing with friends',
+      'Every customer has a short link to share. When a friend orders through it, the customer earns a <b>credit toward free delivery</b>. Nobody types phone numbers anymore. The credit is only for truly new customers.') },
+  { info: info('🎁', 'Gift certificates and the Gift Box',
+      'Buyers can choose the day a certificate arrives, like a birthday or Christmas. The app sends it that morning. One person can buy up to 3 a day (10 in all), to protect your daily email limit. The <b>Gift Box</b> costs what&rsquo;s inside plus $5 for the bread and box, so it always matches the invoice.',
+      '', 'Confirm each payment in the 🎁 Gift tab, like always.') },
+  { info: info('🎉', 'October: free delivery',
+      'Every October delivery is <b>free on orders over $15</b>. The WELCOMEBACK 10% code is paused so nobody gets both. It works again for November deliveries (orders from Tuesday, Oct 27).') },
+  { quiz: 'A customer asks why the WELCOMEBACK code isn&rsquo;t working this month.', opts: [
+    ['It&rsquo;s paused in October because delivery is free. It works again for November', 1, 'Right. Nobody gets both at once.'],
+    ['It doesn&rsquo;t exist anymore', 0, 'It&rsquo;s only paused for October, because delivery is free. It works again for November deliveries.'] ] },
+  { quiz: 'Someone buys a gift certificate for a birthday on November 20. When does the person get it?', opts: [
+    ['On November 20, once I&rsquo;ve confirmed the payment', 1, 'Yes. You confirm as usual, and the app sends it that morning.'],
+    ['Right away', 0, 'They chose a day, so the app sends it that morning (after you&rsquo;ve confirmed the payment).'] ] }
+]},
+auto: { icon: '🤖', title: 'What runs by itself', mins: 3, steps: [
+  { info: info('⏰', 'Thursday and Friday reminder emails',
+      'They go <b>only to people who haven&rsquo;t ordered yet</b> that week. Nobody gets a reminder for something they already did.') },
+  { info: info('🔥', 'The delivery streak',
+      'Every week in a row someone orders, their delivery gets <b>$1 cheaper</b>: $5, $4, $3, $2, $1, then <b>free from week 6</b>. Their reminder tells them, like &ldquo;order by Friday and your delivery is $1&rdquo;.',
+      'It rewards your regulars and gives them a reason not to skip a week. The app works out the price by itself.') },
+  { info: info('💌', 'Win-back emails',
+      'Every Wednesday in October, people who used to order and stopped get a friendly note from you about the anniversary and free delivery. Some get a short &ldquo;why did you stop?&rdquo; survey, with a free-delivery credit as a thank-you.',
+      'Old customers already like your food. A friendly nudge is the easiest way to win them back.') },
+  { info: info('🚪', 'Unsubscribe',
+      'Anyone can take themselves off your marketing emails with one tap. They still get their order confirmations and invoices.',
+      '', 'You never have to remove anyone by hand. If someone asks you, point them to the &ldquo;unsubscribe&rdquo; link at the bottom of any email.') },
+  { info: info('⭐', 'Ratings',
+      'Each invoice has a <b>&ldquo;Rate your order&rdquo;</b> button, so people rate the soup the day it arrives. The stars on your menu are only real ratings from your customers.') },
+  { info: info('🧮', 'New customers are counted right',
+      'Before calling someone &ldquo;new&rdquo;, the app checks every order you&rsquo;ve ever had. So the spreadsheet&rsquo;s new-customer column is right.') },
+  { quiz: 'Mary has ordered 5 weeks in a row. What will her delivery cost next week?', opts: [
+    ['Free', 1, 'Yes! From week 6 in a row, delivery is free.'],
+    ['$5', 0, 'Each week in a row it drops $1: $5, $4, $3, $2, $1, and from week 6 it&rsquo;s <b>free</b>.'],
+    ['$1', 0, 'Close! Week 5 was $1. Week 6 in a row is <b>free</b>.'] ] },
+  { quiz: 'A customer says, &ldquo;Please stop sending me emails.&rdquo; What do you do?', opts: [
+    ['Point them to the unsubscribe link at the bottom of any email', 1, 'Right. One tap and they&rsquo;re off. Nothing for you to change.'],
+    ['Find them in the spreadsheet and delete them', 0, 'No need: the unsubscribe link at the bottom of every email takes them off with one tap, and they still get their invoices.'] ] }
+]},
+reports: { icon: '📊', title: 'Your Saturday report, and how the posts are doing', mins: 3, steps: [
+  { info: info('📊', 'The Saturday report',
+      'Every Saturday, an email to you and Tony: how many people ordered, who&rsquo;s brand new, who came back, who your regulars are, where new customers heard about you, how the Facebook posts did, and what you kept.',
+      '', 'Read it if you&rsquo;d like, with a coffee. Nothing to do.') },
+  { info: info('📣', 'Who posts where on Facebook',
+      '<b>Keego and Sylvan Lake</b> are always yours. <b>Waterford Foodies</b> and <b>Waterford Everything</b> switch between you and Tony every two weeks. The smaller groups are spread over Tuesday to Thursday.',
+      'Many groups allow only one business post a week, so each group gets one post from one of you. You don&rsquo;t need to remember any of it: the &ldquo;Facebook today&rdquo; email tells you.') },
+  { info: info('🧪', 'Tuesday or Friday?',
+      'The four biggest groups take turns getting the menu on Tuesday or on Friday.',
+      'After a few weeks, you&rsquo;ll know which day brings in more orders.') },
+  { info: info('👀', 'How the posts are doing',
+      'In Admin, <b>💌 Re-engage</b>, &ldquo;How the posts are doing&rdquo; shows how many people opened each post (and each Friday text), and how many orders came from them: this week, last week, or all time.',
+      '', 'Just there if you&rsquo;re curious. The Saturday report has the same numbers.') },
+  { info: info('📱', 'Why Friday texts',
+      'They go to people who ordered in the last 8 weeks but not yet this week.',
+      'A personal text from you is the most likely thing to turn &ldquo;I forgot!&rdquo; into an order.') },
+  { info: info('🙋', 'A few more groups',
+      'Joining <b>Waterford Matters</b>, <b>West Bloomfield Forum</b>, and the <b>Walled Lake, White Lake, W Bloomfield &amp; Waterford Small Businesses</b> group would let you and Tony split the posts evenly.',
+      '', 'If you have a minute, join them and tell Tony when you&rsquo;re in.') },
+  { quiz: 'Where can you see which Facebook post brought in orders?', opts: [
+    ['Admin, 💌 Re-engage, &ldquo;How the posts are doing&rdquo; (or the Saturday report)', 1, 'Right. Both have the same numbers.'],
+    ['Facebook itself', 0, 'Facebook can&rsquo;t see orders. The app can: Admin, 💌 Re-engage, &ldquo;How the posts are doing&rdquo;, or the Saturday report.'] ] }
+]},
+money: { icon: '💵', title: 'Money: what you kept, and taxes', mins: 3, steps: [
+  { info: info('💵', 'What you kept',
+      'Sales, minus what you spent, minus your driving, is <b>what you kept</b>. It&rsquo;s on your Dash under &ldquo;What you kept&rdquo;, and in the reply to your receipts email.') },
+  { info: info('🧾', 'Why the receipts email',
+      'You reply once a week, Monday evening, with photos and totals.',
+      'You&rsquo;ll know what each delivery really made, and every receipt is saved in your email, ready for taxes.') },
+  { info: info('🚗', 'Your miles are money',
+      'Every business mile counts for taxes: <b>76&cent; a mile</b> this year. Delivery miles log themselves from the Route tab. Trips to the store, you add on the <b>&ldquo;Shopping miles&rdquo;</b> line.',
+      'Miles add up to real money at tax time. They already cover gas and the car, so never add gas separately.') },
+  { info: info('📅', 'Monthly and yearly summaries',
+      'On the 1st of each month you get a short summary of last month. In January, a <b>year-end summary for whoever does your taxes</b>, with every receipt listed. You get a reminder first to add yearly costs like insurance.') },
+  { info: info('📦', 'Packaging per order',
+      'After a few weeks, you&rsquo;ll see what containers and packaging cost per order.',
+      'It helps you decide prices.') },
+  { quiz: 'You drove 10 miles to the restaurant supply store for containers. Where does that go?', opts: [
+    ['On the &ldquo;Shopping miles&rdquo; line of the receipts reply', 1, 'Exactly. Those miles count for taxes too.'],
+    ['Add the gas money instead', 0, 'Add the miles, not gas: &ldquo;Shopping miles 10&rdquo; in your receipts reply. The miles cover gas and the car.'] ] }
+]},
+handy: { icon: '🧰', title: 'Handy things in Admin', mins: 2, steps: [
+  { info: info('🍲', 'Cook &amp; pack', 'In the <b>🍲 Menu</b> tab: how many pints and quarts of each dish to make, plus gift boxes, cards to write and customer notes, all added up for you.') },
+  { info: info('🧾', 'Who&rsquo;s invoiced', 'Orders show <b>&ldquo;Invoiced ✓&rdquo;</b>, with a count like <b>&ldquo;8 of 18 invoiced&rdquo;</b>, so you know who&rsquo;s left.') },
+  { info: info('📢', 'Publish is safe', 'It tells you how many customers were emailed, and it won&rsquo;t announce an empty menu.') },
+  { info: info('🔄', 'Archive is safe', '<b>Archive Week &amp; Start Fresh</b> is safe to tap twice. Nothing breaks.') },
+  { info: info('📖', 'Your manual and your helper',
+      'Your user manual (the Google Doc Tony shared) is kept up to date. The green <b>❓ Ask a question</b> button in Admin answers from it, any time.',
+      '', 'Not sure about something? Ask it first.') },
+  { quiz: 'Monday afternoon, you&rsquo;re not sure who still needs an invoice. Where do you look?', opts: [
+    ['📋 Orders: the ones without &ldquo;Invoiced ✓&rdquo; (the count says how many)', 1, 'Right.'],
+    ['Wait for the Saturday report', 0, 'Quicker: the 📋 Orders tab shows &ldquo;Invoiced ✓&rdquo; on each order and a count like &ldquo;8 of 18 invoiced&rdquo;.'] ] }
 ]}
 };
 
@@ -434,6 +578,10 @@ function step(){
         first = false;
       };
     });
+    return;
+  }
+  if(s.info){
+    $('app').innerHTML = h + s.info + '<button class="big" onclick="nextStep()">Next</button>'; window.scrollTo(0, 0);
     return;
   }
   h += '<div class="say">' + s.say + '</div><div class="hint" id="hint"></div>';
