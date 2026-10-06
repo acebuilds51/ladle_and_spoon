@@ -124,8 +124,8 @@ var DAYS = [
   { date: '2026-10-09', label: 'Friday',    lessons: ['texts', 'lastcall', 'approve'] },
   { date: '2026-10-10', label: 'Saturday · how things work', lessons: ['auto', 'reports'] },
   { date: '2026-10-11', label: 'Sunday · how things work',   lessons: ['money', 'handy'] },
-  { date: '2026-10-12', label: 'Monday',    lessons: ['route1', 'route2', 'receipts'] },
-  { date: '2026-10-13', label: 'Tuesday',   lessons: ['publish'] }
+  { date: '2026-10-12', label: 'Monday',    lessons: ['route1', 'route2'] },
+  { date: '2026-10-13', label: 'Tuesday',   lessons: ['publish', 'receipts'] }
 ];
 function store(k, v){ try{ if(v === undefined) return JSON.parse(localStorage.getItem(k) || 'null'); localStorage.setItem(k, JSON.stringify(v)); }catch(e){ return null; } }
 var DONE = store('learn_done') || {};
@@ -350,8 +350,8 @@ route2: { icon: '🚗', title: 'Monday: at each stop', mins: 5, steps: [
     ['Open the Ladle &amp; Spoon app: it shows the next stop (or Route, ▶ Resume)', 1, 'Right. The app always knows where you are.'],
     ['The paper list from the kitchen', 0, 'No paper needed: the app shows your next stop. If it closed, Route, ▶ Resume.'] ] }
 ]},
-receipts: { icon: '🧾', title: 'Monday night: your receipts', mins: 3, steps: [
-  { say: 'Monday evening you get an email: <b>🛒 Receipts for your Oct 12 delivery</b>. You just reply to it. Tap <b>Reply</b>.',
+receipts: { icon: '🧾', title: 'Your receipts (Monday night, or now)', mins: 3, steps: [
+  { say: 'Monday evening you get an email: <b>🛒 Receipts for your Oct 12 delivery</b>. If you haven&rsquo;t answered it yet, no problem: it reminds you each morning until you do. You just reply to it. Tap <b>Reply</b>.',
     screen: mail('Ladle &amp; Spoon', '🛒 Receipts for your Oct 12 delivery', 'Hi Lia, your Oct 12 delivery brought in $1,417.00 from 42 orders. Let&rsquo;s see what you actually kept…<br><button class="btn sm" data-t="reply">↩ Reply</button>'), tap: 'reply' },
   { say: 'Tap the paperclip <b>📎</b> and add a photo of each receipt.',
     screen: '<div class="pad"><b>Re: 🛒 Receipts for your Oct 12 delivery</b><div style="margin-top:8px"><button class="btn sm out" data-t="clip">📎 Attach</button></div></div>', tap: 'clip', after: '📷 1 photo attached' },
