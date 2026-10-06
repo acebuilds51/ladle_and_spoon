@@ -108,12 +108,12 @@ textarea{width:100%;border:1.5px solid var(--bd);border-radius:12px;padding:12px
 'use strict';
 var API = 'https://ladle-spoon-api.ladle-spoon-api.workers.dev/';
 var Q = new URLSearchParams(location.search), PREVIEW = Q.has('preview'), DAY = Q.get('d') || '';
-// The same schedule as LEARN_DAYS in the backend: each day's lessons, for the task the day after.
+// The same schedule as LEARN_DAYS in the backend: each day's lessons, emailed at 7 AM that day.
 var DAYS = [
-  { date: '2026-10-07', label: 'For Thursday', lessons: ['helper', 'facebook'] },
-  { date: '2026-10-08', label: 'For Friday',   lessons: ['texts', 'lastcall', 'approve'] },
-  { date: '2026-10-11', label: 'For Monday',   lessons: ['route1', 'route2', 'receipts'] },
-  { date: '2026-10-12', label: 'For Tuesday',  lessons: ['publish'] }
+  { date: '2026-10-07', label: 'Wednesday', lessons: ['helper', 'facebook'] },
+  { date: '2026-10-09', label: 'Friday',    lessons: ['texts', 'lastcall', 'approve'] },
+  { date: '2026-10-12', label: 'Monday',    lessons: ['route1', 'route2', 'receipts'] },
+  { date: '2026-10-13', label: 'Tuesday',   lessons: ['publish'] }
 ];
 function store(k, v){ try{ if(v === undefined) return JSON.parse(localStorage.getItem(k) || 'null'); localStorage.setItem(k, JSON.stringify(v)); }catch(e){ return null; } }
 var DONE = store('learn_done') || {};
@@ -371,20 +371,38 @@ function home(){
   var h = '';
   var todo = first ? first.lessons.filter(function(k){ return !DONE[k]; }) : [];
   if(first){
-    h += '<p style="margin:18px 0 0;font-size:18px">Hi Lia! ' + (todo.length ? 'Here&rsquo;s your practice ' + first.label.replace(/^For/, 'for') + '. It&rsquo;s all pretend: tap anything, nothing gets sent.' : 'You&rsquo;ve done today&rsquo;s practice. Thank you! 🎉 Do any lesson again whenever you like.') + '</p>';
+    h += '<p style="margin:18px 0 0;font-size:18px">Good morning, Lia! ' + (todo.length ? 'Here&rsquo;s a quick practice for today. It&rsquo;s all pretend: tap anything, nothing gets sent.' : 'You&rsquo;ve done today&rsquo;s practice. Thank you! 🎉 Do any lesson again whenever you like.') + '</p>';
     if(todo.length) h += '<button class="big" onclick="start(\'' + todo[0] + '\')">▶ Start: ' + L[todo[0]].title + '</button>';
   } else {
     h += '<p style="margin:18px 0 0;font-size:18px">Hi Lia! Short practice lessons, a few minutes each. It&rsquo;s all pretend: tap anything, nothing gets sent.</p>';
   }
   order.forEach(function(d){
-    h += '<div class="day' + (d === first ? ' now' : '') + '">' + d.label + '</div>';
+    h += '<div class="day' + (d === first ? ' now' : '') + '">' + (d === first ? 'Today · ' : '') + d.label + '</div>';
     d.lessons.forEach(function(k){
       h += '<button class="tile' + (DONE[k] ? ' done' : '') + '" onclick="start(\'' + k + '\')"><span class="ic">' + (DONE[k] ? '✅' : L[k].icon) + '</span>'
         +  '<span class="t">' + L[k].title + '<span class="m">' + (DONE[k] ? 'Done · tap to do again' : 'About ' + L[k].mins + ' min') + '</span></span><span style="color:var(--t3)">›</span></button>';
     });
   });
+  h += '<div class="day">Your ideas</div><button class="tile" onclick="ideaPage()" style="border-color:#E8C27A;background:#FCEFD6"><span class="ic">💡</span>'
+    +  '<span class="t">Tell Tony how you&rsquo;d like it to work<span class="m">Something to change, simplify or do your way. Any time.</span></span><span style="color:var(--t3)">›</span></button>';
   h += '<p style="font-size:14px;color:var(--t3);margin-top:22px">Stuck in the real app? Tap ❓ Ask a question in Admin.</p>';
   $('app').innerHTML = h;
+}
+// Tony, 2026-10-06: it has to fit how Lia wants to work, so her ideas can come any time, not
+// only at the end of a lesson.
+function ideaPage(){
+  window.scrollTo(0, 0);
+  $('app').innerHTML = '<div class="bar"><button class="x" onclick="home()">✕</button></div>'
+    + '<div class="say">💡 How would <b>you</b> like it to work?</div>'
+    + '<p style="margin:0 0 12px;color:var(--t2)">Anything at all: a step that feels like too much, something you&rsquo;d rather do another way, a button you wish was there, or something you&rsquo;d rather not do at all. Tony will shape it around you.</p>'
+    + '<textarea id="idea" placeholder="For example: I&rsquo;d rather get the Friday texts in one list I can send all at once…"></textarea>'
+    + '<button class="big" id="ideago">Send to Tony</button>';
+  $('ideago').onclick = function(){
+    var v = $('idea').value.trim();
+    if(!v){ $('idea').focus(); return; }
+    send({ type: 'learn_result', lesson: 'ideas', idea: v });
+    $('app').innerHTML = '<div style="text-align:center;margin-top:30px"><div style="font-size:52px">💌</div><div class="say">Thank you! Tony will read it, and you can talk it over together.</div></div><button class="big" onclick="home()">Back to the lessons</button>';
+  };
 }
 function start(k){
   S = { k: k, i: 0, right: 0, total: 0, missed: [], t0: Date.now(), st: {} };
@@ -481,31 +499,56 @@ function finish(){
     + '<div style="color:var(--t2)">' + L1.title + (S.total ? ' · ' + S.right + ' of ' + S.total + ' right first try' : '') + '</div></div>'
     + '<div class="say" style="margin-top:22px">How did that feel?</div><div class="feel">'
     + [['good', '😀', 'Easy'], ['ok', '😐', 'OK'], ['hard', '😕', 'Confusing']].map(function(f){ return '<button data-f="' + f[0] + '"><b>' + f[1] + '</b>' + f[2] + '</button>'; }).join('') + '</div>'
+    // Her way of working comes first (Tony, 2026-10-06).
+    + '<div class="say" style="margin-top:22px">Would you change anything about how this works?</div>'
+    + '<div class="feel"><button data-c="no"><b>👍</b>It works for me</button><button data-c="yes"><b>✏️</b>I&rsquo;d change something</button></div>'
+    + '<div id="ideabox" style="display:none"><div style="font-size:16px;color:var(--t2);margin:4px 0 8px">How would you like it to work? Anything: a step you&rsquo;d skip, do differently, or a button you wish was there.</div>'
+    + '<textarea id="idea" placeholder="I&rsquo;d rather…"></textarea></div>'
     + '<div class="say" style="font-size:18px;margin-top:16px">Anything confusing, or a question for Tony? <span style="color:var(--t3);font-size:15px">(optional)</span></div>'
     + '<textarea id="note" placeholder="Type here…"></textarea>'
     + '<button class="big" id="fin">' + (nextK ? 'Send, and go to the next lesson' : 'Send and finish') + '</button>';
   $('app').innerHTML = h; window.scrollTo(0, 0);
   var feel = '';
-  Array.prototype.forEach.call(document.querySelectorAll('.feel button'), function(b){
-    b.onclick = function(){ feel = b.dataset.f; Array.prototype.forEach.call(document.querySelectorAll('.feel button'), function(x){ x.className = x === b ? 'on' : ''; }); };
+  Array.prototype.forEach.call(document.querySelectorAll('.feel button[data-f]'), function(b){
+    b.onclick = function(){ feel = b.dataset.f; Array.prototype.forEach.call(document.querySelectorAll('.feel button[data-f]'), function(x){ x.className = x === b ? 'on' : ''; }); };
+  });
+  Array.prototype.forEach.call(document.querySelectorAll('.feel button[data-c]'), function(b){
+    b.onclick = function(){
+      Array.prototype.forEach.call(document.querySelectorAll('.feel button[data-c]'), function(x){ x.className = x === b ? 'on' : ''; });
+      $('ideabox').style.display = b.dataset.c === 'yes' ? '' : 'none';
+      if(b.dataset.c === 'yes') $('idea').focus();
+    };
   });
   $('fin').onclick = function(){
-    send({ type: 'learn_result', lesson: S.k, right: S.right, total: S.total, missed: S.missed, feel: feel, note: $('note').value.trim(), secs: Math.round((Date.now() - S.t0) / 1000) });
+    var idea = $('ideabox').style.display === 'none' ? '' : $('idea').value.trim();
+    send({ type: 'learn_result', lesson: S.k, right: S.right, total: S.total, missed: S.missed, feel: feel, note: $('note').value.trim(), idea: idea, secs: Math.round((Date.now() - S.t0) / 1000) });
     if(nextK) start(nextK); else home();
   };
 }
 // Results wait on the phone until they reach the backend (a dead spot in the car is fine).
 function send(r){
   if(PREVIEW) return;
+  r.qid = Date.now() + '-' + Math.random().toString(36).slice(2, 8);
   var q = store('learn_queue') || []; q.push(r); store('learn_queue', q); flush();
 }
+// One at a time, and each is removed by its own id once delivered, so two quick sends (a lesson,
+// then an idea) can't send one twice and lose the other.
+var FLUSHING = false;
 function flush(){
+  if(FLUSHING) return;
   var q = store('learn_queue') || []; if(!q.length) return;
-  var r = q[0];
+  var r = q[0]; FLUSHING = true;
   fetch(API, { method: 'POST', headers: { 'Content-Type': 'text/plain' }, body: JSON.stringify(r), keepalive: true })
     .then(function(x){ return x.json(); })
-    .then(function(d){ if(d && d.success !== false || (d && /Unknown lesson/.test(d.error || ''))){ var q2 = store('learn_queue') || []; q2.shift(); store('learn_queue', q2); flush(); } })
-    .catch(function(){});
+    .then(function(d){
+      FLUSHING = false;
+      // Delivered, or refused for good (a bad lesson, an empty idea): either way it leaves the queue.
+      if(d && (d.success !== false || /Unknown lesson|No idea/.test(d.error || ''))){
+        store('learn_queue', (store('learn_queue') || []).filter(function(x){ return x.qid !== r.qid; }));
+        flush();
+      }
+    })
+    .catch(function(){ FLUSHING = false; });
 }
 if(PREVIEW) $('pv').innerHTML = '<div class="pv">Preview: your answers aren&rsquo;t sent to anyone.</div>';
 home(); flush();
