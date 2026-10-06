@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="noindex">
+<title>Lia's practice · Ladle &amp; Spoon</title>
+<link rel="icon" type="image/png" href="icon-192.png">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600;700&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+<!--
+  Lia's lessons (gs101, Tony 2026-10-06). Short self-guided practice for each task, emailed the day
+  before she does it. Every screen here is pretend: made-up customers, and nothing is sent anywhere
+  except her lesson result (which lesson, how it felt, what she typed) to Apps Script, which records
+  it in "Lia's lessons" and emails Tony. ?d=YYYY-MM-DD puts that day's lessons first; ?preview sends
+  nothing (for Tony to try it). No customer data belongs in this file: the repository is public.
+-->
+<style>
+:root{--f:#1B3D1C;--fm:#2E6B30;--sg:#7FAF6E;--sgl:#C4DDB8;--cr:#F8F4EC;--cl:#C4622D;--am:#D4943A;--tx:#1A1A18;--t2:#4A4A45;--t3:#8A8A80;--bd:#E8E0D0;}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--cr);color:var(--tx);font-family:'DM Sans',system-ui,sans-serif;font-size:17px;line-height:1.5;-webkit-text-size-adjust:100%}
+button{font-family:inherit}
+.wrap{max-width:520px;margin:0 auto;padding:0 16px 40px}
+.top{background:var(--f);color:#fff;padding:16px;text-align:center}
+.top h1{font-family:'Cormorant Garamond',serif;font-size:28px;margin:0;line-height:1.1}
+.top p{margin:4px 0 0;font-size:14px;opacity:.85}
+.pv{background:#fff3cd;color:#7a5a00;text-align:center;font-size:13px;padding:6px}
+.day{margin:20px 0 6px;font-size:13px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;color:var(--t3)}
+.day.now{color:var(--cl)}
+.tile{display:flex;align-items:center;gap:12px;width:100%;text-align:left;background:#fff;border:1.5px solid var(--bd);border-radius:14px;padding:14px;margin:8px 0;cursor:pointer;font-size:17px;color:var(--tx)}
+.tile .ic{font-size:26px;width:34px;text-align:center}
+.tile .t{flex:1;font-weight:700;line-height:1.3}
+.tile .m{display:block;font-weight:400;font-size:13px;color:var(--t3)}
+.tile.done{border-color:var(--sgl);background:#f6fbf3}
+.big{display:block;width:100%;border:none;border-radius:14px;background:var(--f);color:#fff;font-size:19px;font-weight:700;padding:16px;cursor:pointer;margin:12px 0}
+.big.alt{background:#fff;color:var(--f);border:2px solid var(--f)}
+.link{background:none;border:none;color:var(--t3);text-decoration:underline;font-size:15px;cursor:pointer;padding:8px}
+/* lesson */
+.bar{display:flex;align-items:center;gap:10px;padding:12px 0}
+.bar .x{background:#fff;border:1.5px solid var(--bd);border-radius:10px;font-size:15px;padding:6px 12px;cursor:pointer}
+.dots{flex:1;height:8px;background:#e6dfd0;border-radius:4px;overflow:hidden}
+.dots i{display:block;height:100%;background:var(--sg);transition:width .3s}
+.say{font-size:20px;line-height:1.45;margin:6px 0 14px}
+.say b{color:var(--f)}
+.hint{font-size:15px;color:var(--cl);font-weight:700;min-height:22px;margin:-6px 0 8px}
+/* the pretend phone screen */
+.scr{background:#fff;border:1.5px solid var(--bd);border-radius:18px;overflow:hidden;box-shadow:0 6px 20px rgba(0,0,0,.06);font-size:15px}
+.scr .lbl{font-size:11px;letter-spacing:.6px;text-transform:uppercase;color:var(--t3);text-align:center;padding:6px;background:#faf8f3;border-bottom:1px solid var(--bd)}
+.pad{padding:14px}
+.ah{background:var(--f);color:#fff;padding:10px 14px;display:flex;align-items:center;gap:10px;font-weight:700}
+.ah .logo{width:40px;height:40px;border-radius:50%;background:#fff;display:flex;align-items:center;justify-content:center;font-size:20px;cursor:pointer;border:none}
+.tabs{display:flex;gap:6px;overflow-x:auto;padding:8px;background:#f3efe6}
+.tabs span{white-space:nowrap;background:#fff;border:1px solid var(--bd);border-radius:16px;padding:5px 10px;font-size:13px;cursor:pointer}
+.tabs span.on{background:var(--f);color:#fff;border-color:var(--f)}
+.btn{display:block;width:100%;text-align:center;border:none;border-radius:12px;background:var(--f);color:#fff;font-weight:700;font-size:16px;padding:13px;margin:8px 0;cursor:pointer}
+.btn.out{background:#fff;color:var(--f);border:1.5px solid var(--f)}
+.btn.red{background:#9a3412}
+.btn.gry{background:#888}
+.btn.sm{display:inline-block;width:auto;padding:8px 14px;font-size:14px;margin:4px 6px 4px 0}
+.card{border:1px solid var(--bd);border-radius:12px;padding:12px;margin:8px 0;background:#fff}
+.mail .from{font-size:12px;color:var(--t3)}
+.mail .sub{font-weight:700;font-size:16px;margin:2px 0 8px;color:var(--tx)}
+.quote{background:var(--cr);border-radius:8px;padding:10px;font-size:14px;white-space:pre-wrap}
+.msgs{background:#f2f2f7;padding:14px;min-height:170px}
+.msgs .to{text-align:center;font-size:13px;color:#666;margin-bottom:10px}
+.bub{background:#0a84ff;color:#fff;border-radius:16px;padding:9px 12px;margin-left:auto;max-width:85%;font-size:14px}
+.compose{display:flex;gap:8px;align-items:flex-end;padding:10px;background:#fff;border-top:1px solid #ddd}
+.compose .in{flex:1;border:1px solid #ccc;border-radius:16px;padding:8px 12px;font-size:14px;color:#333;min-height:36px}
+.compose .send{width:38px;height:38px;border-radius:50%;background:#0a84ff;color:#fff;border:none;font-size:20px;cursor:pointer}
+.fb{background:#f0f2f5}
+.fb .gh{background:#1877f2;color:#fff;padding:10px 14px;font-weight:700}
+.stop{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid #f0ece2}
+.stop .n{width:30px;height:30px;border-radius:50%;background:var(--f);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:14px;flex:none}
+.stop .i{flex:1;min-width:0;font-size:14px;line-height:1.35}
+.stop .i span{display:block;color:var(--t3);font-size:12px}
+.mv{display:flex;flex-direction:column;gap:4px}
+.mv button{width:40px;height:32px;border-radius:8px;border:1.5px solid var(--f);background:#fff;color:var(--f);font-size:14px;cursor:pointer}
+.mv button:disabled{opacity:.3}
+.warn{background:#fff7e0;border:1px solid #f1d38a;border-radius:10px;padding:10px;font-size:14px;margin:8px 0}
+.pay{border-radius:10px;padding:10px;font-weight:700;margin:8px 0}
+.dvn{font-size:22px;font-weight:700;color:var(--f)}
+.ok{color:#15803d;font-weight:700}
+/* the button to tap */
+.glow{position:relative;animation:glow 1.3s ease-in-out infinite;outline:3px solid var(--am);outline-offset:2px}
+@keyframes glow{0%,100%{box-shadow:0 0 0 0 rgba(212,148,58,.7)}50%{box-shadow:0 0 0 9px rgba(212,148,58,0)}}
+.shake{animation:shake .35s}
+@keyframes shake{25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}
+/* quiz */
+.opt{display:block;width:100%;text-align:left;background:#fff;border:2px solid var(--bd);border-radius:14px;padding:14px;margin:10px 0;font-size:17px;cursor:pointer;color:var(--tx)}
+.opt.right{border-color:#15803d;background:#effaf1}
+.opt.wrong{border-color:#c2410c;background:#fff4ed}
+.why{border-radius:12px;padding:12px 14px;margin:8px 0;font-size:16px}
+.why.g{background:#effaf1;color:#14532d}
+.why.b{background:#fff4ed;color:#7c2d12}
+.feel{display:flex;gap:10px;margin:10px 0}
+.feel button{flex:1;background:#fff;border:2px solid var(--bd);border-radius:14px;padding:12px 4px;font-size:15px;cursor:pointer}
+.feel button b{display:block;font-size:34px}
+.feel button.on{border-color:var(--f);background:#f0f7ec}
+textarea{width:100%;border:1.5px solid var(--bd);border-radius:12px;padding:12px;font-size:17px;font-family:inherit;min-height:96px}
+.rd{font-size:15px;margin:4px 0}
+@media (prefers-reduced-motion:reduce){.glow{animation:none}}
+</style>
+</head>
+<body>
+<div class="top"><h1>Lia&rsquo;s practice</h1><p>Short lessons for what&rsquo;s coming up</p></div>
+<div id="pv"></div>
+<div class="wrap" id="app"></div>
+<script>
+'use strict';
+var API = 'https://ladle-spoon-api.ladle-spoon-api.workers.dev/';
+var Q = new URLSearchParams(location.search), PREVIEW = Q.has('preview'), DAY = Q.get('d') || '';
+// The same schedule as LEARN_DAYS in the backend: each day's lessons, for the task the day after.
+var DAYS = [
+  { date: '2026-10-07', label: 'For Thursday', lessons: ['helper', 'facebook'] },
+  { date: '2026-10-08', label: 'For Friday',   lessons: ['texts', 'lastcall', 'approve'] },
+  { date: '2026-10-11', label: 'For Monday',   lessons: ['route1', 'route2', 'receipts'] },
+  { date: '2026-10-12', label: 'For Tuesday',  lessons: ['publish'] }
+];
+function store(k, v){ try{ if(v === undefined) return JSON.parse(localStorage.getItem(k) || 'null'); localStorage.setItem(k, JSON.stringify(v)); }catch(e){ return null; } }
+var DONE = store('learn_done') || {};
+function $(id){ return document.getElementById(id); }
+function esc(s){ return String(s == null ? '' : s).replace(/[&<>"]/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]; }); }
+
+// ── Pretend screens ──
+function scr(inner, label){ return '<div class="scr" id="scr"><div class="lbl">' + (label || 'Practice screen · nothing is sent') + '</div>' + inner + '</div>'; }
+function adminTop(tab){
+  var tabs = ['📊 Dash', '📋 Orders', '🚗 Route', '🍲 Menu', '🎁 Gift', '💌 Re-engage'];
+  return '<div class="ah"><span>Ladle &amp; Spoon · Admin</span></div><div class="tabs">'
+    + tabs.map(function(t){ var id = t.split(' ')[1].toLowerCase().replace(/\W/g, ''); return '<span data-t="tab-' + id + '" class="' + (t.indexOf(tab) >= 0 ? 'on' : '') + '">' + t + '</span>'; }).join('') + '</div>';
+}
+function mail(from, subject, body){ return '<div class="pad mail"><div class="from">From: ' + from + '</div><div class="sub">' + subject + '</div>' + body + '</div>'; }
+function messages(to, text, sent){
+  return '<div class="msgs"><div class="to">To: ' + to + '</div>' + (sent ? '<div class="bub">' + esc(text) + '</div><div style="text-align:right;font-size:11px;color:#888;margin-top:4px">Delivered</div>' : '') + '</div>'
+    + (sent ? '<div class="pad"><button class="btn" data-t="back">← Back to the Ladle &amp; Spoon app</button></div>'
+            : '<div class="compose"><div class="in">' + esc(text) + '</div><button class="send" data-t="send" aria-label="Send">↑</button></div>');
+}
+var MARY = 'Hi Mary! It\'s Lia from Ladle & Spoon. Orders close tonight at 7 PM for Monday delivery. This week: Pasta E Fagioli, Chicken Stroganoff and a Crispy Pepperoni Salad. Order here: ladleandspoon…';
+var TOM = MARY.replace('Mary', 'Tom');
+var BUMP = 'Last call! Orders close at 7 PM tonight for Monday delivery 🥣';
+function textsCard(sent){
+  var ppl = ['Mary Sample', 'Tom Example', 'Rita Demo'], next = ppl[sent];
+  return adminTop('Dash') + '<div class="pad"><b>📱 Friday texts</b><div style="font-size:13px;color:var(--t3);margin:4px 0 8px">Tap the green button, tap <b>Send</b> in Messages, then come back.</div>'
+    + '<div style="font-size:13px;font-weight:700">' + sent + ' of 3 sent</div><div style="height:6px;background:#eee;border-radius:3px;margin:4px 0 10px"><div style="height:100%;width:' + Math.round(sent / 3 * 100) + '%;background:var(--f);border-radius:3px"></div></div>'
+    + (next ? '<button class="btn" data-t="textnext">💬 Text next: ' + next + '</button>' : '<div class="ok" style="text-align:center">All 3 sent. Thank you!</div>')
+    + ppl.map(function(p, i){ return '<div class="stop"><div class="i"><b>' + p + '</b><span>(248) 555-01' + (10 + i) + '</span></div>' + (i < sent ? '<span class="ok">Sent ✓</span>' : '<button class="btn sm out" data-t="stop-' + i + '">Stop</button>') + '</div>'; }).join('')
+    + '</div>';
+}
+var STOPS0 = [['Mary Sample', '412 Maple Ave, Waterford', 'Cash $30'], ['Tom Example', '88 Lakeview Dr, Waterford', 'Venmo $23'], ['Rita Demo', '1530 Cass Lake Rd, Keego Harbor', 'Cash $30'],
+  ['Joe Placeholder', '7 Oak Hollow Ct, Waterford', 'Venmo $15'], ['Ann Testing', '22 Pine St, Waterford', 'Venmo $16']];
+function routeList(stops, moved){
+  return adminTop('Route') + '<div class="pad"><div style="display:flex;gap:16px;font-size:13px;color:var(--t2)"><div><b style="font-size:22px;color:var(--f)">5</b> stops</div><div><b style="font-size:22px;color:var(--f)">52 min</b> driving</div><div><b style="font-size:22px;color:var(--f)">14 mi</b></div></div>'
+    + '<button class="btn" data-t="start">▶ Start delivering</button>'
+    + (moved ? '<button class="btn out" data-t="update">Update drive times for my order</button>' : '')
+    + '<div style="font-size:12px;color:var(--t3);margin-top:8px">Use ▲ ▼ to move a stop (for example someone who needs it early).</div>'
+    + stops.map(function(s, i){ return '<div class="stop"><div class="n">' + (i + 1) + '</div><div class="i"><b>' + s[0] + '</b><span>' + s[1] + '</span></div><div class="mv"><button data-mv="' + i + ',-1"' + (i ? '' : ' disabled') + '>▲</button><button data-mv="' + i + ',1"' + (i < stops.length - 1 ? '' : ' disabled') + '>▼</button></div></div>'; }).join('')
+    + '<div style="text-align:center"><button class="link" style="color:var(--f)">' + (moved ? 'Back to the best order' : 'Plan again (new orders?)') + '</button></div></div>';
+}
+function driveStop(n, s, armed){
+  return '<div class="pad"><div style="display:flex;justify-content:space-between;font-weight:700;color:var(--t2)"><span>Stop ' + n + ' of 5</span><span style="border:1.5px solid var(--bd);border-radius:9px;padding:2px 10px" data-t="close">✕ Close</span></div>'
+    + '<div class="dvn" style="margin-top:8px">' + s[0] + '</div><div>' + s[1] + '</div>'
+    + (n === 1 ? '<div class="warn">📝 Leave on the porch. Dog in the yard.</div>' : '')
+    + '<div class="card">📦 Pasta E Fagioli (Quart), Crispy Pepperoni Salad</div>'
+    + '<div class="pay" style="' + (/Cash/.test(s[2]) ? 'background:#fef3c7;color:#92400e">💵 Collect ' + s[2].slice(5) + ' cash' : 'background:#e8f4ff;color:#0b5cad">💙 Venmo · ' + s[2].slice(6)) + '</div>'
+    + '<button class="btn" style="background:#2563eb" data-t="nav">🧭 Navigate</button>'
+    + '<div style="display:flex;gap:8px"><button class="btn out" style="flex:1">📞 Call</button><button class="btn out" style="flex:1">💬 Text</button></div>'
+    + '<button class="btn" style="padding:18px;font-size:18px;' + (armed ? 'background:#14532d' : '') + '" data-t="' + (armed ? 'confirm' : 'delivered') + '">' + (armed ? 'Tap again to confirm' : '✓ Delivered') + '</button>'
+    + '<div style="display:flex;justify-content:space-between"><button class="link" data-t="skip">Skip for now</button><span style="font-size:12px;color:var(--t3);align-self:center">🚗 6 min from the last stop</span></div></div>';
+}
+function textsPhase(tapped){
+  return '<div class="pad"><div class="ok" style="margin-bottom:10px">✓ Mary Sample delivered. The invoice is on its way.</div><div style="font-size:14px;color:var(--t2);margin-bottom:6px">Tap each one, then Send in Messages:</div>'
+    + '<button class="btn out" data-t="tdone" style="' + (tapped > 0 ? 'opacity:.6' : '') + '">' + (tapped > 0 ? '✓ ' : '💬 ') + 'Text Mary: "delivered"</button>'
+    + '<button class="btn out" data-t="tnext" style="' + (tapped > 1 ? 'opacity:.6' : '') + '">' + (tapped > 1 ? '✓ ' : '💬 ') + 'Text Tom: "you\'re my next stop"</button>'
+    + '<button class="btn" style="background:#2563eb" data-t="navnext">🧭 Navigate to Tom</button></div>';
+}
+function maps(to){ return '<div style="background:#e8f0e3;height:150px;display:flex;align-items:center;justify-content:center;font-size:40px">🗺️</div><div class="pad"><b>Google Maps</b><div>Driving to ' + to + '… 6 min</div><button class="btn" data-t="back">I&rsquo;m there: back to the Ladle &amp; Spoon app</button></div>'; }
+function confirmPage(title, text, yes, cls){ return '<div class="pad" style="text-align:center;background:var(--cr)"><div class="card"><h3 style="color:var(--f);margin:4px 0">' + title + '</h3><p style="color:#555">' + text + '</p>' + (yes ? '<button class="btn ' + (cls || '') + '" data-t="yes">' + yes + '</button>' : '') + '</div></div>'; }
+
+// ── The receipts reply, read the way the app reads it (a simple copy of parseCostReply's rules) ──
+function readReply(text){
+  var out = [], kinds = [[/^(groceries|grocery|food)\b/i, 'Groceries'], [/^(containers?|packaging|lids?|labels?|bags?|supplies)\b/i, 'Containers & packaging'],
+    [/^(gift ?box(es)?|gift|cards?|ribbon)\b/i, 'Gift box & cards'], [/^(other|misc\w*)\b/i, 'Other']];
+  text.split('\n').forEach(function(l){
+    var line = l.trim(); if(!line) return;
+    if(/^(none|nothing)\b/i.test(line)){ out.push({ ok: true, t: 'Nothing bought this time' }); return; }
+    var mm = /^(?:(?:shopping|store|grocery|supply)\s+)?(?:miles?|mileage)\b[\s:=-]*([\d.]+)/i.exec(line);
+    if(mm){ out.push({ ok: true, t: 'Shopping miles: ' + mm[1] + ' mi' }); return; }
+    if(/\bgas\b/i.test(line)){ out.push({ ok: false, t: '“' + line + '”: leave gas out. Your miles already cover it.' }); return; }
+    var kind = 'Groceries', rest = line;
+    for(var i = 0; i < kinds.length; i++){ var k = kinds[i][0].exec(line); if(k){ kind = kinds[i][1]; rest = line.slice(k[0].length); break; } }
+    var a = /\$?\s*(\d{1,4}(?:\.\d{1,2})?)/.exec(rest);
+    if(a) out.push({ ok: true, t: kind + ': $' + parseFloat(a[1]).toFixed(2) });
+    else out.push({ ok: false, t: '“' + line + '”: I couldn’t find an amount. Try “Groceries 182.40”.' });
+  });
+  return out;
+}
+
+// ── Lessons ──
+// Each step: say (what to do), screen (the pretend screen), tap (the button that moves on; it glows),
+// next (a Next button instead), quiz, or run (its own little practice).
+var L = {
+helper: { icon: '🔑', title: 'Getting into Admin, and your helper', mins: 2, steps: [
+  { say: 'To get into Admin, you tap the Ladle &amp; Spoon <b>logo 5 times</b>. Try it: tap the glowing logo 5 times.',
+    screen: function(st){ return '<div class="ah"><button class="logo" data-t="logo">🥣</button><span>Ladle &amp; Spoon</span></div><div class="pad" style="color:var(--t3)">Homemade soups &amp; salads…<div style="margin-top:8px;font-weight:700;color:var(--f)">' + (st.n ? 'Taps: ' + st.n + ' of 5' : '') + '</div></div>'; },
+    tap: 'logo', times: 5 },
+  { say: 'Next it asks for your PIN. In the real app you type it in. Here it&rsquo;s pretend, so just tap <b>Enter</b>.',
+    screen: '<div class="pad" style="text-align:center"><b>Admin PIN</b><div style="font-size:26px;letter-spacing:8px;margin:10px 0">••••</div><button class="btn" data-t="enter">Enter</button></div>', tap: 'enter' },
+  { say: 'You&rsquo;re in! The tabs along the top take you to each part. Tap <b>🚗 Route</b>.',
+    screen: adminTop('Dash') + '<div class="pad" style="color:var(--t3)">This week: 42 orders…</div>', tap: 'tab-route' },
+  { say: 'Stuck on anything, any time? Tap the green <b>❓ Ask a question</b> button at the bottom of Admin. Try it.',
+    screen: adminTop('Route') + '<div class="pad" style="height:120px;position:relative"><button class="btn" data-t="ask" style="position:absolute;right:12px;bottom:4px;width:auto;border-radius:24px;padding:10px 16px">❓ Ask a question</button></div>', tap: 'ask' },
+  { say: 'Type your question in your own words. It answers from your user manual, any time of day.',
+    screen: '<div class="pad"><b style="color:var(--f)">Ask a question</b><div class="quote" style="margin:8px 0;background:#e8f4ff">How do I move a stop earlier?</div><div class="quote">On the Route tab, tap ▲ next to their name until they&rsquo;re near the top, then tap &ldquo;Update drive times for my order&rdquo;.</div></div>', next: true },
+  { quiz: 'You can&rsquo;t remember how to do something in the app. What&rsquo;s the quickest help?', opts: [
+    ['Tap ❓ Ask a question in Admin', 1, 'Yes! It knows the whole app and answers right away.'],
+    ['Look through old emails from Tony', 0, 'You could, but ❓ Ask a question is much quicker. It knows everything in those emails.'],
+    ['Wait and ask at the next meeting', 0, 'No need to wait: tap ❓ Ask a question in Admin and it answers right away.'] ] }
+]},
+facebook: { icon: '📣', title: 'Posting in Facebook groups', mins: 3, steps: [
+  { say: 'On posting days you get an email called <b>📣 Facebook today</b>. It lists the groups to post in, with the post already written for you.',
+    screen: mail('Ladle &amp; Spoon', '📣 Facebook today: 1 group to post in', '<div class="card"><b>1. Keego Harbor Community</b><div class="quote" style="margin:8px 0">🥣 This week at Ladle &amp; Spoon: Pasta E Fagioli, Chicken Stroganoff… Order by Friday 7 PM for Monday delivery!</div><button class="btn sm" data-t="copy">Copy</button><button class="btn sm" data-t="open">Open Keego Harbor Community</button></div>'), next: true },
+  { say: 'On your phone you press and hold the post to copy it. Here, tap <b>Copy</b>.',
+    screen: mail('Ladle &amp; Spoon', '📣 Facebook today: 1 group to post in', '<div class="card"><b>1. Keego Harbor Community</b><div class="quote" style="margin:8px 0">🥣 This week at Ladle &amp; Spoon: Pasta E Fagioli, Chicken Stroganoff… Order by Friday 7 PM for Monday delivery!</div><button class="btn sm" data-t="copy">Copy</button><button class="btn sm" data-t="open">Open Keego Harbor Community</button></div>'), tap: 'copy', after: 'Copied!' },
+  { say: 'Now tap the button to <b>open the group</b>.',
+    screen: mail('Ladle &amp; Spoon', '📣 Facebook today: 1 group to post in', '<div class="card"><b>1. Keego Harbor Community</b><div class="quote" style="margin:8px 0">🥣 This week at Ladle &amp; Spoon: Pasta E Fagioli, Chicken Stroganoff… Order by Friday 7 PM for Monday delivery!</div><button class="btn sm" data-t="copy">Copied ✓</button><button class="btn sm" data-t="open">Open Keego Harbor Community</button></div>'), tap: 'open' },
+  { say: 'Facebook opens the group. Tap <b>Write something…</b>',
+    screen: '<div class="fb"><div class="gh">Keego Harbor Community</div><div class="pad"><div class="card" data-t="write" style="color:#65676b;cursor:pointer">Write something…</div><div class="card" style="color:#999">Neighbor post from yesterday…</div></div></div>', tap: 'write' },
+  { say: 'Press and hold in the box and tap <b>Paste</b>.',
+    screen: '<div class="fb"><div class="gh">Create post</div><div class="pad"><div class="card" style="min-height:70px;color:#999">What&rsquo;s on your mind?</div><button class="btn sm gry" data-t="paste">Paste</button></div></div>', tap: 'paste' },
+  { say: 'Your post is in. Tap <b>Post</b>.',
+    screen: '<div class="fb"><div class="gh">Create post</div><div class="pad"><div class="card" style="min-height:70px">🥣 This week at Ladle &amp; Spoon: Pasta E Fagioli, Chicken Stroganoff… Order by Friday 7 PM for Monday delivery!</div><button class="btn" style="background:#1877f2" data-t="post">Post</button></div></div>', tap: 'post', after: 'Posted!' },
+  { say: 'That&rsquo;s it. If the email lists more than one group, wait about <b>20 minutes</b> between groups. Facebook likes that better.', next: true },
+  { quiz: 'You&rsquo;re in a group that isn&rsquo;t on today&rsquo;s list. Should you post the menu there too?', opts: [
+    ['No, only the groups on the list', 1, 'Right. Each group gets one post a week between you and Tony, so nobody posts twice.'],
+    ['Yes, more groups is better', 0, 'Only the groups on the list. Tony may be posting there, and many groups allow one business post a week.'] ] },
+  { quiz: 'No &ldquo;Facebook today&rdquo; email came this morning. What do you do?', opts: [
+    ['Nothing. No email means no posting today', 1, 'Exactly. The email tells you when there&rsquo;s something to do.'],
+    ['Post in all the groups anyway', 0, 'No email means nothing to post today. Enjoy the break!'] ] }
+]},
+texts: { icon: '📱', title: 'Friday texts', mins: 3, steps: [
+  { say: 'Friday morning, open Admin. At the top of <b>📊 Dash</b> is <b>📱 Friday texts</b>: regulars who haven&rsquo;t ordered yet this week. Each text is already written.',
+    screen: function(){ return textsCard(0); }, next: true },
+  { say: 'Tap the green button: <b>💬 Text next: Mary Sample</b>.', screen: function(){ return textsCard(0); }, tap: 'textnext' },
+  { say: 'Your Messages app opens with the text ready. Tap the blue <b>Send</b> arrow.', screen: messages('Mary Sample', MARY), tap: 'send' },
+  { say: 'Sent! Now go back to the Ladle &amp; Spoon app.', screen: messages('Mary Sample', MARY, true), tap: 'back' },
+  { say: 'It moved to the next person by itself: <b>1 of 3 sent</b>. Your turn: text Tom.', screen: function(){ return textsCard(1); }, tap: 'textnext' },
+  { say: 'Tap <b>Send</b>.', screen: messages('Tom Example', TOM), tap: 'send' },
+  { say: 'And back to the app.', screen: messages('Tom Example', TOM, true), tap: 'back' },
+  { say: 'That&rsquo;s the whole job: <b>tap, Send, come back</b>. About 5 seconds a person. Anyone who orders drops off the list by themselves.', screen: function(){ return textsCard(2); }, next: true },
+  { quiz: 'Tom texts back &ldquo;STOP&rdquo;. What do you do?', opts: [
+    ['Tap Stop next to Tom&rsquo;s name', 1, 'Yes. He won&rsquo;t be on the list again.'],
+    ['Text him again next Friday', 0, 'Tap <b>Stop</b> next to his name instead. He won&rsquo;t be on the list again.'],
+    ['Nothing', 0, 'Tap <b>Stop</b> next to his name, so he isn&rsquo;t texted again.'] ] },
+  { quiz: 'You sent 5 texts, then got busy. What happens to the rest?', opts: [
+    ['The list remembers. Come back and keep going before 7 PM', 1, 'Right. It picks up where you stopped.'],
+    ['You have to start over', 0, 'No, it remembers who you&rsquo;ve texted. Just come back and keep going before 7 PM.'] ] }
+]},
+lastcall: { icon: '📌', title: 'Friday last-call comments', mins: 2, steps: [
+  { say: 'Friday&rsquo;s <b>📣 Facebook today</b> email has a <b>Last call</b> part: the groups where you posted earlier this week.',
+    screen: mail('Ladle &amp; Spoon', '📣 Facebook today: last-call comments', '<b>Last call: comment on your earlier posts</b><div class="quote" style="margin:8px 0">' + BUMP + '</div><button class="btn sm" data-t="copy">Copy</button><ul style="padding-left:18px;margin:8px 0"><li><u data-t="grp">Keego Harbor Community</u> (posted Tuesday)</li><li><u>Sylvan Lake Neighbors</u> (posted Wednesday)</li></ul>'), next: true },
+  { say: 'Copy the comment: tap <b>Copy</b>.',
+    screen: mail('Ladle &amp; Spoon', '📣 Facebook today: last-call comments', '<b>Last call: comment on your earlier posts</b><div class="quote" style="margin:8px 0">' + BUMP + '</div><button class="btn sm" data-t="copy">Copy</button><ul style="padding-left:18px;margin:8px 0"><li><u data-t="grp">Keego Harbor Community</u> (posted Tuesday)</li><li><u>Sylvan Lake Neighbors</u> (posted Wednesday)</li></ul>'), tap: 'copy', after: 'Copied!' },
+  { say: 'Tap the first group, <b>Keego Harbor Community</b>.',
+    screen: mail('Ladle &amp; Spoon', '📣 Facebook today: last-call comments', '<b>Last call: comment on your earlier posts</b><div class="quote" style="margin:8px 0">' + BUMP + '</div><button class="btn sm">Copied ✓</button><ul style="padding-left:18px;margin:8px 0"><li><u data-t="grp" style="cursor:pointer">Keego Harbor Community</u> (posted Tuesday)</li><li><u>Sylvan Lake Neighbors</u> (posted Wednesday)</li></ul>'), tap: 'grp' },
+  { say: 'Find <b>your post</b> from earlier this week and tap <b>Comment</b> under it.',
+    screen: '<div class="fb"><div class="gh">Keego Harbor Community</div><div class="pad"><div class="card"><b>Lia (Ladle &amp; Spoon)</b> · Tuesday<div style="margin:6px 0">🥣 This week at Ladle &amp; Spoon: Pasta E Fagioli…</div><div style="display:flex;gap:16px;color:#65676b;font-weight:700;border-top:1px solid #eee;padding-top:8px"><span>👍 Like</span><span data-t="comment" style="cursor:pointer">💬 Comment</span></div></div></div></div>', tap: 'comment' },
+  { say: 'Press and hold, tap <b>Paste</b>…', screen: '<div class="fb"><div class="pad"><div class="card" style="color:#999">Write a comment…</div><button class="btn sm gry" data-t="paste">Paste</button></div></div>', tap: 'paste' },
+  { say: '…and tap the send arrow.', screen: '<div class="fb"><div class="pad"><div class="compose" style="border-radius:12px"><div class="in">' + BUMP + '</div><button class="send" style="background:#1877f2" data-t="send">↑</button></div></div></div>', tap: 'send', after: 'Commented!' },
+  { say: 'Commenting on your own post moves it <b>back to the top</b> of the group, so people see your menu again on the last day to order. Then do the next group on the list.', next: true },
+  { quiz: 'Why comment on your old post instead of posting the menu again?', opts: [
+    ['It moves the post back to the top, and many groups allow only one post a week', 1, 'Exactly. Same reach, and no rule broken.'],
+    ['Comments are prettier', 0, 'The real reason: a comment moves your post back to the top, and many groups only allow one business post a week.'] ] }
+]},
+approve: { icon: '✅', title: 'Approve or decline, and gift certificates', mins: 4, steps: [
+  { say: 'An order that comes in after <b>7 PM Friday</b> waits for you. You get an email like this. Tap <b>Approve</b>.',
+    screen: mail('Ladle &amp; Spoon', '🌙 Late order: approve? Mary Sample', '<div>🌙 It came in Friday 8:15 PM, after the Friday 7:00 PM cutoff.</div><div class="card">412 Maple Ave, Waterford<br>Pasta E Fagioli (Quart) × 1<br>About <b>$15.00</b></div><button class="btn sm" data-t="approve">Approve</button><button class="btn sm red" data-t="decline">Decline</button>'), tap: 'approve' },
+  { say: 'A page asks you to make sure. Tap <b>Yes, approve</b>.', screen: confirmPage('Approve Mary Sample&rsquo;s order?', '412 Maple Ave · late order', 'Yes, approve'), tap: 'yes' },
+  { say: 'Done. Mary&rsquo;s order is in this week&rsquo;s orders, and she got her normal confirmation.', screen: confirmPage('Approved', 'Mary Sample&rsquo;s order is in this week&rsquo;s orders and they have their confirmation.'), next: true },
+  { say: 'Can&rsquo;t fit it in? Tap <b>Decline</b> instead. Mary gets a kind note and has nothing to pay. Please decide by <b>Sunday night</b>.', next: true },
+  { say: 'Someone farther than 7 miles away gets the same kind of email, <b>📍 Approve an order?</b>, with a map link. Same buttons. Once you approve an address, next time it goes straight through.',
+    screen: mail('Ladle &amp; Spoon', '📍 Approve an order? Tom Example, 9.8 miles out', '<div class="card">1 Far Rd, Clarkston · <u>See it on the map</u></div><button class="btn sm">Approve</button><button class="btn sm red">Decline</button>'), next: true },
+  { say: '<b>Gift certificates:</b> the buyer pays you by Venmo. Once you see their payment in Venmo, open Admin, <b>🎁 Gift</b>, and tap <b>Confirm payment &amp; send</b>.',
+    screen: adminTop('Gift') + '<div class="pad"><div class="card"><b>$50 · LS-K7QM</b><div style="font-size:13px;color:var(--t3)">From Rita Demo, for Joe Placeholder · PENDING</div><button class="btn" data-t="gift">✓ Confirm payment &amp; send</button></div></div>', tap: 'gift', after: 'Sent! The certificate is on its way to Joe.' },
+  { quiz: 'A late order comes Saturday morning. You&rsquo;ve already shopped and can&rsquo;t make more. What do you tap?', opts: [
+    ['Decline', 1, 'Yes. They get a kind note and have nothing to pay.'],
+    ['Approve', 0, 'Approve adds it to Monday. If you can&rsquo;t make it, tap <b>Decline</b>: they get a kind note and pay nothing.'],
+    ['Ignore the email', 0, 'Better to tap <b>Decline</b> so they know. They get a kind note and pay nothing.'] ] },
+  { quiz: 'When do you tap &ldquo;Confirm payment &amp; send&rdquo; for a gift certificate?', opts: [
+    ['After I see their payment in Venmo', 1, 'Right. Confirm sends the certificate, so check the money is there first.'],
+    ['As soon as the email arrives', 0, 'Wait until you see their Venmo payment. Confirm sends the certificate.'] ] }
+]},
+route1: { icon: '🧭', title: 'Monday: plan your route (and early customers)', mins: 3, steps: [
+  { say: 'Monday morning: open Admin, tap <b>🚗 Route</b>, then tap <b>🧭 Plan Monday&rsquo;s route</b>.',
+    screen: adminTop('Route') + '<div class="pad"><div style="font-size:14px;color:var(--t2)">One tap puts this week&rsquo;s orders in the quickest order, starting and ending at the kitchen.</div><button class="btn" data-t="plan">🧭 Plan Monday&rsquo;s route</button></div>', tap: 'plan' },
+  { say: 'Every stop is now in the <b>quickest order</b>, from your kitchen and back.', screen: function(){ return routeList(STOPS0, false); }, next: true },
+  { say: '<b>Ann</b> told you she needs her soup <b>by 11</b>. Move her up: tap <b>▲</b> next to Ann until she&rsquo;s stop 1 or 2.', run: 'reorder' },
+  { say: 'Now tap <b>Update drive times for my order</b>, so the minutes match your new order.', screen: function(st){ return routeList(st.stops, true); }, tap: 'update', after: 'Drive times updated.' },
+  { say: 'Changed your mind? <b>Back to the best order</b> at the bottom puts everything back.', next: true },
+  { say: 'If an address looks wrong, it&rsquo;s in a yellow box at the top with a <b>Look up</b> button. Tap it and pick the right address.',
+    screen: adminTop('Route') + '<div class="pad"><div class="warn"><b>Check this address before you go</b><div style="display:flex;gap:8px;align-items:center;margin-top:6px"><div style="flex:1">Joe Placeholder<br><span style="font-size:12px">7 Oak Hollow · No town or ZIP</span></div><button class="btn sm" data-t="look">Look up</button></div></div></div>', tap: 'look' },
+  { say: 'Pick the one that&rsquo;s right.', screen: '<div class="pad"><b>Pick the right address for Joe</b><button class="btn out" data-t="pick">7 Oak Hollow Ct, Waterford, MI 48328 · 2.1 mi</button><button class="btn out">7 Oak Hollow Dr, Clarkston, MI 48348 · 9.4 mi</button></div>', tap: 'pick', after: 'Fixed. The order and the customer list now have the right address.' },
+  { quiz: 'Ann needs her soup by 11, and she&rsquo;s stop 9 of 30. What do you do?', opts: [
+    ['Tap ▲ next to Ann until she&rsquo;s in the first few, then Update drive times', 1, 'Exactly. Do it before you tap Start delivering.'],
+    ['Drive to Ann first and hope it works out', 0, 'Move her up with ▲ first. Then the app takes you to her in order, and the texts go to the right people.'],
+    ['Plan again', 0, 'Plan again puts her back where she was. Use ▲ to move her up, then Update drive times.'] ] }
+]},
+route2: { icon: '🚗', title: 'Monday: at each stop', mins: 5, steps: [
+  { say: 'When you&rsquo;re ready to leave, tap <b>▶ Start delivering</b>.', screen: function(){ return routeList(STOPS0, false); }, tap: 'start' },
+  { say: 'This screen is <b>your stop</b>: who, where, notes, what they ordered, and cash or Venmo. At the top: <b>Stop 1 of 5</b>.', screen: function(){ return driveStop(1, STOPS0[0]); }, next: true },
+  { say: 'Tap <b>🧭 Navigate</b>. Google Maps opens with directions.', screen: function(){ return driveStop(1, STOPS0[0]); }, tap: 'nav' },
+  { say: 'When you get there, come back to the <b>Ladle &amp; Spoon</b> app. (On your phone: swipe up and pick it.)', screen: maps('412 Maple Ave'), tap: 'back' },
+  { say: 'Hand over the soup, then tap <b>✓ Delivered</b>.', screen: function(){ return driveStop(1, STOPS0[0]); }, tap: 'delivered' },
+  { say: 'Tap it <b>again</b> to confirm. (Two taps, so a bump in the car can&rsquo;t send an invoice by mistake.)', screen: function(){ return driveStop(1, STOPS0[0], true); }, tap: 'confirm' },
+  { say: '⭐ <b>The step that&rsquo;s easy to miss.</b> Two text buttons appear. Tap the first: <b>Text Mary: &ldquo;delivered&rdquo;</b>.', screen: function(){ return textsPhase(0); }, tap: 'tdone' },
+  { say: 'Messages opens with it written. Tap <b>Send</b>.', screen: messages('Mary Sample', 'Hi Mary, your Ladle & Spoon order has been delivered. Enjoy! - Lia'), tap: 'send' },
+  { say: 'Back to the app.', screen: messages('Mary Sample', 'Hi Mary, your Ladle & Spoon order has been delivered. Enjoy! - Lia', true), tap: 'back' },
+  { say: 'Now the second one: <b>Text Tom: &ldquo;you&rsquo;re my next stop&rdquo;</b>.', screen: function(){ return textsPhase(1); }, tap: 'tnext' },
+  { say: 'Tap <b>Send</b>.', screen: messages('Tom Example', 'Hi Tom! It\'s Lia from Ladle & Spoon. You\'re my next stop, about 6 minutes away. See you soon!'), tap: 'send' },
+  { say: 'Back to the app.', screen: messages('Tom Example', 'Hi Tom! It\'s Lia from Ladle & Spoon. You\'re my next stop, about 6 minutes away. See you soon!', true), tap: 'back' },
+  { say: 'Both texts sent. Now tap <b>🧭 Navigate to Tom</b>.', screen: function(){ return textsPhase(2); }, tap: 'navnext' },
+  { say: 'Driving to Tom&hellip; When you arrive, come back to the app.', screen: maps('88 Lakeview Dr'), tap: 'back' },
+  { say: '<b>Who&rsquo;s next?</b> Whenever you come back to the app, it&rsquo;s already showing your next stop: here, <b>Tom, Stop 2 of 5</b>. Same steps at every house.', screen: function(){ return driveStop(2, STOPS0[1]); }, next: true },
+  { say: 'Closed the app by accident? Open it, go to Admin, <b>🚗 Route</b>, and tap <b>▶ Resume</b>. You&rsquo;re right back where you were.',
+    screen: adminTop('Route') + '<div class="pad"><button class="btn" data-t="resume">▶ Resume (4 stops left)</button></div>', tap: 'resume' },
+  { say: 'Nobody home? Tap <b>Skip for now</b> at the bottom. They come back at the end of the list.', screen: function(){ return driveStop(2, STOPS0[1]); }, tap: 'skip', after: 'Skipped. Tom comes back at the end.' },
+  { say: 'Someone needs it sooner while you&rsquo;re driving? Tap <b>✕ Close</b>, move them up with <b>▲</b> to right after the stop you&rsquo;re on, then tap <b>▶ Resume</b>.', next: true },
+  { say: 'After the last stop: <b>🏠 Navigate home</b>, then <b>Finish</b>. Then, when everyone&rsquo;s invoiced, the <b>Archive Week &amp; Start Fresh</b> button in the Menu tab, like always.', next: true },
+  { quiz: 'You just tapped Delivered (twice) at Mary&rsquo;s. What comes next?', opts: [
+    ['Tap the two text buttons, and Send each one', 1, 'Yes! Mary hears it&rsquo;s there, and the next person knows you&rsquo;re coming.'],
+    ['Drive straight to the next house', 0, 'First the two text buttons: &ldquo;delivered&rdquo; to Mary, &ldquo;you&rsquo;re my next stop&rdquo; to the next person. Then Navigate.'],
+    ['Close the app', 0, 'Not yet. Tap the two text buttons and Send each one, then Navigate to the next stop.'] ] },
+  { quiz: 'Halfway through, you can&rsquo;t remember who&rsquo;s next. Where do you look?', opts: [
+    ['Open the Ladle &amp; Spoon app: it shows the next stop (or Route, ▶ Resume)', 1, 'Right. The app always knows where you are.'],
+    ['The paper list from the kitchen', 0, 'No paper needed: the app shows your next stop. If it closed, Route, ▶ Resume.'] ] }
+]},
+receipts: { icon: '🧾', title: 'Monday night: your receipts', mins: 3, steps: [
+  { say: 'Monday evening you get an email: <b>🛒 Receipts for your Oct 12 delivery</b>. You just reply to it. Tap <b>Reply</b>.',
+    screen: mail('Ladle &amp; Spoon', '🛒 Receipts for your Oct 12 delivery', 'Hi Lia, your Oct 12 delivery brought in $1,417.00 from 42 orders. Let&rsquo;s see what you actually kept…<br><button class="btn sm" data-t="reply">↩ Reply</button>'), tap: 'reply' },
+  { say: 'Tap the paperclip <b>📎</b> and add a photo of each receipt.',
+    screen: '<div class="pad"><b>Re: 🛒 Receipts for your Oct 12 delivery</b><div style="margin-top:8px"><button class="btn sm out" data-t="clip">📎 Attach</button></div></div>', tap: 'clip', after: '📷 1 photo attached' },
+  { say: 'Now type what you spent, <b>one line for each kind</b>. Try it, for example:<br><span style="font-size:16px;color:var(--t2)">Groceries 182.40<br>Containers 42.10<br>Shopping miles 14</span>', run: 'receipt' },
+  { say: 'You tap <b>Send</b>, and a reply comes right back with what the delivery kept.',
+    screen: mail('Ladle &amp; Spoon', 'Re: 🛒 Receipts for your Oct 12 delivery', '<div class="quote">Got it for the Oct 12 delivery (1 photo saved):\n  Groceries               $182.40\n  Containers & packaging  $42.10\n\nYour Oct 12 delivery so far:\n  Sales                   $1417.00\n  Driving                 -$51.07\n  You kept                $1141.43</div>'), next: true },
+  { quiz: 'You bought gas on Monday. Do you add it?', opts: [
+    ['No, the miles already cover gas', 1, 'Right. Delivery miles are logged by the Route tab, and they count for gas and the car.'],
+    ['Yes, as Other', 0, 'Leave gas out. The miles already cover it (the IRS rate includes gas).'] ] },
+  { quiz: 'You didn&rsquo;t buy anything for this delivery. What do you reply?', opts: [
+    ['none', 1, 'Yes, just &ldquo;none&rdquo;. Then it stops reminding you.'],
+    ['Don&rsquo;t reply', 0, 'Reply &ldquo;none&rdquo;, so it knows and stops reminding you.'] ] }
+]},
+publish: { icon: '📢', title: 'Tuesday: publish, and the 💡 Send button', mins: 3, steps: [
+  { say: 'Tuesday, in <b>🍲 Menu</b>, add this week&rsquo;s dishes like always. Then tap <b>Save Menu to Sheet</b>.',
+    screen: adminTop('Menu') + '<div class="pad"><b>This Week&rsquo;s Menu</b><div class="card">🥣 Pasta E Fagioli</div><div class="card">🥣 Chicken Stroganoff</div><div class="card">🥗 Crispy Pepperoni Layered Salad</div><button class="btn" data-t="save">Save Menu to Sheet</button></div>', tap: 'save', after: 'Saved ✓' },
+  { say: 'Then tap <b>📢 Publish This Week&rsquo;s Menu</b>. It emails your customers and opens ordering.',
+    screen: adminTop('Menu') + '<div class="pad"><div class="ok">Saved ✓</div><button class="btn" data-t="publish">📢 Publish This Week&rsquo;s Menu</button></div>', tap: 'publish', after: 'Menu published: 112 emailed.' },
+  { say: 'Soon after, you might get this email. <b>Pat asked for Pasta e Fagioli, and you&rsquo;re making it!</b> Tap <b>Send the thank-you</b>.',
+    screen: mail('Ladle &amp; Spoon', '💡 A customer asked for something on this week&rsquo;s menu', '<div class="card"><b style="color:var(--f)">Pasta E Fagioli</b><div style="font-size:12px;color:var(--t3)">First time on your menu</div><div class="quote" style="margin:6px 0">&ldquo;Could Lia make pasta e fagioli some week?&rdquo;<br><span style="font-size:12px;color:#666">Pat Example, Sep 14</span></div><button class="btn sm" data-t="send">Send the thank-you</button><button class="btn sm gry" data-t="no">Not a match</button></div>'), tap: 'send' },
+  { say: 'A page asks to make sure. Tap <b>Yes, send</b>.', screen: confirmPage('Thank 1 person for Pasta E Fagioli?', 'They get a &ldquo;You asked. I listened.&rdquo; email from you, and Pasta E Fagioli shows 💡 Customer requested on this week&rsquo;s menu.', 'Yes, send'), tap: 'yes' },
+  { say: 'Pat gets an email <b>from you</b>: &ldquo;You asked. I listened.&rdquo; with their idea, a photo of the soup and an Order button. And on the menu, the soup shows <b>💡 New · Customer requested</b>, so everyone sees you read their ideas.',
+    screen: mail('Lia at Ladle &amp; Spoon', '💡 You asked, I listened: Pasta E Fagioli is on my menu!', '<div style="text-align:center;font-family:\'Cormorant Garamond\',serif;font-size:24px;color:var(--f);font-weight:700">You asked. I listened.</div><p style="margin:6px 0">Hi Pat, it&rsquo;s Lia, from Ladle &amp; Spoon. A little while back, you sent me an idea…</p>'), next: true },
+  { quiz: 'The email matched &ldquo;beef stroganoff, please&rdquo; to your <b>Chicken</b> Stroganoff. What do you tap?', opts: [
+    ['Not a match', 1, 'Right. Nothing is sent, and their idea waits for the right dish.'],
+    ['Send the thank-you', 0, 'They asked for beef, so tap <b>Not a match</b>. Nothing is sent, and their idea keeps waiting.'] ] }
+]}
+};
+
+// ── Engine ──
+var S = null;   // the lesson being done
+function home(){
+  S = null; window.scrollTo(0, 0);
+  var order = DAYS.slice(), first = order.filter(function(d){ return d.date === DAY; })[0];
+  if(first) order = [first].concat(order.filter(function(d){ return d !== first; }));
+  var h = '';
+  var todo = first ? first.lessons.filter(function(k){ return !DONE[k]; }) : [];
+  if(first){
+    h += '<p style="margin:18px 0 0;font-size:18px">Hi Lia! ' + (todo.length ? 'Here&rsquo;s your practice ' + first.label.replace(/^For/, 'for') + '. It&rsquo;s all pretend: tap anything, nothing gets sent.' : 'You&rsquo;ve done today&rsquo;s practice. Thank you! 🎉 Do any lesson again whenever you like.') + '</p>';
+    if(todo.length) h += '<button class="big" onclick="start(\'' + todo[0] + '\')">▶ Start: ' + L[todo[0]].title + '</button>';
+  } else {
+    h += '<p style="margin:18px 0 0;font-size:18px">Hi Lia! Short practice lessons, a few minutes each. It&rsquo;s all pretend: tap anything, nothing gets sent.</p>';
+  }
+  order.forEach(function(d){
+    h += '<div class="day' + (d === first ? ' now' : '') + '">' + d.label + '</div>';
+    d.lessons.forEach(function(k){
+      h += '<button class="tile' + (DONE[k] ? ' done' : '') + '" onclick="start(\'' + k + '\')"><span class="ic">' + (DONE[k] ? '✅' : L[k].icon) + '</span>'
+        +  '<span class="t">' + L[k].title + '<span class="m">' + (DONE[k] ? 'Done · tap to do again' : 'About ' + L[k].mins + ' min') + '</span></span><span style="color:var(--t3)">›</span></button>';
+    });
+  });
+  h += '<p style="font-size:14px;color:var(--t3);margin-top:22px">Stuck in the real app? Tap ❓ Ask a question in Admin.</p>';
+  $('app').innerHTML = h;
+}
+function start(k){
+  S = { k: k, i: 0, right: 0, total: 0, missed: [], t0: Date.now(), st: {} };
+  step();
+}
+function step(){
+  var L1 = L[S.k], s = L1.steps[S.i];
+  S.st = S.st || {}; S.tries = 0;
+  if(!s) return finish();
+  var pct = Math.round(S.i / L1.steps.length * 100);
+  var h = '<div class="bar"><button class="x" onclick="home()">✕</button><div class="dots"><i style="width:' + pct + '%"></i></div><span style="font-size:13px;color:var(--t3)">' + (S.i + 1) + '/' + L1.steps.length + '</span></div>';
+  if(s.quiz){
+    h += '<div class="say">🤔 ' + s.quiz + '</div>' + s.opts.map(function(o, i){ return '<button class="opt" data-o="' + i + '">' + o[0] + '</button>'; }).join('') + '<div id="why"></div><div id="nx"></div>';
+    $('app').innerHTML = h; window.scrollTo(0, 0);
+    S.total++; var first = true;
+    Array.prototype.forEach.call(document.querySelectorAll('.opt'), function(b){
+      b.onclick = function(){
+        var o = s.opts[+b.dataset.o];
+        if(o[1]){
+          b.className = 'opt right'; if(first) S.right++;
+          $('why').innerHTML = '<div class="why g">✅ ' + o[2] + '</div>';
+          $('nx').innerHTML = '<button class="big" onclick="nextStep()">Next</button>';
+          Array.prototype.forEach.call(document.querySelectorAll('.opt'), function(x){ x.onclick = null; });
+        } else {
+          b.className = 'opt wrong';
+          if(first) S.missed.push(s.quiz.replace(/<[^>]+>/g, '').replace(/&rsquo;/g, '\'').replace(/&ldquo;|&rdquo;/g, '"').replace(/&amp;/g, '&'));
+          $('why').innerHTML = '<div class="why b">Not quite. ' + o[2] + ' Try again.</div>';
+        }
+        first = false;
+      };
+    });
+    return;
+  }
+  h += '<div class="say">' + s.say + '</div><div class="hint" id="hint"></div>';
+  if(s.run === 'reorder') return runReorder(h);
+  if(s.run === 'receipt') return runReceipt(h);
+  if(s.screen) h += scr(typeof s.screen === 'function' ? s.screen(S.st) : s.screen);
+  if(s.next) h += '<button class="big" onclick="nextStep()">Next</button>';
+  $('app').innerHTML = h; window.scrollTo(0, 0);
+  if(s.tap) armTap(s);
+}
+// The button to tap glows; a tap anywhere else in the pretend screen gets a gentle nudge.
+function armTap(s){
+  var el = document.querySelector('#scr [data-t="' + s.tap + '"]');
+  if(el) el.classList.add('glow');
+  $('scr').onclick = function(e){
+    var t = e.target.closest('[data-t]');
+    if(t && t.dataset.t === s.tap){
+      if(s.times && (S.st.n = (S.st.n || 0) + 1) < s.times){ var keep = S.st.n; step(); S.st.n = keep; $('hint').textContent = (s.times - keep) + ' more…'; return; }
+      S.st.n = 0;
+      if(s.after){ $('hint').innerHTML = '<span class="ok">' + s.after + '</span>'; $('scr').onclick = null; setTimeout(nextStep, 900); }
+      else nextStep();
+      return;
+    }
+    if(++S.tries >= 1){ $('hint').textContent = '👆 Tap the glowing one'; if(el){ el.classList.remove('shake'); void el.offsetWidth; el.classList.add('shake'); } }
+  };
+}
+function nextStep(){ S.i++; step(); }
+
+function runReorder(h){
+  var st = S.st; st.stops = st.stops || STOPS0.slice();
+  function draw(){
+    var ann = st.stops.map(function(s){ return s[0]; }).indexOf('Ann Testing');
+    $('app').innerHTML = h + scr(routeList(st.stops, ann < 4)) + (ann <= 1 ? '<div class="why g">✅ Ann is stop ' + (ann + 1) + ' now. She&rsquo;ll have her soup well before 11.</div><button class="big" onclick="nextStep()">Next</button>' : '');
+    var annRow = document.querySelectorAll('#scr .stop')[ann];
+    if(ann > 1 && annRow) annRow.querySelector('[data-mv$=",-1"]').classList.add('glow');
+    Array.prototype.forEach.call(document.querySelectorAll('#scr [data-mv]'), function(b){
+      b.onclick = function(e){
+        e.stopPropagation();
+        var p = b.dataset.mv.split(','), i = +p[0], j = i + (+p[1]);
+        if(j < 0 || j >= st.stops.length) return;
+        var t = st.stops[i]; st.stops[i] = st.stops[j]; st.stops[j] = t; draw();
+      };
+    });
+  }
+  draw(); window.scrollTo(0, 0);
+}
+function runReceipt(h){
+  $('app').innerHTML = h + scr('<div class="pad"><b>Re: 🛒 Receipts for your Oct 12 delivery</b><div style="font-size:13px;color:var(--t3);margin:4px 0 8px">📷 1 photo attached</div><textarea id="rc" placeholder="Groceries 182.40"></textarea><button class="btn" id="rcgo">See what the app reads</button><div id="rcout"></div></div>');
+  $('rcgo').onclick = function(){
+    var r = readReply($('rc').value), good = r.filter(function(x){ return x.ok; }).length;
+    $('rcout').innerHTML = (r.length ? r.map(function(x){ return '<div class="rd">' + (x.ok ? '✅ ' : '⚠️ ') + esc(x.t) + '</div>'; }).join('') : '<div class="rd">⚠️ Type at least one line, like “Groceries 182.40”, or “none”.</div>')
+      + (good ? '<div class="why g" style="margin-top:10px">That&rsquo;s exactly how to do it. ' + (good === r.length ? '' : 'Lines with ⚠️ wouldn&rsquo;t count. ') + '</div><button class="big" onclick="nextStep()">Next</button>' : '');
+  };
+  window.scrollTo(0, 0);
+}
+
+function finish(){
+  var L1 = L[S.k];
+  DONE[S.k] = true; store('learn_done', DONE);
+  var day = DAYS.filter(function(d){ return d.lessons.indexOf(S.k) >= 0; })[0];
+  var nextK = day ? day.lessons.filter(function(k){ return !DONE[k]; })[0] : null;
+  var h = '<div style="text-align:center;margin-top:24px"><div style="font-size:56px">🎉</div><div class="say" style="font-family:\'Cormorant Garamond\',serif;font-size:30px;color:var(--f);font-weight:700;margin:0">Done!</div>'
+    + '<div style="color:var(--t2)">' + L1.title + (S.total ? ' · ' + S.right + ' of ' + S.total + ' right first try' : '') + '</div></div>'
+    + '<div class="say" style="margin-top:22px">How did that feel?</div><div class="feel">'
+    + [['good', '😀', 'Easy'], ['ok', '😐', 'OK'], ['hard', '😕', 'Confusing']].map(function(f){ return '<button data-f="' + f[0] + '"><b>' + f[1] + '</b>' + f[2] + '</button>'; }).join('') + '</div>'
+    + '<div class="say" style="font-size:18px;margin-top:16px">Anything confusing, or a question for Tony? <span style="color:var(--t3);font-size:15px">(optional)</span></div>'
+    + '<textarea id="note" placeholder="Type here…"></textarea>'
+    + '<button class="big" id="fin">' + (nextK ? 'Send, and go to the next lesson' : 'Send and finish') + '</button>';
+  $('app').innerHTML = h; window.scrollTo(0, 0);
+  var feel = '';
+  Array.prototype.forEach.call(document.querySelectorAll('.feel button'), function(b){
+    b.onclick = function(){ feel = b.dataset.f; Array.prototype.forEach.call(document.querySelectorAll('.feel button'), function(x){ x.className = x === b ? 'on' : ''; }); };
+  });
+  $('fin').onclick = function(){
+    send({ type: 'learn_result', lesson: S.k, right: S.right, total: S.total, missed: S.missed, feel: feel, note: $('note').value.trim(), secs: Math.round((Date.now() - S.t0) / 1000) });
+    if(nextK) start(nextK); else home();
+  };
+}
+// Results wait on the phone until they reach the backend (a dead spot in the car is fine).
+function send(r){
+  if(PREVIEW) return;
+  var q = store('learn_queue') || []; q.push(r); store('learn_queue', q); flush();
+}
+function flush(){
+  var q = store('learn_queue') || []; if(!q.length) return;
+  var r = q[0];
+  fetch(API, { method: 'POST', headers: { 'Content-Type': 'text/plain' }, body: JSON.stringify(r), keepalive: true })
+    .then(function(x){ return x.json(); })
+    .then(function(d){ if(d && d.success !== false || (d && /Unknown lesson/.test(d.error || ''))){ var q2 = store('learn_queue') || []; q2.shift(); store('learn_queue', q2); flush(); } })
+    .catch(function(){});
+}
+if(PREVIEW) $('pv').innerHTML = '<div class="pv">Preview: your answers aren&rsquo;t sent to anyone.</div>';
+home(); flush();
+</script>
+</body>
+</html>
