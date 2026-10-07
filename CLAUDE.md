@@ -13,7 +13,7 @@ case where that rule is already broken.
 
 | Piece | Where | Notes |
 |---|---|---|
-| Frontend | `index.html` | One self-contained PWA. Customer app *and* admin panel. |
+| Frontend | `index.html` + `admin.js` | One PWA. `index.html` is the customer app plus the admin panel's HTML and sign-in; `admin.js` holds the admin screens' code (see *Admin code* below). |
 | Link preview | `share.html` + `og-image.jpg` | Tiny page for social/messaging previews. |
 | Published menu | `data/site.json` | Menu, photos, custom items. **Written by the backend**, not by hand (see below). |
 | Backend | Google Apps Script | Single file, confusingly named `Business Analysis.gs`. |
@@ -116,7 +116,17 @@ decoded the file. When an image renders wrong, decode it first.
 ## Conventions
 
 - Frontend version bumps on every change: `APP VERSION` console line **and** the badge
-  under the header. Keep them in step — a mismatch has masked real problems.
+  under the header. Keep them in step — a mismatch has masked real problems. Since v276
+  also `ADMIN_JS_URL` (`admin.js?v=…`) in `index.html` and `ADMIN_JS_VERSION` in
+  `admin.js`; a static test fails if any of the four differ.
+- **Admin code (S-034, v276).** Lia's screens are in `admin.js`, which customers never
+  download: `loadAdmin()` fetches it when the Admin tab opens (after the PIN), or at
+  start-up on a phone with an admin sign-in. It shares the page's global scope. New admin
+  functions go in `admin.js`; code in `index.html` may call them only behind
+  `adminReady()` (or from admin HTML onclicks, which only exist once admin is open).
+  Something every admin screen needs at start goes in `adminStart` at the end of
+  `admin.js`, not in `window.onload`. Commit `admin.js` with `index.html`. The page has its
+  own size limit (0.45 MB) and `admin.js` another (0.4 MB).
 - Backend version lives in one `SCRIPT_VERSION` constant used by every endpoint. It was
   previously duplicated per-endpoint and drifted, making version checks untrustworthy.
 - Syntax-check before shipping. Frontend: extract the main `<script>` and run
@@ -184,6 +194,17 @@ send attempted on a blast day will silently send nothing.
 Upgrading the account to Workspace (~$7/month) raises the limit to 1,500/day and makes
 this entire section unnecessary.
 
+## Timer budget
+
+The same consumer account gets **90 minutes a day** of timer run time, shared by every
+timer (the hourly job, the push ~20 s after each order or save, the weekday reminders).
+If it runs out, every timer stops until the next day. Google also stops any single run at
+6 minutes. Since gs105 each day's total is in the public `?type=get_perf` (`timerDays`)
+and the Saturday report, which warns above 60 min. The hourly job pushes the front-door
+copies first, skips intelligence and its own push on quiet hours, and reads archived
+weeks from the hidden **Saved weeks** tab rather than every week tab. Anything new added
+to the hourly job should be cheap on a quiet hour.
+
 ---
 
 ## Known weaknesses
@@ -196,9 +217,10 @@ earlier commit of this public repo until history is rewritten.
 **Keep images out of `index.html`.** Until v234 the page was ~4.3MB, ~88% of it base64
 images, and the menu took ~6s to appear on a 4G phone. They now live in `img/`
 (`logo.png`, `hero.jpg`, `soups/*.jpg`, referenced by relative path from `SOUP_PHOTOS`),
-and the page is ~0.5MB. The test suite fails if the page passes 0.65MB (raised from 0.6MB at v271 as admin features grew), embeds an image over
+and the page is ~0.5MB. Since v276 the admin code is in `admin.js` and the page is ~0.36MB.
+The test suite fails if the page passes 0.45MB (or `admin.js` 0.4MB), embeds an image over
 8KB, references a missing or truncated `img/` file, or leaves an unused one there. Commit
-`img/` together with `index.html`: `deploy.sh` only copies `index.html` from Downloads.
+`img/` and `admin.js` together with `index.html`: `deploy.sh` only copies `index.html` from Downloads.
 
 **Delivery-fee data starts in Jan 2026.** Earlier weeks genuinely have no per-order fee
 recorded, so analytics fall back to a flat $5 for them. That is correct, not a bug.
