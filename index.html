@@ -131,6 +131,25 @@ header{background:var(--f);padding:10px 14px;min-height:88px;display:flex;align-
 .bn{flex:1;display:flex;flex-direction:column;align-items:center;padding:8px 2px 12px;cursor:pointer;border:none;background:none;color:var(--t3);font-size:9px;font-weight:700;letter-spacing:.5px;gap:3px;transition:color .2s;}
 .bn.active{color:var(--f);}
 .bn svg{width:20px;height:20px;}
+/* S-037 (v277): once the page scrolls, the header and the promo bar shrink (initCompactHeader).
+   !important: these override inline styles and the 640px rules above. */
+.hdr-compact header{min-height:48px;padding-top:4px;padding-bottom:4px}
+.hdr-compact header .hdr-logo{max-height:38px!important}
+.hdr-compact header .hdr-tag,.hdr-compact header .hdr-deliv,.hdr-compact .anniv-wrap{display:none!important}
+.hdr-compact header .hdr-btns{top:50%!important;bottom:auto!important;transform:translateY(-50%)}
+.hdr-compact .anniv-bar,.hdr-compact .season-bar{padding:3px 8px;font-size:10.5px}
+.hdr-compact .anniv-bar em,.hdr-compact .season-bar em{font-size:12px}
+.hdr-compact #ib{display:none!important}
+/* S-037: the order bar above the bottom tabs (updateCartBar) */
+#cart-bar{display:none;position:fixed;left:10px;right:10px;bottom:72px;z-index:49;background:var(--f);color:#fff;
+  border-radius:14px;padding:10px 14px;box-shadow:0 8px 24px rgba(0,0,0,.22);align-items:center;gap:10px;cursor:pointer;border:none;
+  font-family:inherit;text-align:left}
+#cart-bar.on{display:flex}
+#cart-bar .cb-main{flex:1;min-width:0}
+#cart-bar .cb-main b{display:block;font-size:14px}
+#cart-bar .cb-main span{display:block;font-size:11px;opacity:.85;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#cart-bar .cb-go{background:var(--am);color:var(--f);border-radius:20px;padding:7px 12px;font-size:12px;font-weight:800;white-space:nowrap}
+body.has-cartbar #body{padding-bottom:140px}
 /* VIEWS */
 .view{display:none;padding:16px 14px;}
 .view.active{display:block;animation:fi .22s ease;}
@@ -530,10 +549,12 @@ header{background:var(--f);padding:10px 14px;min-height:88px;display:flex;align-
 </head>
 <body>
 
-<div id="ib">
+<!-- S-037 (v277): hidden until updateInstallBanner() decides: never inside the installed app,
+     not for 30 days after ✕, and only once this phone has ordered. -->
+<div id="ib" style="display:none">
   <p><b>📱 Add to Home Screen</b>Install the app — one tap to the menu, plus deadline reminders</p>
   <button class="ib-btn" onclick="showInst()">How To</button>
-  <button class="ib-x" onclick="this.parentElement.style.display='none'">✕</button>
+  <button class="ib-x" aria-label="Close" onclick="dismissInstallBanner()">✕</button>
 </div>
 
 <!-- INSTALL OVERLAY -->
@@ -568,7 +589,7 @@ header{background:var(--f);padding:10px 14px;min-height:88px;display:flex;align-
   <div class="anniv-confetti"><i class="anniv-cf"></i><i class="anniv-cf"></i><i class="anniv-cf"></i><i class="anniv-cf"></i><i class="anniv-cf"></i><i class="anniv-cf"></i><i class="anniv-cf"></i><i class="anniv-cf"></i><i class="anniv-cf"></i><i class="anniv-cf"></i><i class="anniv-cf"></i><i class="anniv-cf"></i><i class="anniv-cf"></i><i class="anniv-cf"></i><i class="anniv-cf"></i><i class="anniv-cf"></i><i class="anniv-cf"></i><i class="anniv-cf"></i><i class="anniv-cf"></i><i class="anniv-cf"></i><i class="anniv-cf"></i><i class="anniv-cf"></i><i class="anniv-cf"></i><i class="anniv-cf"></i><i class="anniv-cf"></i><i class="anniv-cf"></i><i class="anniv-cf"></i><i class="anniv-cf"></i><i class="anniv-cf"></i><i class="anniv-cf"></i></div>
   <div style="position:absolute;left:14px;top:50%;transform:translateY(-50%);display:flex;align-items:center;z-index:2">
     <div class="anniv-wrap"><svg viewBox="0 0 30 50" width="24" height="40" aria-hidden="true" style="flex-shrink:0"><g><g fill="currentColor"><ellipse cx="14.0" cy="44.0" rx="5.2" ry="2.5" transform="rotate(-62 14.0 44.0)"/><ellipse cx="20.6" cy="45.5" rx="4.7" ry="2.2" transform="rotate(-4 20.6 45.5)"/><ellipse cx="12.8" cy="39.2" rx="5.0" ry="2.4" transform="rotate(-56 12.8 39.2)"/><ellipse cx="19.4" cy="40.8" rx="4.5" ry="2.2" transform="rotate(2 19.4 40.8)"/><ellipse cx="11.5" cy="34.5" rx="4.8" ry="2.3" transform="rotate(-50 11.5 34.5)"/><ellipse cx="18.1" cy="36.0" rx="4.3" ry="2.1" transform="rotate(8 18.1 36.0)"/><ellipse cx="10.2" cy="29.8" rx="4.6" ry="2.2" transform="rotate(-45 10.2 29.8)"/><ellipse cx="16.9" cy="31.2" rx="4.1" ry="2.0" transform="rotate(13 16.9 31.2)"/><ellipse cx="9.0" cy="25.0" rx="4.4" ry="2.1" transform="rotate(-39 9.0 25.0)"/><ellipse cx="15.6" cy="26.5" rx="3.9" ry="1.9" transform="rotate(19 15.6 26.5)"/><ellipse cx="7.8" cy="20.2" rx="4.1" ry="2.1" transform="rotate(-33 7.8 20.2)"/><ellipse cx="14.3" cy="21.8" rx="3.7" ry="1.9" transform="rotate(25 14.3 21.8)"/><ellipse cx="6.5" cy="15.5" rx="3.9" ry="2.0" transform="rotate(-28 6.5 15.5)"/><ellipse cx="13.1" cy="17.0" rx="3.5" ry="1.8" transform="rotate(30 13.1 17.0)"/><ellipse cx="5.2" cy="10.8" rx="3.7" ry="1.9" transform="rotate(-22 5.2 10.8)"/><ellipse cx="11.8" cy="12.2" rx="3.3" ry="1.7" transform="rotate(36 11.8 12.2)"/><ellipse cx="4.0" cy="6.0" rx="3.5" ry="1.8" transform="rotate(-16 4.0 6.0)"/><ellipse cx="10.6" cy="7.5" rx="3.1" ry="1.6" transform="rotate(42 10.6 7.5)"/><path d="M15 46 Q10 26 5 7" stroke="currentColor" stroke-width="1.6" fill="none" stroke-linecap="round"/></g></g></svg><div class="anniv-txt"><span class="a1">Celebrating</span><span class="a2">Two Years</span><span class="a3">In Business</span></div><svg viewBox="0 0 30 50" width="24" height="40" aria-hidden="true" style="flex-shrink:0"><g transform="scale(-1,1) translate(-30,0)"><g fill="currentColor"><ellipse cx="14.0" cy="44.0" rx="5.2" ry="2.5" transform="rotate(-62 14.0 44.0)"/><ellipse cx="20.6" cy="45.5" rx="4.7" ry="2.2" transform="rotate(-4 20.6 45.5)"/><ellipse cx="12.8" cy="39.2" rx="5.0" ry="2.4" transform="rotate(-56 12.8 39.2)"/><ellipse cx="19.4" cy="40.8" rx="4.5" ry="2.2" transform="rotate(2 19.4 40.8)"/><ellipse cx="11.5" cy="34.5" rx="4.8" ry="2.3" transform="rotate(-50 11.5 34.5)"/><ellipse cx="18.1" cy="36.0" rx="4.3" ry="2.1" transform="rotate(8 18.1 36.0)"/><ellipse cx="10.2" cy="29.8" rx="4.6" ry="2.2" transform="rotate(-45 10.2 29.8)"/><ellipse cx="16.9" cy="31.2" rx="4.1" ry="2.0" transform="rotate(13 16.9 31.2)"/><ellipse cx="9.0" cy="25.0" rx="4.4" ry="2.1" transform="rotate(-39 9.0 25.0)"/><ellipse cx="15.6" cy="26.5" rx="3.9" ry="1.9" transform="rotate(19 15.6 26.5)"/><ellipse cx="7.8" cy="20.2" rx="4.1" ry="2.1" transform="rotate(-33 7.8 20.2)"/><ellipse cx="14.3" cy="21.8" rx="3.7" ry="1.9" transform="rotate(25 14.3 21.8)"/><ellipse cx="6.5" cy="15.5" rx="3.9" ry="2.0" transform="rotate(-28 6.5 15.5)"/><ellipse cx="13.1" cy="17.0" rx="3.5" ry="1.8" transform="rotate(30 13.1 17.0)"/><ellipse cx="5.2" cy="10.8" rx="3.7" ry="1.9" transform="rotate(-22 5.2 10.8)"/><ellipse cx="11.8" cy="12.2" rx="3.3" ry="1.7" transform="rotate(36 11.8 12.2)"/><ellipse cx="4.0" cy="6.0" rx="3.5" ry="1.8" transform="rotate(-16 4.0 6.0)"/><ellipse cx="10.6" cy="7.5" rx="3.1" ry="1.6" transform="rotate(42 10.6 7.5)"/><path d="M15 46 Q10 26 5 7" stroke="currentColor" stroke-width="1.6" fill="none" stroke-linecap="round"/></g></g></svg></div>
-    <div class="hdr-tag" style="color:#7FFF00;font-size:10px;letter-spacing:1.5px;text-transform:uppercase;font-weight:700;line-height:1.4;"><span class="hdr-tagtxt">Homemade<br>Soups &amp; Salads<br></span><span style="font-size:8px;opacity:0.6;letter-spacing:1px">v276</span></div>
+    <div class="hdr-tag" style="color:#7FFF00;font-size:10px;letter-spacing:1.5px;text-transform:uppercase;font-weight:700;line-height:1.4;"><span class="hdr-tagtxt">Homemade<br>Soups &amp; Salads<br></span><span style="font-size:8px;opacity:0.6;letter-spacing:1px">v277</span></div>
   </div>
   <img id="hdr-logo" class="hdr-logo" src="img/logo.png" style="display:block;height:auto;max-height:66px;max-width:70%;" alt="Ladle &amp; Spoon">
   <div class="hdr-deliv" style="position:absolute;right:14px;top:8px;color:#7FFF00;font-size:10px;letter-spacing:1px;font-weight:600;line-height:1.4;text-align:right;z-index:2">Delivered Directly from<br>Our Kitchen to Your Door</div>
@@ -578,7 +599,7 @@ header{background:var(--f);padding:10px 14px;min-height:88px;display:flex;align-
   </div>
   <button id="mpb" onclick="toggleMode()" style="display:none;">⚙️ Admin</button>
 </header>
-<div class="anniv-bar">🎉 <em>Free delivery on every October delivery</em> — on orders over $15 🎉</div>
+<div class="anniv-bar">🎉 <em>Free delivery on every October delivery</em> — on orders of $15 or more 🎉</div>
 
 <div id="body">
 
@@ -1245,6 +1266,12 @@ header{background:var(--f);padding:10px 14px;min-height:88px;display:flex;align-
 
 </div><!-- end #body -->
 
+<!-- S-037 (v277): once something is in the cart, checkout is one thumb-tap away on Menu and Home -->
+<button id="cart-bar" onclick="showCart()" aria-label="View your order">
+  <div class="cb-main"><b id="cb-sum"></b><span id="cb-sub"></span></div>
+  <div class="cb-go">View order →</div>
+</button>
+
 <nav class="bnav">
   <button class="bn active" id="nav-home" onclick="if(typeof sw!=='undefined')sw('home',this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9,22 9,12 15,12 15,22"/></svg>HOME</button>
   <button class="bn" id="nav-menu" onclick="if(typeof sw!=='undefined')sw('menu',this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>MENU</button>
@@ -1651,7 +1678,7 @@ var ADMIN_TOKEN_TTL_MS = 6 * 3600 * 1000 - 10 * 60 * 1000;
 // run them. It loads when the Admin tab opens, or at start-up on a phone signed in as admin.
 // Shared code calls into it only after adminReady(). The ?v= changes with every version so
 // a phone never runs an old admin.js against a new page.
-var ADMIN_JS_URL = 'admin.js?v=v276';
+var ADMIN_JS_URL = 'admin.js?v=v277';
 var _adminLoad = null;
 function adminReady(){ return window.ADMIN_JS === 'ready'; }
 function loadAdmin(){
@@ -1827,6 +1854,36 @@ function isInstalledApp(){
         || window.matchMedia('(display-mode: minimal-ui)').matches;
   }catch(e){ return false; }
 }
+// S-037 (v277): the install banner showed on every visit, inside the installed app too, and
+// its ✕ only lasted until the next page load. It took 72 px of a phone screen above the menu.
+var IB_DISMISS_DAYS = 30;
+function installBannerWanted(){
+  if(isInstalledApp()) return false;
+  try{
+    var d = parseInt(localStorage.getItem('ib_dismissed')||'0', 10);
+    if(d && Date.now() - d < IB_DISMISS_DAYS*86400000) return false;
+  }catch(e){}
+  return !firstOrderOnThisDevice();   // a first-time visitor sees the menu first
+}
+function updateInstallBanner(){
+  var ib = $('ib'); if(ib) ib.style.display = installBannerWanted() ? '' : 'none';
+}
+function dismissInstallBanner(){
+  try{ localStorage.setItem('ib_dismissed', String(Date.now())); }catch(e){}
+  updateInstallBanner();
+}
+// S-037: the header (88 px) and the October bar (50 px) stayed on screen while scrolling, so the
+// menu got about 540 of 812 px. Once the page scrolls, they shrink; back at the top they return.
+// Two thresholds so the change of height can't make it flicker.
+function initCompactHeader(){
+  var b = $('body'); if(!b || b._compactOn) return;
+  b._compactOn = true;
+  b.addEventListener('scroll', function(){
+    var on = document.body.classList.contains('hdr-compact');
+    if(!on && b.scrollTop > 60 && !isAdmin) document.body.classList.add('hdr-compact');
+    else if(on && (b.scrollTop < 8 || isAdmin)) document.body.classList.remove('hdr-compact');
+  }, { passive:true });
+}
 function devicePlatform(){
   var ua = navigator.userAgent || '';
   if(/iPhone|iPad|iPod/i.test(ua)) return 'iOS';
@@ -1980,8 +2037,8 @@ function applySeasonalHeader(){
       if(ab && PROMO.minFood){
         // Per DELIVERY, not per order month: the offer ends 24 October, when orders
         // start landing in November. "All October" would be a promise we break.
-        ab.innerHTML='\uD83C\uDF89 <em>Free delivery on every October delivery</em> \u2014 on orders over $'
-                    + PROMO.minFood
+        ab.innerHTML='\uD83C\uDF89 <em>Free delivery on every October delivery</em> \u2014 on orders of $'
+                    + PROMO.minFood + ' or more'   // $15 exactly qualifies, on both sides (S-038)
                     + (PROMO.deliveryDate ? ' \u00b7 yours arrives ' + PROMO.deliveryDate : '')
                     + ' \uD83C\uDF89';
       }
@@ -2499,6 +2556,7 @@ function applyGiftCode(){
 function clearGiftCode(){ GIFT_CODE=''; GIFT_BALANCE=0; GIFT_MSG=''; showCart(); }
 // Held for the receipt screen, then cleared — a refresh must not re-apply a spent one.
 var GIFT_LAST_APPLIED = 0, GIFT_LAST_CODE = '', GIFT_LAST_REMAIN = 0;
+var CODES_OPEN = false;   // S-039: the customer tapped "Have a gift certificate or coupon?"
 
 function promoApplies(foodTotal){
   return !!(PROMO && PROMO.freeDelivery && (parseFloat(foodTotal)||0) >= (PROMO.minFood||0));
@@ -2599,7 +2657,7 @@ function applyCoupon(){
   const msg=$('coupon-msg');
   if(code==='WELCOMEBACK' && welcomebackPaused()){
     appliedCoupon='';
-    if(msg){msg.textContent='🎉 WELCOMEBACK is paused while delivery is free for our anniversary (orders over $'+(PROMO.minFood||15)+'). Your code stays good for later!';msg.style.display='block';msg.style.color='var(--am)';}
+    if(msg){msg.textContent='🎉 WELCOMEBACK is paused while delivery is free for our anniversary (orders of $'+(PROMO.minFood||15)+' or more). Your code stays good for later!';msg.style.display='block';msg.style.color='var(--am)';}
     return;
   }
   if(code==='WELCOMEBACK'){
@@ -2948,14 +3006,14 @@ function showOrderConfirmation(o){
       <div style="background:#fef3c7;border-radius:10px;padding:12px;font-size:13px;margin-bottom:18px">
         ${o.lateHold?'<div id="late-held"><strong>Please don\'t pay yet.</strong> Your order came in after the order cutoff, so Lia will check she can fit it in and email you either way. Once she confirms, you\'ll pay as usual.</div>':o.payment==='venmo'?'<div style="text-align:center">'+venmoPayButton(o)+'<div style="font-size:11px;color:var(--t3);margin:12px 0 2px">Paying from another device? Scan this:</div><img src="data:image/png;base64,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" style="width:120px;height:120px;border-radius:8px;margin:4px auto;display:block" alt="Venmo QR code for @Lia-Merritt2282"><div style="font-size:12px;font-weight:700;color:#1B3D1C;margin-top:6px">Venmo @Lia-Merritt2282</div><div style="font-size:11px;color:var(--t3);margin-top:2px">$'+o.total.toFixed(2)+' · Use your name as the note</div><div style="font-size:11px;color:var(--t3);margin-top:2px">Venmo last 4 of phone: <strong>5132</strong></div><div style="font-size:11px;color:var(--t3);margin-top:8px">Your confirmation email has the final total. If it\'s different, the email is right.</div></div>':'<strong>Please have $'+o.total.toFixed(2)+' cash ready for delivery</strong>'}
       </div>
+      ${confirmNotifOffer()}
       ${_oRefHtml}
       <button class="bp" onclick="closeOv('ov-cart')">Done ✓</button>
     </div>`;
   openOv('ov-cart');
-  // Request push notification permission
-  if('Notification' in window && Notification.permission==='default'){
-    Notification.requestPermission();
-  }
+  // S-035: this used to call Notification.requestPermission() and ignore the answer, so a
+  // customer who said yes was never signed up. The "Turn on" offer above registers properly.
+  updateInstallBanner();   // S-037: someone who has ordered is now offered the install banner
 }
 
 // ── CUSTOMER PROFILE ──
@@ -3388,23 +3446,27 @@ function autoRestorePushIfNeeded(){
 
   if(optedOut) return; // Respect explicit opt-out
 
-  if(enabled && permission === 'granted'){
-    // Already enabled - silently refresh token to keep it current
+  // S-035 (v277): "granted but not enabled" is someone who said yes to the old prompt on the
+  // order confirmation, which never registered them. Sign them up now, as they asked.
+  if(permission === 'granted'){
+    // Enabled: silently refresh the token to keep it current.
     setTimeout(function(){ registerPushToken(true); }, 3000);
     return;
   }
-
-  if(!enabled && permission === 'default'){
-    // First-time visitor - auto-request permission after short delay
-    setTimeout(function(){
-      Notification.requestPermission().then(function(p){
-        if(p === 'granted'){
-          registerPushToken(true);
-          updateNotifUI(true);
-        }
-      });
-    }, 5000);
-  }
+  // A first-time visitor is no longer asked 5 s after the page opens, with no tap: Chrome mutes
+  // or blocks that, and a "Block" is permanent for the site. They're asked when they tap
+  // "Turn On Notifications" on Home, or the reminder button after ordering.
+}
+// The reminder offer on the order confirmation (S-035). Only when this browser can ask.
+function confirmNotifOffer(){
+  try{
+    if(!('Notification' in window) || !('serviceWorker' in navigator)) return '';
+    if(Notification.permission !== 'default' || localStorage.getItem('notif_enabled') === '1') return '';
+    if(localStorage.getItem('notif_opted_out') === '1') return '';   // they turned them off
+  }catch(e){ return ''; }
+  return '<div id="confirm-notif" style="background:#f0faf0;border-radius:12px;padding:12px 14px;margin-bottom:16px;text-align:left;display:flex;align-items:center;gap:10px">'
+    + '<span style="font-size:22px">🔔</span><span style="flex:1;font-size:12px;color:var(--t2)"><strong style="color:var(--f)">Want a reminder before next Friday\'s cutoff?</strong><br>We\'ll also tell you when the new menu goes up.</span>'
+    + '<button onclick="enableNotif();var b=$(\'confirm-notif\');if(b)b.style.display=\'none\'" style="white-space:nowrap;padding:8px 12px;border-radius:20px;border:none;background:var(--f);color:#fff;font-size:12px;font-weight:700;cursor:pointer">Turn on</button></div>';
 }
 
 async function registerPushToken(silent){
@@ -3725,7 +3787,7 @@ function refShareNative(code,fname){
 }
 
 window.onload = () => {
-  console.log("APP VERSION: 2026-10-07-v276-admin-split");
+  console.log("APP VERSION: 2026-10-09-v277-phone-ordering");
   // One-time cleanup: remove legacy subscription data from localStorage
   try{ localStorage.removeItem('my_sub'); localStorage.removeItem('my_swap'); }catch(e){}
   startMenuEarly();   // normally already running since DOMContentLoaded — see below
@@ -3752,6 +3814,7 @@ window.onload = () => {
   setTimeout(resendUnsentOrder, 1500);   // an order that never reached Lia (IMP-020)
   sessionStorage.removeItem('admin_data_time');
   buildMenu(); buildRepo(); countdown();
+  updateInstallBanner(); initCompactHeader();   // S-037
   // Lia's screens build themselves when admin.js loads (adminStart): straight away on a
   // phone signed in as admin, otherwise when the Admin tab opens.
   if(getAdminToken()) loadAdmin().catch(function(){});
@@ -3928,6 +3991,8 @@ function applyMenuResponse(d){
         });
       }
       buildMenu();
+      restoreCart();     // S-036: once, after the first menu with dishes in it
+      updateCartBar();   // the promo minimum or the deadline may have just arrived
 }
 
 // ════ UTILS ════
@@ -4111,6 +4176,9 @@ function sw(v, btn){
     setTimeout(initMenuBuilder, 100);
   }
   if(v === 'loyalty') initLoyaltyPage();
+  // S-037: the order bar shows on Menu and Home only; the header comes back if this view is at the top.
+  var _bd=$('body'); if(_bd && (_bd.scrollTop < 8 || v === 'admin')) document.body.classList.remove('hdr-compact');
+  updateCartBar();
 }
 function toggleMode(){
   if(isAdmin){
@@ -4376,7 +4444,14 @@ function buildMenu(){
       + '</div></div>';
   }
 
-  $('mgrid').innerHTML = _backStrip + _boxCard + items.map(i=>{
+  // S-037 (v277): the deadline was only on Home, so anyone arriving on Menu (push, email
+  // button, welcome card) never saw it on the screen where they choose.
+  var _dlTxt = deadlineShort();
+  var _menuDl = _dlTxt
+    ? '<div id="menu-dl" style="grid-column:1/-1;display:flex;justify-content:space-between;gap:8px;font-size:12px;font-weight:700;color:var(--f);padding:2px 2px 0">'
+      + '<span>⏰ ' + esc(_dlTxt) + '</span><span style="color:var(--t3);font-weight:600">Delivery ' + esc(deliveryDayShort()) + '</span></div>'
+    : '';
+  $('mgrid').innerHTML = _menuDl + _backStrip + _boxCard + items.map(i=>{
     const had  = _had[(i.n||'').toLowerCase()];
     const s    = ALL_SOUPS.find(x=>x.id===i.soupId)||{rating:0,reviews:[]};
     const fp   = i.sz[0].p.toFixed(2);
@@ -4498,7 +4573,89 @@ function qAddSized(id, sizeIdx){
 }
 // v270: nothing goes into the cart while ordering is closed (a menu left open on a phone).
 function closedGuard(){ if(!orderingClosed()) return false; toast(closedMessage()); return true; }
-function updCart(){var _cc=$('cc');if(_cc)_cc.textContent=cart.reduce((a,b)=>a+b.qty,0);}
+function updCart(){var _cc=$('cc');if(_cc)_cc.textContent=cart.reduce((a,b)=>a+b.qty,0); saveCart(); updateCartBar();}
+
+// ── S-036 (v277): the cart survives a reload ──
+// It lived only in memory, so leaving for Messages or Venmo (or Safari reloading the tab)
+// emptied it. Saved per ordering week (the Tuesday the next week opens); restored once the
+// menu is in, matched by dish name and size at today's menu price (the server prices the
+// order anyway). Cleared by the order going through (orderReachedLia empties the cart).
+var CART_KEY = 'saved_cart', CART_RESTORED = false;
+function cartWeekKey(){ return orderWindow().reopens.toDateString(); }
+function saveCart(){
+  if(!CART_RESTORED) return;   // never overwrite a saved cart before it has been restored
+  try{
+    if(!cart.length) localStorage.removeItem(CART_KEY);
+    else localStorage.setItem(CART_KEY, JSON.stringify({ week: cartWeekKey(), items: cart }));
+  }catch(e){}
+}
+function restoreCart(){
+  if(CART_RESTORED || !MENU_ITEMS || !MENU_ITEMS.length) return;
+  CART_RESTORED = true;
+  var saved = null;
+  try{ saved = JSON.parse(localStorage.getItem(CART_KEY)||'null'); }catch(e){}
+  if(!saved || !Array.isArray(saved.items) || !saved.items.length) return;
+  if(saved.week !== cartWeekKey() || orderingClosed()){ try{ localStorage.removeItem(CART_KEY); }catch(e){} return; }
+  var onMenu = {};
+  MENU_ITEMS.forEach(function(m){ onMenu[(m.n||'').toLowerCase()] = m; });
+  var kept = [];
+  saved.items.forEach(function(c){
+    if(!c || !c.sz) return;
+    if(c.id === 'giftbox'){
+      // A box keeps its price; it's dropped if any of its dishes has left the menu.
+      if((c.boxItems||[]).every(function(n){ return onMenu[(n||'').toLowerCase()]; })) kept.push(c);
+      return;
+    }
+    var m = onMenu[(c.n||'').toLowerCase()]; if(!m || m.soldout) return;
+    var sz = (m.sz||[]).find(function(s){ return s.l === c.sz.l; }); if(!sz) return;
+    kept.push({ id:m.id, n:m.n, em:m.em, sz:Object.assign({}, sz), qty:1 });
+  });
+  if(!kept.length && !cart.length){ try{ localStorage.removeItem(CART_KEY); }catch(e){} return; }
+  cart = kept.concat(cart);
+  updCart();
+  if(kept.length) toast('🛒 Your cart is still here');
+}
+
+// ── S-037 / S-038 (v277): the order bar above the bottom tabs ──
+function cartFood(){ return cart.reduce(function(a,b){ return a + b.sz.p*(b.qty||1); }, 0); }
+// How much more food reaches the promotion's free delivery, or 0 when it doesn't apply
+// (no promo, already there, or delivery is already free for this customer).
+function promoShortfall(food, fee){
+  if(!PROMO || !PROMO.freeDelivery || !(PROMO.minFood > 0)) return 0;
+  if(!(food > 0) || food >= PROMO.minFood || !(fee > 0)) return 0;
+  return Math.round((PROMO.minFood - food)*100)/100;
+}
+function timeShort(d){
+  // Newer browsers put a narrow no-break space before "PM"; keep it a plain space.
+  return d.toLocaleTimeString('en-US', d.getMinutes() ? {hour:'numeric',minute:'2-digit'} : {hour:'numeric'}).replace(/\s+/g, ' ');
+}
+function deliveryDayShort(now){
+  now = now || new Date();
+  if(typeof SCHEDULE !== 'undefined' && SCHEDULE && SCHEDULE.specialDeliveryLabel) return String(SCHEDULE.specialDeliveryLabel);
+  var dow = now.getDay(), mon = new Date(now);
+  mon.setDate(now.getDate() + (dow === 1 ? 0 : dow === 0 ? 1 : 8 - dow));
+  return mon.toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric'});
+}
+function deadlineShort(){
+  var w = orderWindow();
+  if(w.state === 'late') return 'Late orders until 11:59 PM tonight · Lia confirms';
+  if(w.state === 'closed') return '';
+  return 'Order by ' + w.deadline.toLocaleDateString('en-US',{weekday:'short'}) + ' ' + timeShort(w.deadline);
+}
+function updateCartBar(){
+  var bar = $('cart-bar'); if(!bar) return;
+  var active = document.querySelector('.view.active'), v = active ? active.id : '';
+  var n = cart.reduce(function(a,b){ return a + (b.qty||1); }, 0);
+  var show = n > 0 && !isAdmin && (v === 'v-menu' || v === 'v-home') && !orderingClosed();
+  bar.classList.toggle('on', show);
+  document.body.classList.toggle('has-cartbar', show);
+  if(!show) return;
+  var food = cartFood(), fee = 0;
+  try{ fee = projectLoyaltyForCheckout(CART_USE_CREDIT).fee; }catch(e){}
+  var short = promoShortfall(food, fee);
+  $('cb-sum').textContent = n + ' item' + (n === 1 ? '' : 's') + ' · $' + food.toFixed(2);
+  $('cb-sub').textContent = short > 0 ? '🎉 Add $' + short.toFixed(2) + ' more for free delivery' : deadlineShort();
+}
 
 // ════ RATINGS ════
 // S-020: the item screen and Best Sellers each had a "Leave a Review" box that only changed
@@ -4543,6 +4700,9 @@ function showCart(){
   // redemption offers stay hidden rather than letting someone spend one for nothing.
   const showProtectOffer = !promoOn && proj.resetting && LOYALTY.credits >= proj.creditsNeeded && CART_USE_CREDIT!=='protect_streak';
   const showFreeDelOffer = !promoOn && LOYALTY.credits >= 1 && del > 0 && CART_USE_CREDIT!=='free_delivery';
+  // S-039 (v277): the gift-certificate and coupon boxes sat above name and address. They're now
+  // below them, behind a link, and open by themselves once a code is in play.
+  const codesOpen = CODES_OPEN || !!GIFT_CODE || !!GIFT_MSG || !!appliedCoupon;
   // Applying a code or loading loyalty redraws the whole cart, which used to wipe
   // checkout details a new customer had typed but not saved (IMP-011). Keep them.
   const kept = {};
@@ -4565,6 +4725,7 @@ function showCart(){
         </div>`; }).join('')}
       ${cart.length>0?`
         <div style="background:#f0faf0;border:1.5px solid var(--f);border-radius:10px;padding:10px 12px;margin-bottom:12px;font-size:12px;font-weight:700;color:var(--f)">🔥 ${streakLabel}</div>
+        ${promoShortfall(food, proj.fee) > 0 ? `<div id="promo-short" style="background:#fff8e1;border:1.5px solid #E8B84B;border-radius:10px;padding:10px 12px;margin-bottom:12px;font-size:12px;color:#78350f"><strong>🎉 Add $${promoShortfall(food, proj.fee).toFixed(2)} more for free delivery.</strong> ${esc(PROMO.name||'This month')}: delivery is free on orders of $${PROMO.minFood} or more in food. <a href="#" onclick="closeOv('ov-cart');sw('menu',$('nav-menu'));return false;" style="color:var(--f);font-weight:700">Add something →</a></div>` : ''}
         ${proj.resetting&&CART_USE_CREDIT!=='protect_streak'?`<div style="background:#fff3f0;border-radius:10px;padding:10px 12px;margin-bottom:12px;font-size:12px;color:#9a3412">Missed ${proj.weeksSkipped} week${proj.weeksSkipped>1?'s':''} — your streak will reset to Week 1 unless you protect it below.</div>`:''}
         ${showProtectOffer?`<button onclick="CART_USE_CREDIT='protect_streak';showCart();" style="width:100%;text-align:left;display:flex;align-items:center;gap:10px;background:#f0faf0;border:1.5px solid var(--f);border-radius:10px;padding:10px 12px;margin-bottom:8px;cursor:pointer;font-family:inherit"><span style="font-size:20px">🔒</span><span style="font-size:12px;color:var(--t2)"><strong style="color:var(--f)">Use ${proj.creditsNeeded} credit${proj.creditsNeeded>1?'s':''} to protect your streak</strong><br>Keep your discount ladder position (${LOYALTY.credits} credit${LOYALTY.credits===1?'':'s'} available)</span></button>`:''}
         ${showFreeDelOffer?`<button onclick="CART_USE_CREDIT='free_delivery';showCart();" style="width:100%;text-align:left;display:flex;align-items:center;gap:10px;background:#fff8e1;border:1.5px solid #92400e;border-radius:10px;padding:10px 12px;margin-bottom:8px;cursor:pointer;font-family:inherit"><span style="font-size:20px">🚚</span><span style="font-size:12px;color:var(--t2)"><strong style="color:#92400e">Use 1 credit for free delivery</strong><br>${LOYALTY.credits} credit${LOYALTY.credits===1?'':'s'} available</span></button>`:''}
@@ -4577,18 +4738,7 @@ function showCart(){
           <div class="cs-row tot"><span>Total</span><span>$${total.toFixed(2)}</span></div>
           ${giftUse>0&&GIFT_BALANCE-giftUse>0?`<div style="font-size:11px;color:var(--t3);text-align:right;margin-top:2px">$${(GIFT_BALANCE-giftUse).toFixed(2)} left on the certificate</div>`:''}
         </div>
-        <div style="margin:14px 0 8px;font-size:13px;font-weight:700;color:var(--t2)">Gift Certificate</div>
-        ${GIFT_CODE
-          ? `<div style="display:flex;align-items:center;justify-content:space-between;background:#f0faf0;border:1.5px solid var(--f);border-radius:10px;padding:9px 12px;margin-bottom:14px;font-size:12px;color:var(--t2)"><span>✓ <strong style="font-family:monospace">${GIFT_CODE}</strong> · $${GIFT_BALANCE.toFixed(2)} available</span><button onclick="clearGiftCode()" style="background:transparent;border:none;color:var(--f);font-weight:700;cursor:pointer;font-size:12px">Remove</button></div>`
-          : `<div style="display:flex;gap:7px;margin-bottom:6px"><input id="gift-inp" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="LS-XXXX-XXXX" style="flex:1;padding:9px;border-radius:8px;border:1.5px solid var(--bd);font-size:13px;font-family:monospace;text-transform:uppercase;outline:none" onkeydown="if(event.key==='Enter')applyGiftCode()"><button onclick="applyGiftCode()" style="padding:9px 15px;border-radius:8px;border:none;background:var(--f);color:#fff;font-size:12px;font-weight:700;cursor:pointer">Apply</button></div>
-             <div id="gift-msg" style="font-size:11px;color:var(--cl);min-height:14px;margin-bottom:10px">${GIFT_MSG}</div>`}
-        <div style="margin:14px 0 8px;font-size:13px;font-weight:700;color:var(--t2)">Coupon Code</div>
-        <div style="display:flex;gap:7px;margin-bottom:14px">
-          <input id="coupon-inp" class="fi-sel" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="Enter promo code" style="flex:1;padding:10px;border-radius:10px;border:2px solid var(--bd);font-size:13px;outline:none">
-          <button onclick="applyCoupon()" style="padding:10px 14px;background:var(--f);color:#fff;border:none;border-radius:10px;font-weight:700;cursor:pointer">Apply</button>
-        </div>
-        <div id="coupon-msg" style="font-size:12px;color:var(--sg);margin-bottom:10px;display:none"></div>
-        <div style="margin:0 0 8px;font-size:13px;font-weight:700;color:var(--t2)">Complete Your Order</div>
+        <div style="margin:14px 0 8px;font-size:13px;font-weight:700;color:var(--t2)">Complete Your Order</div>
         <div style="display:grid;gap:9px;margin-bottom:14px">
           <input id="ord-name" name="name" class="fi-sel" autocomplete="name" placeholder="Full name *" style="padding:10px;border-radius:10px;border:2px solid var(--bd);font-size:13px;outline:none;width:100%">
           <input id="ord-email" name="email" class="fi-sel" autocomplete="email" inputmode="email" autocapitalize="off" spellcheck="false" placeholder="Email address *" type="email" style="padding:10px;border-radius:10px;border:2px solid var(--bd);font-size:13px;outline:none;width:100%">
@@ -4638,6 +4788,20 @@ function showCart(){
             <option value="cash">Cash on Delivery</option>
           </select>
           <textarea id="ord-notes" class="fi-sel" placeholder="Comments or special instructions (delivery window, etc.)" rows="2" style="padding:10px;border-radius:10px;border:2px solid var(--bd);font-size:13px;outline:none;width:100%;resize:none"></textarea>
+        </div>
+        <a id="codes-link" href="#" onclick="CODES_OPEN=true;$('codes-box').style.display='';this.style.display='none';return false;" style="display:${codesOpen?'none':'inline-block'};font-size:12px;color:var(--f);font-weight:600;text-decoration:underline;margin-bottom:12px">Have a gift certificate or coupon?</a>
+        <div id="codes-box" style="display:${codesOpen?'':'none'}">
+        <div style="margin:4px 0 8px;font-size:13px;font-weight:700;color:var(--t2)">Gift Certificate</div>
+        ${GIFT_CODE
+          ? `<div style="display:flex;align-items:center;justify-content:space-between;background:#f0faf0;border:1.5px solid var(--f);border-radius:10px;padding:9px 12px;margin-bottom:14px;font-size:12px;color:var(--t2)"><span>✓ <strong style="font-family:monospace">${GIFT_CODE}</strong> · $${GIFT_BALANCE.toFixed(2)} available</span><button onclick="clearGiftCode()" style="background:transparent;border:none;color:var(--f);font-weight:700;cursor:pointer;font-size:12px">Remove</button></div>`
+          : `<div style="display:flex;gap:7px;margin-bottom:6px"><input id="gift-inp" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="LS-XXXX-XXXX" style="flex:1;padding:9px;border-radius:8px;border:1.5px solid var(--bd);font-size:13px;font-family:monospace;text-transform:uppercase;outline:none" onkeydown="if(event.key==='Enter')applyGiftCode()"><button onclick="applyGiftCode()" style="padding:9px 15px;border-radius:8px;border:none;background:var(--f);color:#fff;font-size:12px;font-weight:700;cursor:pointer">Apply</button></div>
+             <div id="gift-msg" style="font-size:11px;color:var(--cl);min-height:14px;margin-bottom:10px">${GIFT_MSG}</div>`}
+        <div style="margin:14px 0 8px;font-size:13px;font-weight:700;color:var(--t2)">Coupon Code</div>
+        <div style="display:flex;gap:7px;margin-bottom:14px">
+          <input id="coupon-inp" class="fi-sel" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="Enter promo code" style="flex:1;padding:10px;border-radius:10px;border:2px solid var(--bd);font-size:13px;outline:none">
+          <button onclick="applyCoupon()" style="padding:10px 14px;background:var(--f);color:#fff;border:none;border-radius:10px;font-weight:700;cursor:pointer">Apply</button>
+        </div>
+        <div id="coupon-msg" style="font-size:12px;color:var(--sg);margin-bottom:10px;display:none"></div>
         </div>
         ${orderingClosed()
           ? `<div id="cart-closed" style="background:#fff8e1;border-radius:10px;padding:12px;font-size:13px;color:var(--t2);line-height:1.5;margin-bottom:10px;text-align:center">🔒 ${closedMessage()}</div>`
