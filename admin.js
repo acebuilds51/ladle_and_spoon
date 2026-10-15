@@ -2,7 +2,7 @@
 // when the Admin tab opens or on a phone signed in as admin, so customers' phones never
 // download or run it. Same global scope as index.html: its functions and variables are
 // shared both ways. index.html calls into this file only after adminReady().
-var ADMIN_JS_VERSION = 'v283';
+var ADMIN_JS_VERSION = 'v284';
 
 // Phone photos are 3–6 MB. Shrink to at most 1600px and re-encode as JPEG in the browser
 // before uploading, so Cloudinary never stores a full-size original. Resolves to the
@@ -355,26 +355,56 @@ function isRetiredCustomer(id){
 
 // ── SUGGEST NEXT WEEK'S SOUPS ──
 // v283 (Tony, 2026-10-15): a suggestion Lia can't or won't make this week can be snoozed for 1, 2,
-// 4 or 8 weeks; the next best dish takes its place. Kept on this phone, like Retire.
-var SNOOZE_KEY = 'snoozed_suggestions', SUGG_SHOWN = [];
+// 4 or 8 weeks; the next best dish takes its place.
+// v284 (gs120): kept in the Sheet ("Snoozed suggestions"), so every phone sees the same list; read
+// with the dashboard, saved through mark_delivered (action 'snooze'). Before gs120, on this phone.
+var SNOOZE_KEY = 'snoozed_suggestions', SUGG_SHOWN = [], SERVER_SNOOZES = null;
+function snoozeOnServer(){ return BACKEND_GS >= 120; }
 function suggSnoozes(){
-  var s = {}; try{ s = JSON.parse(localStorage.getItem(SNOOZE_KEY) || '{}') || {}; }catch(e){}
+  var s = {};
+  if(snoozeOnServer()) s = SERVER_SNOOZES || {};
+  else { try{ s = JSON.parse(localStorage.getItem(SNOOZE_KEY) || '{}') || {}; }catch(e){} }
   var now = Date.now(), live = {};
   Object.keys(s).forEach(function(k){ if(s[k] > now) live[k] = s[k]; });   // expired snoozes drop off
   return live;
 }
+function refreshSugg(){ var b = $('suggestion-box'); if(b && b.style.display === 'block') suggestNextWeek(); }
+function setSnooze(n, weeks){
+  var s = suggSnoozes();
+  if(weeks) s[n] = Date.now() + weeks * 7 * 86400000; else delete s[n];
+  if(!snoozeOnServer()){ try{ localStorage.setItem(SNOOZE_KEY, JSON.stringify(s)); }catch(e){} refreshSugg(); return; }
+  var before = SERVER_SNOOZES;
+  SERVER_SNOOZES = s; refreshSugg();   // shows at once; the Sheet's answer follows
+  fetch(APPS_SCRIPT_URL, { method:'POST', headers:{'Content-Type':'text/plain'},
+    body: JSON.stringify({ type:'mark_delivered', action:'snooze', name:n, weeks:weeks || 0 }) })
+    .then(function(r){ return r.json(); })
+    .then(function(d){
+      if(!d || !d.success) throw new Error((d && d.error) || 'not saved');
+      SERVER_SNOOZES = d.snoozes || {};
+      try{ var c = JSON.parse(sessionStorage.getItem('admin_data')||'null'); if(c){ c.snoozes = SERVER_SNOOZES; sessionStorage.setItem('admin_data', JSON.stringify(c)); } }catch(e){}
+      refreshSugg();
+    })
+    .catch(function(e){ SERVER_SNOOZES = before; refreshSugg(); toast('Couldn\'t save the snooze: ' + e.message + '. Try again.'); });
+}
+// Snoozes made on this phone before gs120 move into the Sheet once (rounded up to 1/2/4/8 weeks).
+function moveLocalSnoozes(){
+  var s = {}; try{ s = JSON.parse(localStorage.getItem(SNOOZE_KEY) || 'null'); localStorage.removeItem(SNOOZE_KEY); }catch(e){ return; }
+  if(!s) return;
+  var now = Date.now();
+  Object.keys(s).forEach(function(n){
+    if(!(s[n] > now) || SERVER_SNOOZES[n]) return;
+    var left = Math.ceil((s[n] - now) / (7 * 86400000));
+    setSnooze(n, [1,2,4,8].filter(function(w){ return w >= left; })[0] || 8);
+  });
+}
 function snoozeSugg(i, weeks){
   var n = SUGG_SHOWN[i]; if(!n) return;
-  var s = suggSnoozes(); s[n] = Date.now() + weeks * 7 * 86400000;
-  try{ localStorage.setItem(SNOOZE_KEY, JSON.stringify(s)); }catch(e){}
   toast('💤 ' + n + ' snoozed for ' + weeks + ' week' + (weeks === 1 ? '' : 's'));
-  suggestNextWeek();
+  setSnooze(n, weeks);
 }
 function unsnoozeSugg(i){
   var n = SUGG_SHOWN[i]; if(!n) return;
-  var s = suggSnoozes(); delete s[n];
-  try{ localStorage.setItem(SNOOZE_KEY, JSON.stringify(s)); }catch(e){}
-  suggestNextWeek();
+  setSnooze(n, 0);
 }
 function suggestNextWeek(){
   var retired={}; try{retired=JSON.parse(localStorage.getItem('retired_soups')||'{}');}catch(e){}
@@ -1249,6 +1279,11 @@ function applyAdminData(data){
       buildOrders();
     }
     if(Array.isArray(data.liaCustomers)) LIA_CUSTOMERS = data.liaCustomers;   // v279 (gs108)
+    if(data.snoozes && typeof data.snoozes === 'object'){   // v284 (gs120)
+      SERVER_SNOOZES = data.snoozes;
+      if(snoozeOnServer()) moveLocalSnoozes();
+      refreshSugg();
+    }
     // Week figures and the KPI cards come only from get_dashboard. get_dashboard_extra
     // (intel/areas/route…) is also fed through here, and used to zero every card:
     // "This week $0 · 0 orders", "All-time $0 · 0 months".
