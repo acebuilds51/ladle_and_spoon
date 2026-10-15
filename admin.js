@@ -2,7 +2,7 @@
 // when the Admin tab opens or on a phone signed in as admin, so customers' phones never
 // download or run it. Same global scope as index.html: its functions and variables are
 // shared both ways. index.html calls into this file only after adminReady().
-var ADMIN_JS_VERSION = 'v278';
+var ADMIN_JS_VERSION = 'v279';
 
 // Phone photos are 3–6 MB. Shrink to at most 1600px and re-encode as JPEG in the browser
 // before uploading, so Cloudinary never stores a full-size original. Resolves to the
@@ -619,8 +619,10 @@ function weeklyReset(btn){
       if(dry.already){ alert(dry.message); unlock(); return; }
       if(typeof dry.orders !== 'number') dry.orders = (ORDERS || []).length;   // backend before gs74
       var notInvoiced = (ORDERS || []).filter(function(o){ return o.email && !o.delivered; }).length;
+      var unpaid = BACKEND_GS < 108 ? [] : (ORDERS || []).filter(function(o){ return o.email && o.key && !o.paid; });
       var msg = 'Archive ' + dry.orders + ' order' + (dry.orders === 1 ? '' : 's') + ' to the tab "' + dry.archived + '" and start a fresh week?'
-        + (notInvoiced ? '\n\n⚠️ ' + notInvoiced + ' order' + (notInvoiced === 1 ? ' has' : 's have') + ' not been invoiced. After archiving, invoices can\'t be sent from the app.' : '')        + '\n\nThis cannot be undone.';
+        + (notInvoiced ? '\n\n⚠️ ' + notInvoiced + ' order' + (notInvoiced === 1 ? ' has' : 's have') + ' not been invoiced. After archiving, invoices can\'t be sent from the app.' : '')
+        + (unpaid.length ? '\n\n💵 Not marked paid yet: ' + unpaid.map(function(o){ return o.n || o.name || o.email; }).join(', ') + '.' : '')        + '\n\nThis cannot be undone.';
       if(!confirm(msg)){ unlock(); return; }
       if(btn) btn.innerHTML = 'Archiving…';
       toast('⏳ Archiving week...');
@@ -1208,6 +1210,7 @@ function applyAdminData(data){
       ORDERS = data.orders;
       buildOrders();
     }
+    if(Array.isArray(data.liaCustomers)) LIA_CUSTOMERS = data.liaCustomers;   // v279 (gs108)
     // Week figures and the KPI cards come only from get_dashboard. get_dashboard_extra
     // (intel/areas/route…) is also fed through here, and used to zero every card:
     // "This week $0 · 0 orders", "All-time $0 · 0 months".
@@ -2155,9 +2158,14 @@ function buildOrders(){
     var done = billable.filter(function(o){ return o.delivered; }).length;
     var hasFlag = ORDERS.some(function(o){ return o.delivered !== undefined; });
     tally.style.display = (billable.length && hasFlag) ? '' : 'none';
-    tally.textContent = (done === billable.length && done
+    // v279 (gs108, S-027): who has paid, and what is still owed.
+    var paidN = billable.filter(function(o){ return o.paid; }).length;
+    var owed = billable.filter(function(o){ return !o.paid; }).reduce(function(s, o){ return s + (parseFloat(o.total) || 0); }, 0);
+    tally.innerHTML = esc(done === billable.length && done
       ? '🧾 All ' + done + ' invoices sent'
-      : '🧾 ' + done + ' of ' + billable.length + ' invoiced');
+      : '🧾 ' + done + ' of ' + billable.length + ' invoiced')
+      + (BACKEND_GS < 108 ? '' : '<br>' + (paidN === billable.length && paidN ? '💵 Everyone has paid'
+        : '💵 Paid ' + paidN + ' of ' + billable.length + ' · <span style="color:#b45309">$' + owed.toFixed(2) + ' still owed</span>'));
   }
 
   // ── Source Tracker ──────────────────────────────────────────
@@ -2296,6 +2304,12 @@ function buildOrders(){
       +(isVenmo
         ?'<span style="font-size:11px;font-weight:700;color:#1d4ed8">Venmo</span>'
         :'<span style="font-size:11px;font-weight:700;color:#555">Cash</span>')
+      // v279 (gs108): one tap to tick or un-tick paid. Only Sheet orders have a key to save it under.
+      // Hidden until gs108 is live: an older backend would take the request as "delivered".
+      +(o.key && BACKEND_GS >= 108
+        ?'<button class="ord-paid" onclick="togglePaid(this,'+oi+')" style="padding:3px 9px;border-radius:8px;font-size:11px;font-weight:700;cursor:pointer;'
+          +(o.paid ? 'border:1.5px solid #15803d;background:#dcfce7;color:#14532d">✓ Paid' : 'border:1.5px solid #b45309;background:#fff;color:#b45309">Mark paid')+'</button>'
+        :'')
       +'</div></div>'
       +'<div class="oitm">'+esc(itemsStr)+'</div>'
       +'<div style="margin-top:4px">'+deviceBadge+(loyaltyBadge?' '+loyaltyBadge:'')+'</div>'
@@ -2400,6 +2414,133 @@ function markDelivered(btn, idx, resend){
     btn.disabled = false; btn.innerHTML = original;
     toast('Network error — invoice not sent');
   });
+}
+
+// ── v279 (gs108): Lia orders for one of her customers ──
+// Tony, 2026-10-15: a few customers won't enter their own details, so Lia ordered for them in an
+// incognito tab, typing the address every week. Tony lists them in the Sheet's "Lia's customers"
+// tab; this screen offers only those, fills in their details, and sends an ordinary order (same
+// path, same confirmation, loyalty and invoice as an order from the app).
+var LIA_CUSTOMERS = [];
+var LO = null;   // { ci: chosen customer, qty: {'item|size': n}, pay, note }
+function openLiaOrder(){
+  LO = { ci: -1, qty: {}, pay: 'venmo', note: '' };
+  var el = $('lia-ord');
+  if(!el){
+    el = document.createElement('div'); el.id = 'lia-ord';
+    el.style.cssText = 'position:fixed;inset:0;z-index:2000;background:var(--cr);overflow-y:auto;-webkit-overflow-scrolling:touch';
+    document.body.appendChild(el);
+  }
+  el.style.display = 'block';
+  renderLiaOrder();
+}
+function closeLiaOrder(){ var el = $('lia-ord'); if(el) el.style.display = 'none'; LO = null; }
+function liaOrderItems(){ return (MENU_ITEMS || []).filter(function(i){ return !i.soldout && i.sz && i.sz.length; }); }
+function liaOrderLines(){
+  var lines = [];
+  liaOrderItems().forEach(function(it, i){ it.sz.forEach(function(s, si){
+    var q = LO.qty[i + '|' + si] || 0;
+    if(q > 0) lines.push({ name: it.n, size: s.l, qty: q, price: s.p });
+  }); });
+  return lines;
+}
+function renderLiaOrder(){
+  var el = $('lia-ord'); if(!el || !LO) return;
+  var c = LIA_CUSTOMERS[LO.ci], items = liaOrderItems();
+  var h = '<div style="max-width:560px;margin:0 auto;padding:16px 16px 40px">'
+    + '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px"><div class="st">Order for a customer</div>'
+    + '<button onclick="closeLiaOrder()" style="background:#fff;border:1.5px solid var(--bd);border-radius:9px;padding:6px 12px;font-weight:700;cursor:pointer">✕ Close</button></div>';
+  if(!LIA_CUSTOMERS.length){
+    el.innerHTML = h + '<div class="ccrd"><p style="margin:0;font-size:14px;line-height:1.6">No customers here yet. Tony adds them in the Sheet&rsquo;s <b>&ldquo;Lia&rsquo;s customers&rdquo;</b> tab (name, phone, address, Venmo or cash). They show up here within the hour.</p></div></div>';
+    return;
+  }
+  h += '<select onchange="liaPick(this.value)" style="width:100%;padding:13px;font-size:16px;border-radius:12px;border:1.5px solid var(--bd);background:#fff;margin-bottom:12px">'
+    + '<option value="-1">Choose a customer…</option>'
+    + LIA_CUSTOMERS.map(function(x, i){ return '<option value="' + i + '"' + (i === LO.ci ? ' selected' : '') + '>' + esc(x.name) + '</option>'; }).join('') + '</select>';
+  if(c){
+    h += '<div class="ccrd" style="font-size:13px;line-height:1.6"><b style="font-size:15px">' + esc(c.name) + '</b><br>📍 ' + esc(c.address || 'No address in the tab') + (c.phone ? '<br>📞 ' + esc(c.phone) : '')
+      + '<br>' + (c.ownEmail ? '✉️ ' + esc(c.email) : '<span style="color:var(--t3)">No email: their confirmation and invoice come to your inbox.</span>') + '</div>';
+    if(!items.length){
+      h += '<div class="ccrd" style="font-size:14px">There&rsquo;s no menu this week yet. Save and publish the menu first.</div>';
+    } else {
+      h += '<div class="ccrd">' + items.map(function(it, i){
+        return '<div style="padding:8px 0;border-bottom:1px solid #f0ece2"><div style="font-weight:700;font-size:14px;margin-bottom:4px">' + esc(it.n) + '</div>'
+          + it.sz.map(function(s, si){
+              var k = i + '|' + si, q = LO.qty[k] || 0;
+              return '<div style="display:flex;align-items:center;gap:10px;margin:4px 0"><span style="flex:1;font-size:13px;color:var(--t2)">' + esc(s.l) + ' · $' + s.p + '</span>'
+                + '<button onclick="liaQty(\'' + k + '\',-1)" style="width:38px;height:38px;border-radius:10px;border:1.5px solid var(--f);background:#fff;color:var(--f);font-size:20px;cursor:pointer"' + (q ? '' : ' disabled') + '>−</button>'
+                + '<b style="min-width:20px;text-align:center;font-size:16px">' + q + '</b>'
+                + '<button onclick="liaQty(\'' + k + '\',1)" style="width:38px;height:38px;border-radius:10px;border:none;background:var(--f);color:#fff;font-size:20px;cursor:pointer">+</button></div>';
+            }).join('') + '</div>';
+      }).join('') + '</div>';
+      var food = liaOrderLines().reduce(function(s, l){ return s + l.qty * l.price; }, 0);
+      h += '<div style="display:flex;gap:8px;margin:4px 0 10px">'
+        + ['venmo', 'cash'].map(function(p){ var on = LO.pay === p; return '<button onclick="liaPay(\'' + p + '\')" style="flex:1;padding:11px;border-radius:10px;font-weight:700;cursor:pointer;border:1.5px solid var(--f);background:' + (on ? 'var(--f);color:#fff' : '#fff;color:var(--f)') + '">' + (p === 'venmo' ? 'Venmo' : 'Cash') + '</button>'; }).join('') + '</div>'
+        + '<textarea oninput="LO.note=this.value" placeholder="Note on the order (optional)" style="width:100%;box-sizing:border-box;border:1.5px solid var(--bd);border-radius:10px;padding:10px;font-size:14px;font-family:inherit;min-height:60px">' + esc(LO.note) + '</textarea>'
+        + '<div style="display:flex;justify-content:space-between;font-weight:700;margin:12px 2px"><span>Food</span><span>$' + food.toFixed(2) + ' + delivery</span></div>'
+        + '<button class="bp" onclick="placeLiaOrder(this)"' + (food ? '' : ' disabled style="opacity:.5"') + '>Place order for ' + esc(c.name.split(' ')[0]) + '</button>'
+        + '<div style="font-size:11px;color:var(--t3);text-align:center">Delivery is worked out like any order (streak, free-delivery offers).</div>';
+    }
+  }
+  el.innerHTML = h + '</div>';
+}
+function liaPick(v){
+  LO.ci = +v; LO.qty = {};
+  var c = LIA_CUSTOMERS[LO.ci];
+  if(c){ LO.pay = c.pay || 'venmo'; LO.note = c.note || ''; }
+  renderLiaOrder();
+}
+function liaQty(k, d){ LO.qty[k] = Math.max(0, (LO.qty[k] || 0) + d); renderLiaOrder(); }
+function liaPay(p){ LO.pay = p; renderLiaOrder(); }
+function placeLiaOrder(btn){
+  var c = LIA_CUSTOMERS[LO.ci], lines = liaOrderLines();
+  if(!c || !lines.length){ toast('Add at least one dish'); return; }
+  if(!c.address){ toast('No address for ' + c.name + ' in the "Lia\'s customers" tab'); return; }
+  var food = lines.reduce(function(s, l){ return s + l.qty * l.price; }, 0);
+  if(!confirm('Place this order for ' + c.name + '?\n\n' + lines.map(function(l){ return l.qty + ' × ' + l.name + ' (' + l.size + ')'; }).join('\n')
+    + '\n\nFood $' + food.toFixed(2) + ' + delivery · ' + (LO.pay === 'cash' ? 'Cash' : 'Venmo'))) return;
+  var orderData = { type: 'order', id: '#L' + Date.now().toString().slice(-6), timestamp: new Date().toISOString(), source: 'app',
+    name: c.name, email: c.email, phone: c.phone, address: c.address, isNew: false, payment: LO.pay, notes: LO.note,
+    total: food + 5, deliveryFee: 5, srcChannel: 'lia', installed: false, platform: 'admin', items: lines };
+  btn.disabled = true; btn.textContent = 'Sending…';
+  sendOrderWithRetry(orderData).then(function(){
+    toast('✅ Order placed for ' + c.name);
+    closeLiaOrder();
+    try{ sessionStorage.removeItem('admin_data_time'); }catch(e){}
+    setTimeout(refreshAdminData, 1500);
+  }, function(e){
+    btn.disabled = false; btn.textContent = 'Try again';
+    toast('Not sent (' + ((e && e.message) || 'network') + '). Nothing was saved; tap Try again.');
+  });
+}
+
+// v279 (gs108): Paid / not paid, saved on the server so every phone sees it. Ticking is one tap;
+// un-ticking asks first, since it is usually a slip.
+function togglePaid(btn, idx){
+  var o = ORDER_VIEW[idx] || {};
+  if(!o.key){ toast('That order is not on the Sheet yet. Reload the Orders tab.'); return; }
+  var paid = !o.paid;
+  if(!paid && !confirm('Mark ' + (o.n || o.name || 'this order') + ' as NOT paid?')) return;
+  btn.disabled = true; btn.textContent = 'Saving…';
+  fetch(APPS_SCRIPT_URL, { method:'POST', headers:{'Content-Type':'text/plain'},
+    // No email on purpose: should an older backend ever get this, it refuses ("Missing email") instead of invoicing.
+    body: JSON.stringify({ type:'mark_delivered', action:'paid', key:o.key, paid:paid }) })
+    .then(function(r){ return r.json(); })
+    .then(function(d){
+      if(d && d.success){ o.paid = paid; rememberPaid(o.key, paid); buildOrders(); toast(paid ? '💵 Marked paid' : 'Marked not paid'); }
+      else { btn.disabled = false; buildOrders(); toast('Could not save: ' + ((d && d.error) || 'unknown error')); }
+    })
+    .catch(function(){ btn.disabled = false; buildOrders(); toast('Network error: not saved'); });
+}
+function rememberPaid(key, paid){
+  (ORDERS||[]).forEach(function(c){ if(c.key === key) c.paid = paid; });
+  try{
+    var cached = JSON.parse(sessionStorage.getItem('admin_data')||'null');
+    if(cached && Array.isArray(cached.orders)){
+      cached.orders.forEach(function(c){ if(c.key && c.key === key) c.paid = paid; });
+      sessionStorage.setItem('admin_data', JSON.stringify(cached));
+    }
+  }catch(e){}
 }
 
 // The phone's copies of the orders must remember an invoice too, or a tab switch undoes it.
@@ -4008,7 +4149,7 @@ function buildCostsCard(weeks, periods){
   var h = '<h3>💵 What you kept</h3>';
   if(!weeks.length){
     h += '<p style="font-size:13px;color:var(--t2);margin:0;line-height:1.5">After Monday\'s deliveries you\'ll get an email, <strong>"Receipts for your … delivery"</strong>. '
-      +  'Reply with a photo of each grocery receipt and the total. Your profit for the week shows up here.</p>';
+      +  'Reply with a photo of each receipt, your supplies total and your shopping miles. Your profit for the week shows up here.</p>';
   } else {
     var th = 'style="padding:5px 4px;text-align:right;font-size:10px;color:var(--t3);text-transform:uppercase;letter-spacing:.5px"';
     var td = 'style="padding:6px 4px;text-align:right;border-top:1px solid #f0f0f0"';
@@ -4039,7 +4180,7 @@ function buildCostsCard(weeks, periods){
     h += '</table>';
     var waiting = weeks.filter(function(w){ return !w.answered && w.orders; })[0];
     h += '<p style="font-size:12px;color:var(--t3);margin:10px 0 0;line-height:1.5">'
-      + (waiting ? '🛒 To fill in <strong>' + esc(waiting.label) + '</strong>: reply to the "Receipts for your ' + esc(waiting.label) + ' delivery" email with your receipt photos and what you spent on groceries, containers, gift boxes and anything else (or "none"). '
+      + (waiting ? '🛒 To fill in <strong>' + esc(waiting.label) + '</strong>: reply to the "Receipts for your ' + esc(waiting.label) + ' delivery" email with your receipt photos, your supplies total and your shopping miles (or "none"). '
                  : '')
       + 'Delivery driving is logged by itself when you use the 🚗 Route tab; add trips to the store on the email\'s "Shopping miles" line. Miles count at the IRS rate, for taxes. '
       + 'A summary of each month comes by email early the next month, and a year-end summary for your taxes in January, after a reminder to add anything not logged yet.</p>';

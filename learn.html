@@ -187,20 +187,20 @@ function maps(to){ return '<div style="background:#e8f0e3;height:150px;display:f
 function confirmPage(title, text, yes, cls){ return '<div class="pad" style="text-align:center;background:var(--cr)"><div class="card"><h3 style="color:var(--f);margin:4px 0">' + title + '</h3><p style="color:#555">' + text + '</p>' + (yes ? '<button class="btn ' + (cls || '') + '" data-t="yes">' + yes + '</button>' : '') + '</div></div>'; }
 
 // ── The receipts reply, read the way the app reads it (a simple copy of parseCostReply's rules) ──
+// gs108: every cost word adds to one Supplies total.
 function readReply(text){
-  var out = [], kinds = [[/^(groceries|grocery|food)\b/i, 'Groceries'], [/^(containers?|packaging|lids?|labels?|bags?|supplies)\b/i, 'Containers & packaging'],
-    [/^(gift ?box(es)?|gift|cards?|ribbon)\b/i, 'Gift box & cards'], [/^(other|misc\w*)\b/i, 'Other']];
+  var out = [], kinds = [[/^(supplies|groceries|grocery|food|containers?|packaging|lids?|labels?|bags?|gift ?box(es)?|gift|cards?|ribbon|other|misc\w*)\b/i, 'Supplies']];
   text.split('\n').forEach(function(l){
     var line = l.trim(); if(!line) return;
     if(/^(none|nothing)\b/i.test(line)){ out.push({ ok: true, t: 'Nothing bought this time' }); return; }
     var mm = /^(?:(?:shopping|store|grocery|supply)\s+)?(?:miles?|mileage)\b[\s:=-]*([\d.]+)/i.exec(line);
     if(mm){ out.push({ ok: true, t: 'Shopping miles: ' + mm[1] + ' mi' }); return; }
     if(/\bgas\b/i.test(line)){ out.push({ ok: false, t: '“' + line + '”: leave gas out. Your miles already cover it.' }); return; }
-    var kind = 'Groceries', rest = line;
+    var kind = 'Supplies', rest = line;
     for(var i = 0; i < kinds.length; i++){ var k = kinds[i][0].exec(line); if(k){ kind = kinds[i][1]; rest = line.slice(k[0].length); break; } }
     var a = /\$?\s*(\d{1,4}(?:\.\d{1,2})?)/.exec(rest);
     if(a) out.push({ ok: true, t: kind + ': $' + parseFloat(a[1]).toFixed(2) });
-    else out.push({ ok: false, t: '“' + line + '”: I couldn’t find an amount. Try “Groceries 182.40”.' });
+    else out.push({ ok: false, t: '“' + line + '”: I couldn’t find an amount. Try “Supplies 224.50”.' });
   });
   return out;
 }
@@ -355,9 +355,9 @@ receipts: { icon: '🧾', title: 'Your receipts (Monday night, or now)', mins: 3
     screen: mail('Ladle &amp; Spoon', '🛒 Receipts for your Oct 12 delivery', 'Hi Lia, your Oct 12 delivery brought in $1,417.00 from 42 orders. Let&rsquo;s see what you actually kept…<br><button class="btn sm" data-t="reply">↩ Reply</button>'), tap: 'reply' },
   { say: 'Tap the paperclip <b>📎</b> and add a photo of each receipt.',
     screen: '<div class="pad"><b>Re: 🛒 Receipts for your Oct 12 delivery</b><div style="margin-top:8px"><button class="btn sm out" data-t="clip">📎 Attach</button></div></div>', tap: 'clip', after: '📷 1 photo attached' },
-  { say: 'Now type what you spent, <b>one line for each kind</b>. Try it, for example:<br><span style="font-size:16px;color:var(--t2)">Groceries 182.40<br>Containers 42.10<br>Shopping miles 14</span>', run: 'receipt' },
+  { say: 'Now type <b>two lines</b>: your supplies total (everything you bought, all in one) and your shopping miles. Try it, for example:<br><span style="font-size:16px;color:var(--t2)">Supplies 224.50<br>Shopping miles 14</span>', run: 'receipt' },
   { say: 'You tap <b>Send</b>, and a reply comes right back with what the delivery kept.',
-    screen: mail('Ladle &amp; Spoon', 'Re: 🛒 Receipts for your Oct 12 delivery', '<div class="quote">Got it for the Oct 12 delivery (1 photo saved):\n  Groceries               $182.40\n  Containers & packaging  $42.10\n\nYour Oct 12 delivery so far:\n  Sales                   $1417.00\n  Driving                 -$51.07\n  You kept                $1141.43</div>'), next: true },
+    screen: mail('Ladle &amp; Spoon', 'Re: 🛒 Receipts for your Oct 12 delivery', '<div class="quote">Got it for the Oct 12 delivery (1 photo saved):\n  Supplies                $224.50\n  Shopping miles          14 mi\n\nYour Oct 12 delivery so far:\n  Sales                   $1417.00\n  Driving                 -$51.07\n  You kept                $1141.43</div>'), next: true },
   { quiz: 'You bought gas on Monday. Do you add it?', opts: [
     ['No, the miles already cover gas', 1, 'Right. Delivery miles are logged by the Route tab, and they count for gas and the car.'],
     ['Yes, as Other', 0, 'Leave gas out. The miles already cover it (the IRS rate includes gas).'] ] },
@@ -485,9 +485,6 @@ money: { icon: '💵', title: 'Money: what you kept, and taxes', mins: 3, steps:
       'Miles add up to real money at tax time. They already cover gas and the car, so never add gas separately.') },
   { info: info('📅', 'Monthly and yearly summaries',
       'On the 1st of each month you get a short summary of last month. In January, a <b>year-end summary for whoever does your taxes</b>, with every receipt listed. You get a reminder first to add yearly costs like insurance.') },
-  { info: info('📦', 'Packaging per order',
-      'After a few weeks, you&rsquo;ll see what containers and packaging cost per order.',
-      'It helps you decide prices.') },
   { quiz: 'You drove 10 miles to the restaurant supply store for containers. Where does that go?', opts: [
     ['On the &ldquo;Shopping miles&rdquo; line of the receipts reply', 1, 'Exactly. Those miles count for taxes too.'],
     ['Add the gas money instead', 0, 'Add the miles, not gas: &ldquo;Shopping miles 10&rdquo; in your receipts reply. The miles cover gas and the car.'] ] }
@@ -629,10 +626,10 @@ function runReorder(h){
   draw(); window.scrollTo(0, 0);
 }
 function runReceipt(h){
-  $('app').innerHTML = h + scr('<div class="pad"><b>Re: 🛒 Receipts for your Oct 12 delivery</b><div style="font-size:13px;color:var(--t3);margin:4px 0 8px">📷 1 photo attached</div><textarea id="rc" placeholder="Groceries 182.40"></textarea><button class="btn" id="rcgo">See what the app reads</button><div id="rcout"></div></div>');
+  $('app').innerHTML = h + scr('<div class="pad"><b>Re: 🛒 Receipts for your Oct 12 delivery</b><div style="font-size:13px;color:var(--t3);margin:4px 0 8px">📷 1 photo attached</div><textarea id="rc" placeholder="Supplies 224.50"></textarea><button class="btn" id="rcgo">See what the app reads</button><div id="rcout"></div></div>');
   $('rcgo').onclick = function(){
     var r = readReply($('rc').value), good = r.filter(function(x){ return x.ok; }).length;
-    $('rcout').innerHTML = (r.length ? r.map(function(x){ return '<div class="rd">' + (x.ok ? '✅ ' : '⚠️ ') + esc(x.t) + '</div>'; }).join('') : '<div class="rd">⚠️ Type at least one line, like “Groceries 182.40”, or “none”.</div>')
+    $('rcout').innerHTML = (r.length ? r.map(function(x){ return '<div class="rd">' + (x.ok ? '✅ ' : '⚠️ ') + esc(x.t) + '</div>'; }).join('') : '<div class="rd">⚠️ Type at least one line, like “Supplies 224.50”, or “none”.</div>')
       + (good ? '<div class="why g" style="margin-top:10px">That&rsquo;s exactly how to do it. ' + (good === r.length ? '' : 'Lines with ⚠️ wouldn&rsquo;t count. ') + '</div><button class="big" onclick="nextStep()">Next</button>' : '');
   };
   window.scrollTo(0, 0);
