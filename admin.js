@@ -2,7 +2,7 @@
 // when the Admin tab opens or on a phone signed in as admin, so customers' phones never
 // download or run it. Same global scope as index.html: its functions and variables are
 // shared both ways. index.html calls into this file only after adminReady().
-var ADMIN_JS_VERSION = 'v279';
+var ADMIN_JS_VERSION = 'v280';
 
 // Phone photos are 3–6 MB. Shrink to at most 1600px and re-encode as JPEG in the browser
 // before uploading, so Cloudinary never stores a full-size original. Resolves to the
@@ -2149,6 +2149,7 @@ function buildOrders(){
   var allOrders=[...localOrders,...ORDERS];
   ORDER_VIEW = allOrders;
   buildWkMenu();   // Cook & pack follows the orders
+  buildOrderTally();   // v280: the same counts at the top of Orders
   var el=$('ordl'); if(!el) return;
 
   // Invoices sent so far (S-007). Only Sheet orders carry the flag (gs74+).
@@ -4186,6 +4187,54 @@ function buildCostsCard(weeks, periods){
       + 'A summary of each month comes by email early the next month, and a year-end summary for your taxes in January, after a reminder to add anything not logged yet.</p>';
   }
   el.innerHTML = h;
+  el.style.display = '';
+}
+
+// v280 (Tony, 2026-10-15): "add tally of Qt and Pints, salads, bakery items in orders tab for that
+// week". The same counts as Cook & pack (so Gift Box soups are in it too, since they're cooked
+// the same), grouped by kind with totals. The kind comes from this week's menu; failing that,
+// pints and quarts mean soup.
+function dishKind(name, sizes){
+  var low = (name || '').toLowerCase().trim();
+  var it = (MENU_ITEMS || []).filter(function(m){ return (m.n || '').toLowerCase().trim() === low; })[0]
+        || (typeof ALL_SOUPS !== 'undefined' ? ALL_SOUPS : []).filter(function(m){ return (m.n || '').toLowerCase().trim() === low; })[0];
+  var cat = (it && it.cat || '').toLowerCase();
+  if(cat === 'soup' || cat === 'salad' || cat === 'bakery') return cat;
+  if(sizes.pint || sizes.quart) return 'soup';
+  if(/salad/i.test(name)) return 'salad';
+  if(/bread|muffin|loaf|cookie|bar|cake|pie|scone/i.test(name)) return 'bakery';
+  return 'other';
+}
+function buildOrderTally(){
+  var el = $('ord-tally'); if(!el) return;
+  var c = cookListData(ORDERS);
+  if(!c.dishes.length){ el.innerHTML = ''; el.style.display = 'none'; return; }
+  var KINDS = [['soup', '🥣 Soups'], ['salad', '🥗 Salads'], ['bakery', '🍞 Bakery'], ['other', '🧺 Other']];
+  var by = { soup: [], salad: [], bakery: [], other: [] };
+  c.dishes.forEach(function(d){ by[dishKind(d.n, d.sizes)].push(d); });
+  var plural = function(n, w){ return fmtQty(n) + ' ' + w + (n === 1 ? '' : 's'); };
+  var count = function(list){ return list.reduce(function(a, d){ return a + Object.keys(d.sizes).reduce(function(s, k){ return s + d.sizes[k]; }, 0); }, 0); };
+  var pints = by.soup.reduce(function(a, d){ return a + (d.sizes.pint || 0); }, 0);
+  var quarts = by.soup.reduce(function(a, d){ return a + (d.sizes.quart || 0); }, 0);
+  var head = [];
+  if(pints) head.push(plural(pints, 'pint'));
+  if(quarts) head.push(plural(quarts, 'quart'));
+  if(by.salad.length) head.push(plural(count(by.salad), 'salad'));
+  if(by.bakery.length) head.push(fmtQty(count(by.bakery)) + ' bakery');
+  if(by.other.length) head.push(fmtQty(count(by.other)) + ' other');
+  var h = '<details open style="background:#fff;border:1.5px solid var(--bd);border-radius:12px;padding:10px 12px;margin-bottom:12px">'
+    + '<summary style="cursor:pointer;font-size:14px;font-weight:800;color:var(--f)">📦 This week: ' + esc(head.join(' · ')) + '</summary>';
+  KINDS.forEach(function(k){
+    var list = by[k[0]]; if(!list.length) return;
+    h += '<div style="margin-top:10px;font-size:12px;font-weight:800;color:var(--t3);letter-spacing:.5px">' + k[1].toUpperCase() + '</div>';
+    list.forEach(function(d){
+      var parts = Object.keys(d.sizes).map(function(s){ var q = d.sizes[s]; return (s === 'each' || s === 'single') ? fmtQty(q) : fmtQty(q) + ' ' + esc(s) + (q !== 1 && (s === 'pint' || s === 'quart') ? 's' : ''); });
+      h += '<div style="display:flex;justify-content:space-between;gap:10px;padding:5px 0;border-bottom:1px solid #f4f1ea;font-size:13px"><span>' + esc(d.n) + '</span><span style="color:var(--t2);white-space:nowrap">' + parts.join(' · ') + '</span></div>';
+    });
+    if(k[0] === 'soup' && list.length > 1) h += '<div style="display:flex;justify-content:space-between;padding:5px 0;font-size:13px;font-weight:800"><span>All soups</span><span>' + [pints ? plural(pints, 'pint') : '', quarts ? plural(quarts, 'quart') : ''].filter(String).join(' · ') + '</span></div>';
+  });
+  if(c.boxes.length) h += '<div style="margin-top:8px;font-size:12px;color:var(--t3)">Includes the soups and salads in ' + plural(c.boxes.reduce(function(a, b){ return a + b.qty; }, 0), 'Gift Box') + '.</div>';
+  el.innerHTML = h + '</details>';
   el.style.display = '';
 }
 
