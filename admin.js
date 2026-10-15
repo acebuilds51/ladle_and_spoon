@@ -2,7 +2,7 @@
 // when the Admin tab opens or on a phone signed in as admin, so customers' phones never
 // download or run it. Same global scope as index.html: its functions and variables are
 // shared both ways. index.html calls into this file only after adminReady().
-var ADMIN_JS_VERSION = 'v282';
+var ADMIN_JS_VERSION = 'v283';
 
 // Phone photos are 3–6 MB. Shrink to at most 1600px and re-encode as JPEG in the browser
 // before uploading, so Cloudinary never stores a full-size original. Resolves to the
@@ -354,13 +354,37 @@ function isRetiredCustomer(id){
 }
 
 // ── SUGGEST NEXT WEEK'S SOUPS ──
+// v283 (Tony, 2026-10-15): a suggestion Lia can't or won't make this week can be snoozed for 1, 2,
+// 4 or 8 weeks; the next best dish takes its place. Kept on this phone, like Retire.
+var SNOOZE_KEY = 'snoozed_suggestions', SUGG_SHOWN = [];
+function suggSnoozes(){
+  var s = {}; try{ s = JSON.parse(localStorage.getItem(SNOOZE_KEY) || '{}') || {}; }catch(e){}
+  var now = Date.now(), live = {};
+  Object.keys(s).forEach(function(k){ if(s[k] > now) live[k] = s[k]; });   // expired snoozes drop off
+  return live;
+}
+function snoozeSugg(i, weeks){
+  var n = SUGG_SHOWN[i]; if(!n) return;
+  var s = suggSnoozes(); s[n] = Date.now() + weeks * 7 * 86400000;
+  try{ localStorage.setItem(SNOOZE_KEY, JSON.stringify(s)); }catch(e){}
+  toast('💤 ' + n + ' snoozed for ' + weeks + ' week' + (weeks === 1 ? '' : 's'));
+  suggestNextWeek();
+}
+function unsnoozeSugg(i){
+  var n = SUGG_SHOWN[i]; if(!n) return;
+  var s = suggSnoozes(); delete s[n];
+  try{ localStorage.setItem(SNOOZE_KEY, JSON.stringify(s)); }catch(e){}
+  suggestNextWeek();
+}
 function suggestNextWeek(){
   var retired={}; try{retired=JSON.parse(localStorage.getItem('retired_soups')||'{}');}catch(e){}
+  var snoozed=suggSnoozes();
+  SUGG_SHOWN=[];
   // Score = avg_per_week * recency_factor
   // recency_factor: soups not on menu in 4+ weeks get boosted
   var _td=new Date();var today=_td.getFullYear()*10000+(_td.getMonth()+1)*100+_td.getDate();
   var candidates=SOUP_INTEL.filter(function(s){
-    return s.cat==='Soup' && !retired[s.n] && s.avg>=50;
+    return s.cat==='Soup' && !retired[s.n] && !snoozed[s.n] && s.avg>=50;
   });
   candidates.forEach(function(s){
     // Get last_sort from original snapshot if live data doesn't have it
@@ -383,7 +407,7 @@ function suggestNextWeek(){
   candidates.sort(function(a,b){return b._score-a._score;});
 
   var salads=SOUP_INTEL.filter(function(s){
-    return s.cat==='Salad' && !retired[s.n];
+    return s.cat==='Salad' && !retired[s.n] && !snoozed[s.n];
   });
   salads.forEach(function(s){
     // Get last_sort from original snapshot if live data doesn't have it
@@ -412,19 +436,33 @@ function suggestNextWeek(){
   var html='<div style="font-size:13px;font-weight:700;color:var(--f);margin-bottom:10px">🤖 Suggested Menu for Next Week</div>';
   html+='<div style="font-size:11px;color:var(--t3);margin-bottom:10px">Based on highest avg revenue × time since last offered:</div>';
   html+='<div style="display:grid;gap:7px">';
+  // v283: 💤 buttons under each suggestion; the list refills from the next best dishes.
+  var snoozeRow=function(name){
+    var i=SUGG_SHOWN.push(name)-1;
+    return '<div class="sugg-snooze" style="display:flex;align-items:center;gap:5px;flex-wrap:wrap;margin-top:6px;font-size:11px;color:var(--t3)">💤 Not this week:'
+      +[1,2,4,8].map(function(w){ return '<button onclick="snoozeSugg('+i+','+w+')" style="padding:3px 8px;border-radius:6px;border:1px solid var(--bd);background:#faf8f3;font-size:11px;font-weight:700;color:var(--t2);cursor:pointer">'+w+' wk</button>'; }).join('')
+      +'</div>';
+  };
   top3soups.forEach(function(s,i){
     html+='<div style="background:#fff;border-radius:8px;padding:8px 10px;border:1px solid var(--bd)">';
-    html+='<div style="font-weight:700">🥣 Soup '+(i+1)+': '+s.n+'</div>';
+    html+='<div style="font-weight:700">🥣 Soup '+(i+1)+': '+esc(s.n)+'</div>';
     html+='<div style="font-size:10px;color:var(--t3)">$'+s.avg+'/wk avg · Last: '+(_getLD(s)||'—')+' · Score: '+Math.round(s._score)+'</div>';
-    html+='</div>';
+    html+=snoozeRow(s.n)+'</div>';
   });
   top2salads.forEach(function(s,i){
     html+='<div style="background:#fff;border-radius:8px;padding:8px 10px;border:1px solid var(--bd)">';
-    html+='<div style="font-weight:700">🥗 Salad '+(i+1)+': '+s.n+'</div>';
+    html+='<div style="font-weight:700">🥗 Salad '+(i+1)+': '+esc(s.n)+'</div>';
     html+='<div style="font-size:10px;color:var(--t3)">$'+s.avg+'/wk avg · Last: '+(_getLD(s)||'—')+'</div>';
-    html+='</div>';
+    html+=snoozeRow(s.n)+'</div>';
   });
   html+='</div>';
+  var sn=Object.keys(snoozed).sort(function(a,b){ return snoozed[a]-snoozed[b]; });
+  if(sn.length){
+    html+='<div id="sugg-snoozed" style="margin-top:10px;font-size:11px;color:var(--t3);line-height:1.8"><strong>💤 Snoozed:</strong> '
+      +sn.map(function(n){ var i=SUGG_SHOWN.push(n)-1;
+        return esc(n)+' <span style="white-space:nowrap">(until '+new Date(snoozed[n]).toLocaleDateString('en-US',{month:'short',day:'numeric'})+', <a href="#" onclick="unsnoozeSugg('+i+');return false" style="color:var(--f)">undo</a>)</span>'; }).join(' · ')
+      +'</div>';
+  }
   el.innerHTML=html;
   el.style.display='block';
 }
