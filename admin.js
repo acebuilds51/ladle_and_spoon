@@ -2,7 +2,7 @@
 // when the Admin tab opens or on a phone signed in as admin, so customers' phones never
 // download or run it. Same global scope as index.html: its functions and variables are
 // shared both ways. index.html calls into this file only after adminReady().
-var ADMIN_JS_VERSION = 'v284';
+var ADMIN_JS_VERSION = 'v285';
 
 // Phone photos are 3–6 MB. Shrink to at most 1600px and re-encode as JPEG in the browser
 // before uploading, so Cloudinary never stores a full-size original. Resolves to the
@@ -5180,25 +5180,25 @@ function buildAreas(){
   (AREAS||[]).forEach(function(a){
     var street = a.n || '';
     if(!street) return;
-    if(!streetMap[street]) streetMap[street] = {name: street, customers: 0, orders: 0, score: 0, thisWeek: false};
+    if(!streetMap[street]) streetMap[street] = {name: street, city: a.city || '', customers: 0, orders: 0, score: 0, thisWeek: false};
     streetMap[street].customers = Math.max(streetMap[street].customers, a.custs || 0);
     streetMap[street].orders    = Math.max(streetMap[street].orders, a.del || 0);
     streetMap[street].score     = Math.max(streetMap[street].score, a.score || 0);
   });
 
-  // Overlay this week's orders to flag active streets
+  // Overlay this week's orders to flag active streets (v285: same street matching as the
+  // backend's list, gs121; an order on a street not in the list doesn't add a made-up one).
+  var byKey = {};
+  Object.keys(streetMap).forEach(function(k){ var s = streetMap[k]; byKey[streetKey(s.name + ', ' + s.city, true)] = s; });
   (ORDERS||[]).forEach(function(o){
-    var addr = (o.addr || o.address || '').toString();
-    var street = extractStreet(addr);
-    if(!street) return;
-    if(!streetMap[street]) streetMap[street] = {name: street, customers: 1, orders: 1, score: 1, thisWeek: true};
-    else streetMap[street].thisWeek = true;
+    var s = byKey[streetKey((o.addr || o.address || '').toString())];
+    if(s) s.thisWeek = true;
   });
 
   var streets = Object.values(streetMap).sort(function(a,b){ return b.score - a.score; });
 
   if(!streets.length){
-    flyerEl.innerHTML = '<div style="text-align:center;padding:20px;color:var(--t3)">Customer address data not yet loaded — visit Orders tab first</div>';
+    flyerEl.innerHTML = '<div style="text-align:center;padding:20px;color:var(--t3)">No customer street addresses yet. They come from the Customers tab.</div>';
     return;
   }
 
@@ -5214,7 +5214,8 @@ function buildAreas(){
     return '<div class="ccrd" style="padding:10px 14px">'
       +'<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">'
         +'<div>'
-          +'<span style="font-weight:700;font-size:14px">'+(i+1)+'. '+s.name+'</span>'
+          +'<span style="font-weight:700;font-size:14px">'+(i+1)+'. '+esc(s.name)+'</span>'
+          +(s.city ? ' <span style="font-size:11px;color:var(--t3)">'+esc(s.city)+'</span>' : '')
           +(s.thisWeek ? ' <span style="font-size:10px;background:#dcfce7;color:#166534;border-radius:4px;padding:1px 5px;font-weight:700">Delivering this week</span>' : '')
         +'</div>'
         +'<span style="font-size:11px;font-weight:800;color:'+badgeColor+'">'+badge+'</span>'
@@ -5229,7 +5230,7 @@ function buildAreas(){
       +'<div style="font-size:11px;color:var(--t3);margin-top:6px">'
         +(isHot ? '✅ Great flyer street — neighbors likely see Lia\'s deliveries already'
          : isWarm ? '👍 Good target — 1-2 customers will vouch if asked'
-         : '💡 Expansion opportunity — no customers yet on this street')
+         : '💡 One customer here — a starting point; their neighbors are the next door to knock')
       +'</div>'
     +'</div>';
   }).join('');
@@ -5238,22 +5239,21 @@ function buildAreas(){
   if(listEl) listEl.innerHTML = (AREAS||[]).slice(0,8).map(function(a,i){
     return '<div class="ac">'
       +'<div class="ah" style="background:'+(i<2?'var(--f)':i<4?'var(--am)':'var(--sg)')+'">'+( i<2?'🔥':'📍')+'</div>'
-      +'<div class="ai"><strong>'+a.n+'</strong><span>'+a.custs+' customers · '+a.del+' deliveries</span></div>'
+      +'<div class="ai"><strong>'+esc(a.n)+'</strong><span>'+a.custs+' customers · '+a.del+' deliveries</span></div>'
       +'<div class="ap"><strong>'+a.del+'</strong><span>drops</span></div>'
     +'</div>';
   }).join('');
 }
 
-function extractStreet(addr){
-  if(!addr) return '';
-  var cleaned = addr.replace(/\b(apt|suite|ste|unit|#)\s*\w+/gi,'').trim();
-  var parts = cleaned.split(',')[0].split(' ');
-  if(parts.length < 2) return '';
-  var street = parts.slice(1).join(' ').replace(/\s+/g,' ').trim();
-  var commonWords = /^(st|ave|blvd|dr|rd|ln|ct|way|pl|cir|pkwy|hwy)$/i;
-  var words = street.split(' ');
-  var cleaned2 = words.filter(function(w){ return w.length > 1; }).join(' ');
-  return cleaned2.length > 2 ? cleaned2 : '';
+// v285: the street a customer lives on, as the backend's Flyer Targeting groups it (streetOf in
+// gs121): house number dropped, St/Rd/Ave… dropped, plus the city. Not a street address → ''.
+function streetKey(addr, noNumber){
+  var first = (addr || '').split(',')[0].replace(/\s+(apt|suite|ste|unit|#)\s*\S+$/i, '').trim();
+  var m = noNumber ? [0, first] : /^\d+[a-z]?\s+(.+)$/i.exec(first);
+  if(!m) return '';
+  var key = m[1].replace(/\./g, '').replace(/\s+/g, ' ').trim()
+    .replace(/\b(street|st|avenue|ave|drive|dr|road|rd|court|ct|lane|ln|boulevard|blvd|circle|cir|way|trail|trl|place|pl|parkway|pkwy|highway|hwy|terrace|ter)\.?$/i, '').trim().toLowerCase();
+  return key ? key + '|' + ((addr.split(',')[1]) || '').trim().toLowerCase() : '';
 }
 
 function setPlt(btn){document.querySelectorAll('.pb').forEach(b=>b.classList.remove('active'));btn.classList.add('active');}
