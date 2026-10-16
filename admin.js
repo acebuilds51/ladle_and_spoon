@@ -2,7 +2,7 @@
 // when the Admin tab opens or on a phone signed in as admin, so customers' phones never
 // download or run it. Same global scope as index.html: its functions and variables are
 // shared both ways. index.html calls into this file only after adminReady().
-var ADMIN_JS_VERSION = 'v286';
+var ADMIN_JS_VERSION = 'v287';
 
 // Phone photos are 3–6 MB. Shrink to at most 1600px and re-encode as JPEG in the browser
 // before uploading, so Cloudinary never stores a full-size original. Resolves to the
@@ -5180,7 +5180,8 @@ function buildAreas(){
   (AREAS||[]).forEach(function(a){
     var street = a.n || '';
     if(!street) return;
-    if(!streetMap[street]) streetMap[street] = {name: street, city: a.city || '', customers: 0, orders: 0, score: 0, thisWeek: false};
+    if(!streetMap[street]) streetMap[street] = {name: street, city: a.city || '', customers: 0, current: null, orders: 0, score: 0, thisWeek: false};
+    if(typeof a.cur === 'number') streetMap[street].current = a.cur;   // v287 (gs123)
     streetMap[street].customers = Math.max(streetMap[street].customers, a.custs || 0);
     streetMap[street].orders    = Math.max(streetMap[street].orders, a.del || 0);
     streetMap[street].score     = Math.max(streetMap[street].score, a.score || 0);
@@ -5221,7 +5222,8 @@ function buildAreas(){
         +'<span style="font-size:11px;font-weight:800;color:'+badgeColor+'">'+badge+'</span>'
       +'</div>'
       +'<div style="display:flex;gap:16px;font-size:12px;color:var(--t3);margin-bottom:6px">'
-        +'<span>👥 '+s.customers+' customer'+(s.customers!==1?'s':'')+'</span>'
+        +'<span>👥 '+s.customers+' customer'+(s.customers!==1?'s':'')+(s.current!==null ? ' all-time' : '')+'</span>'
+        +(s.current!==null ? '<span title="Ordered in the last 6 weeks" style="color:'+(s.current?'var(--f)':'var(--t3)')+';font-weight:'+(s.current?'700':'400')+'">🟢 '+s.current+' current</span>' : '')
         +'<span>📦 '+s.orders+' orders</span>'
       +'</div>'
       +'<div style="background:#f0f0f0;border-radius:4px;height:6px;overflow:hidden">'
@@ -5255,7 +5257,8 @@ function streetKey(addr){
   if(words.length > 1 && /^(n|s|e|w|north|south|east|west)$/i.test(words[0])) words.shift();
   for(var i = 1; i < words.length; i++)
     if(/^(street|st|avenue|ave|drive|dr|road|rd|court|ct|lane|ln|boulevard|blvd|circle|cir|way|trail|trl|place|pl|parkway|pkwy|highway|hwy|terrace|ter)$/i.test(words[i])){ words = words.slice(0, i); break; }
-  var key = words.join(' ').toLowerCase();
+  var SHORT = { lk:'lake', mt:'mount', pt:'point', hts:'heights', crk:'creek', ctr:'center', spgs:'springs', grv:'grove' };   // gs123
+  var key = words.map(function(w){ return SHORT[w.toLowerCase()] || w; }).join(' ').toLowerCase();
   return /[a-z]{2}/.test(key) ? key : '';
 }
 
