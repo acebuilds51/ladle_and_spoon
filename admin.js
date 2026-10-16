@@ -2,7 +2,7 @@
 // when the Admin tab opens or on a phone signed in as admin, so customers' phones never
 // download or run it. Same global scope as index.html: its functions and variables are
 // shared both ways. index.html calls into this file only after adminReady().
-var ADMIN_JS_VERSION = 'v285';
+var ADMIN_JS_VERSION = 'v286';
 
 // Phone photos are 3–6 MB. Shrink to at most 1600px and re-encode as JPEG in the browser
 // before uploading, so Cloudinary never stores a full-size original. Resolves to the
@@ -5186,10 +5186,10 @@ function buildAreas(){
     streetMap[street].score     = Math.max(streetMap[street].score, a.score || 0);
   });
 
-  // Overlay this week's orders to flag active streets (v285: same street matching as the
-  // backend's list, gs121; an order on a street not in the list doesn't add a made-up one).
+  // Overlay this week's orders to flag active streets (v286: matched by the street key the
+  // backend sends, gs122; an order on a street not in the list doesn't add a made-up one).
   var byKey = {};
-  Object.keys(streetMap).forEach(function(k){ var s = streetMap[k]; byKey[streetKey(s.name + ', ' + s.city, true)] = s; });
+  (AREAS||[]).forEach(function(a){ if(a.key && streetMap[a.n]) byKey[a.key] = streetMap[a.n]; });
   (ORDERS||[]).forEach(function(o){
     var s = byKey[streetKey((o.addr || o.address || '').toString())];
     if(s) s.thisWeek = true;
@@ -5245,15 +5245,18 @@ function buildAreas(){
   }).join('');
 }
 
-// v285: the street a customer lives on, as the backend's Flyer Targeting groups it (streetOf in
-// gs121): house number dropped, St/Rd/Ave… dropped, plus the city. Not a street address → ''.
-function streetKey(addr, noNumber){
-  var first = (addr || '').split(',')[0].replace(/\s+(apt|suite|ste|unit|#)\s*\S+$/i, '').trim();
-  var m = noNumber ? [0, first] : /^\d+[a-z]?\s+(.+)$/i.exec(first);
-  if(!m) return '';
-  var key = m[1].replace(/\./g, '').replace(/\s+/g, ' ').trim()
-    .replace(/\b(street|st|avenue|ave|drive|dr|road|rd|court|ct|lane|ln|boulevard|blvd|circle|cir|way|trail|trl|place|pl|parkway|pkwy|highway|hwy|terrace|ter)\.?$/i, '').trim().toLowerCase();
-  return key ? key + '|' + ((addr.split(',')[1]) || '').trim().toLowerCase() : '';
+// v286: the street a customer lives on, as the backend's Flyer Targeting groups it (streetOf in
+// gs122): house number and N/S/E/W dropped, the street ends at its St/Rd/Ave…, town ignored.
+// Not a street address → ''.
+function streetKey(addr){
+  var words = (addr || '').split(',')[0].replace(/\./g, '').replace(/\s+(apt|suite|ste|unit|#)\s*\S+$/i, '').trim().split(/\s+/);
+  if(words.length < 2 || !/^\d+[a-z]?$/i.test(words[0])) return '';
+  words.shift();
+  if(words.length > 1 && /^(n|s|e|w|north|south|east|west)$/i.test(words[0])) words.shift();
+  for(var i = 1; i < words.length; i++)
+    if(/^(street|st|avenue|ave|drive|dr|road|rd|court|ct|lane|ln|boulevard|blvd|circle|cir|way|trail|trl|place|pl|parkway|pkwy|highway|hwy|terrace|ter)$/i.test(words[i])){ words = words.slice(0, i); break; }
+  var key = words.join(' ').toLowerCase();
+  return /[a-z]{2}/.test(key) ? key : '';
 }
 
 function setPlt(btn){document.querySelectorAll('.pb').forEach(b=>b.classList.remove('active'));btn.classList.add('active');}
