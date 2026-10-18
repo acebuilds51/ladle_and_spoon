@@ -2,7 +2,7 @@
 // when the Admin tab opens or on a phone signed in as admin, so customers' phones never
 // download or run it. Same global scope as index.html: its functions and variables are
 // shared both ways. index.html calls into this file only after adminReady().
-var ADMIN_JS_VERSION = 'v288';
+var ADMIN_JS_VERSION = 'v289';
 
 // Phone photos are 3–6 MB. Shrink to at most 1600px and re-encode as JPEG in the browser
 // before uploading, so Cloudinary never stores a full-size original. Resolves to the
@@ -2367,10 +2367,15 @@ function buildOrders(){
     if(credits > 0){
       loyaltyBadge += '<span style="font-size:10px;background:#fff8e1;color:#92400e;border-radius:4px;padding:2px 6px;font-weight:700;margin-left:4px" title="Referral credits available">🎟️ '+credits+' credit'+(credits===1?'':'s')+'</span>';
     }
+    // v289 (gs126): more than one order from this email this week: maybe a duplicate.
+    var repeatBadge = (parseInt(o.ofWeek)||0) > 1
+      ? '<span class="ord-repeat" style="font-size:10px;background:#fee2e2;color:#991b1b;border-radius:4px;padding:2px 6px;font-weight:700" title="Same email ordered more than once this week. Check it is not a duplicate.">⚠️ '+(parseInt(o.nth)===1?'1st':parseInt(o.nth)===2?'2nd':parseInt(o.nth)+'th')+' order this week (of '+parseInt(o.ofWeek)+')</span>'
+      : '';
 
     return '<div class="oc">'
       +'<div class="ohd"><strong>'+esc(o.name||o.n||'Unknown')+(o.id?' · '+esc(o.id):'')+'</strong>'
       +'<div style="display:flex;gap:6px;align-items:center">'
+      +repeatBadge
       +(isApp
         ?'<span style="font-size:10px;background:#dcfce7;color:#166534;border-radius:4px;padding:2px 6px;font-weight:700">App</span>'
         :'<span style="font-size:10px;background:#fef3c7;color:#92400e;border-radius:4px;padding:2px 6px;font-weight:700">Form</span>')
