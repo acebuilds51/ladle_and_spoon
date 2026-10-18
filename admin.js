@@ -2,7 +2,7 @@
 // when the Admin tab opens or on a phone signed in as admin, so customers' phones never
 // download or run it. Same global scope as index.html: its functions and variables are
 // shared both ways. index.html calls into this file only after adminReady().
-var ADMIN_JS_VERSION = 'v287';
+var ADMIN_JS_VERSION = 'v288';
 
 // Phone photos are 3–6 MB. Shrink to at most 1600px and re-encode as JPEG in the browser
 // before uploading, so Cloudinary never stores a full-size original. Resolves to the
@@ -991,7 +991,7 @@ function renderPublishStatus(lp, pendingNote){
     html = '<span style="color:#b91c1c;font-weight:700">⚠️ Last try (' + fmtPublishTime(lp.at) + ') did not send: ' + (lp.error || 'unknown error') + '</span>';
   } else if(lp && lp.ok){
     html = '<span style="color:var(--f);font-weight:700">✅ ' + (lp.thisWeek ? 'Announced this week' : 'Last announced') + ' · ' + fmtPublishTime(lp.at) + '</span><br>'
-         + '<span style="color:var(--t3)">Emailed ' + (lp.sent||0) + (lp.skipped ? ' · <b style="color:#b45309">' + lp.skipped + ' held back by today\'s email limit</b> (publish again tomorrow to reach them)' : '')
+         + '<span style="color:var(--t3)">Emailed ' + (lp.sent||0) + (lp.inBatches ? ' · ' + lp.inBatches + ' more going out in small batches over the next hour or so' : '') + (lp.skipped ? ' · <b style="color:#b45309">' + lp.skipped + ' held back by today\'s email limit</b> (tried again every hour this evening)' : '')
          + ' · push ' + (lp.pushes ? 'sent to ' + lp.pushes + ' phone' + (lp.pushes===1?'':'s') : 'sent')
          + (lp.sms ? ' · ' + lp.sms + ' texts' : '') + '</span>';
   }
@@ -1027,7 +1027,7 @@ function publishMenu(btn){
       // Once Apps Script has run, the Dash data carries the result.
       setTimeout(function(){ try{ sessionStorage.removeItem('admin_data_time'); }catch(e){} refreshAdminData(); }, 90000);
     } else if(d && d.published){
-      LAST_PUBLISH = { ok:true, at:new Date().toISOString(), thisWeek:true, sent:d.sent, skipped:d.skipped, pushes:d.pushes, sms:d.sms };
+      LAST_PUBLISH = { ok:true, at:new Date().toISOString(), thisWeek:true, sent:d.sent, inBatches:d.inBatches, skipped:d.skipped, pushes:d.pushes, sms:d.sms };   // v288 (gs125): inBatches
       renderPublishStatus(LAST_PUBLISH);
       toast('✅ ' + (d.message || 'Menu published'));
     } else if(d && d.success && d.published === false){
