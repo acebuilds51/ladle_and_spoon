@@ -2,7 +2,7 @@
 // when the Admin tab opens or on a phone signed in as admin, so customers' phones never
 // download or run it. Same global scope as index.html: its functions and variables are
 // shared both ways. index.html calls into this file only after adminReady().
-var ADMIN_JS_VERSION = 'v290';
+var ADMIN_JS_VERSION = 'v291';
 
 // Phone photos are 3–6 MB. Shrink to at most 1600px and re-encode as JPEG in the browser
 // before uploading, so Cloudinary never stores a full-size original. Resolves to the
@@ -2749,6 +2749,7 @@ function buildRoutePlanner(){
     +  '</div><div style="font-size:11px;color:var(--t3);margin-top:6px">Kitchen and back · planned '
     +  new Date(p.planned).toLocaleTimeString('en-US', { hour:'numeric', minute:'2-digit' })
     +  (p.custom ? ' · your order' : ' · best order') + (p.delivered ? ' · ' + p.delivered + ' already delivered' : '') + '</div></div>';
+  h += rtCompareCard(p);   // v291 (gs128)
   // gs82: every address that may send her to the wrong door, each with a Look up button.
   var flagged = st.filter(function(s){ return !d.done[s.key] && rtAddrIssue(s); });
   var noAddr = (p.noAddress || []).map(function(x){ return typeof x === 'string' ? { n: x } : x; });
@@ -2815,8 +2816,59 @@ function rtMove(i, dir){
   if(j < 0 || j >= st.length) return;
   var t = st[i]; st[i] = st[j]; st[j] = t;
   RT_PLAN.moved = true; RT_PLAN.custom = true; RT_PLAN.savedAt = new Date().toISOString();
+  delete RT_PLAN.compare;   // v291: it was for the order before this move
   rtSave(RT_PLAN_KEY, RT_PLAN); buildRoutePlanner();
   rtPushOrder();   // v290: so her phone gets it too
+}
+
+// ── Her order vs Google's best (v291 + gs128) ──
+// Tony, 2026-10-19: understand why Lia reorders, and help her see when it costs time.
+var RT_REASONS = [
+  ['early', 'Someone needs it early or at a set time', 'Makes sense. Keep the time in their order note; that tells us how often it happens, so the planner can learn to put those stops first.'],
+  ['asked', 'A customer asked me to', 'Got it. A customer\'s request comes first.'],
+  ['area', 'I like to do one area at a time', 'Good to know. Google\'s order already groups nearby stops when that\'s quicker, so doing an area together cost about {min} extra minutes this time.'],
+  ['roads', 'Avoiding a road, traffic or construction', 'Good call. Google plans with normal traffic and doesn\'t know about today\'s road work, so your local knowledge helps.'],
+  ['faster', 'I know a quicker way', 'Google thinks your order takes {min} min longer. If your way really is quicker, tell Tony after the drive and we\'ll check.'],
+  ['errand', 'A stop of my own on the way', 'No problem. Your own stops aren\'t in Google\'s plan, so extra time is expected.'],
+  ['other', 'Something else', 'Thanks! Tony will take a look.']];
+var RT_REASON_TIP = '';
+function rtCompareCard(p){
+  var c = p.compare; if(!c) return '';
+  var cost = c.extraCost >= 0.5 ? ' (about ' + rtMoney(c.extraCost) + ' at the mileage rate)' : '';
+  if(c.extraMin <= -2) return '<div class="rt-card rt-compare" style="font-size:13px">🎉 Your order is <strong>' + (-c.extraMin) + ' min quicker</strong> than Google\'s best (' + c.bestMin + ' min). Nice!</div>';
+  if(!c.ask) return '<div class="rt-card rt-compare" style="font-size:13px;color:var(--t2)">👍 Your order is about as quick as Google\'s best (' + (c.extraMin > 0 ? '+' + c.extraMin + ' min' : 'same time') + ').</div>';
+  var h = '<div class="rt-card rt-compare" style="border:1.5px solid #f59e0b"><div style="font-weight:800;font-size:14px;margin-bottom:6px">🧭 Your order vs. Google\'s best</div>'
+    + '<div style="font-size:13px;color:var(--t2);line-height:1.5">Yours: <strong>' + c.mineMin + ' min, ' + c.mineMi + ' mi</strong> · Best: ' + c.bestMin + ' min, ' + c.bestMi + ' mi<br>'
+    + 'That\'s <strong>' + c.extraMin + ' more minutes and ' + c.extraMi + ' more miles</strong>' + cost + '.</div>';
+  if(c.moved && c.moved.length){
+    h += '<div style="font-size:13px;margin-top:8px">You moved: ' + c.moved.map(function(m){ return '<strong>' + esc(m.n) + '</strong> (' + rtOrd(m.from) + ' → ' + rtOrd(m.to) + ')'; }).join(', ') + '</div>';
+    var early = c.moved.filter(function(m){ return m.early && m.to < m.from; })[0];
+    if(early) h += '<div style="font-size:12px;color:var(--t3);margin-top:4px">' + esc(early.n.split(' ')[0]) + '\'s note says "' + esc(early.note) + '". Is that why?</div>';
+  }
+  if(c.answered){
+    return h + '<div class="rt-reason-tip" style="font-size:13px;color:#166534;margin-top:8px">✓ Thanks for telling us why. ' + esc(RT_REASON_TIP) + '</div></div>';
+  }
+  var pre = (c.moved || []).some(function(m){ return m.early && m.to < m.from; }) ? 'early' : '';
+  h += '<div style="font-size:13px;font-weight:700;margin:10px 0 6px">What\'s the reason? (one tap)</div><div class="rt-reasons" style="display:flex;flex-direction:column;gap:6px">'
+    + RT_REASONS.map(function(r){ return '<label style="display:flex;gap:8px;align-items:center;font-size:13px"><input type="radio" name="rt-reason" value="' + r[0] + '"' + (r[0] === pre ? ' checked' : '') + '> ' + r[1] + '</label>'; }).join('')
+    + '</div><input id="rt-reason-note" maxlength="300" placeholder="Anything to add? (optional)" style="width:100%;margin-top:8px;padding:8px;border:1px solid var(--bd);border-radius:8px;font-size:13px;box-sizing:border-box">'
+    + '<button class="rt-big alt" style="margin-top:8px" onclick="rtSendReason()">Send</button></div>';
+  return h;
+}
+function rtOrd(n){ var s = ['th','st','nd','rd'], v = n % 100; return n + (s[(v - 20) % 10] || s[v] || s[0]); }
+function rtSendReason(){
+  var c = RT_PLAN && RT_PLAN.compare; if(!c) return;
+  var pick = document.querySelector('input[name="rt-reason"]:checked');
+  if(!pick){ toast('Pick a reason first'); return; }
+  var note = (($('rt-reason-note') || {}).value || '').trim(), r = RT_REASONS.filter(function(x){ return x[0] === pick.value; })[0];
+  fetch(APPS_SCRIPT_URL, { method:'POST', headers:{ 'Content-Type':'text/plain' }, body: JSON.stringify({ type:'plan_route', action:'reason', sig: c.sig, reason: pick.value, note: note }) })
+    .then(function(res){ return res.json(); })
+    .then(function(d){
+      if(!d || !d.success) throw new Error((d && d.error) || 'not saved');
+      c.answered = true; RT_REASON_TIP = r[2].replace('{min}', c.extraMin);
+      rtSave(RT_PLAN_KEY, RT_PLAN); buildRoutePlanner();
+    })
+    .catch(function(e){ toast('Couldn\'t send: ' + e.message + '. Try again.'); });
 }
 
 // ── Addresses that look wrong: Look up (v260 + gs82) ──
