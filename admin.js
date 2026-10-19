@@ -2,7 +2,7 @@
 // when the Admin tab opens or on a phone signed in as admin, so customers' phones never
 // download or run it. Same global scope as index.html: its functions and variables are
 // shared both ways. index.html calls into this file only after adminReady().
-var ADMIN_JS_VERSION = 'v289';
+var ADMIN_JS_VERSION = 'v290';
 
 // Phone photos are 3–6 MB. Shrink to at most 1600px and re-encode as JPEG in the browser
 // before uploading, so Cloudinary never stores a full-size original. Resolves to the
@@ -2674,6 +2674,42 @@ function rtNextKey(key){
   return null;
 }
 
+// v290 (gs127): paid comes from this week's Orders when it has the stop (it changes as
+// Venmo payments come in), else from the plan.
+function rtPaid(s){
+  var o = (typeof ORDERS !== 'undefined' && ORDERS || []).filter(function(x){ return x && x.key === s.key; })[0];
+  return o ? !!o.paid : !!s.paid;
+}
+// The route order is kept on the server, so the laptop and the phone show the same one.
+var RT_SYNC_AT = 0, RT_PUSH_TIMER = null;
+function rtSyncSaved(){
+  if(BACKEND_GS < 127 || RT_PLANNING || Date.now() - RT_SYNC_AT < 60000) return;
+  if(RT_DRIVE && !RT_DRIVE.finished) return;   // never reorder in the middle of a drive
+  RT_SYNC_AT = Date.now();
+  fetch(APPS_SCRIPT_URL, { method:'POST', headers:{ 'Content-Type':'text/plain' }, body: JSON.stringify({ type:'plan_route', action:'saved' }) })
+    .then(function(r){ return r.json(); })
+    .then(function(d){
+      var sv = d && d.saved;
+      if(!sv || !sv.order || !sv.order.length) return;
+      if(RT_PLAN && (RT_PLAN.savedAt || RT_PLAN.planned || '') >= sv.at) return;   // this device's is newer
+      if(RT_PLAN && RT_PLAN.stops.map(function(s){ return s.key; }).join('|') === sv.order.join('|')) { RT_PLAN.savedAt = sv.at; rtSave(RT_PLAN_KEY, RT_PLAN); return; }
+      toast('🧭 Using the route order you saved ' + (RT_PLAN ? 'on your other device' : 'earlier'));
+      planRoute(sv.custom, sv.custom ? sv.order : null);
+    })
+    .catch(function(){});
+}
+function rtPushOrder(){
+  if(BACKEND_GS < 127 || !RT_PLAN) return;
+  clearTimeout(RT_PUSH_TIMER);
+  RT_PUSH_TIMER = setTimeout(function(){
+    var order = RT_PLAN.stops.map(function(s){ return s.key; });
+    fetch(APPS_SCRIPT_URL, { method:'POST', headers:{ 'Content-Type':'text/plain' }, body: JSON.stringify({ type:'plan_route', action:'save_order', order: order }) })
+      .then(function(r){ return r.json(); })
+      .then(function(d){ if(d && d.success && d.at && RT_PLAN){ RT_PLAN.savedAt = d.at; rtSave(RT_PLAN_KEY, RT_PLAN); } })
+      .catch(function(){});
+  }, 1500);
+}
+
 function rtDriveOpen(){ var el = $('drive'); return !!(el && !el.classList.contains('hidden')); }
 
 function rtSaveDrive(){ rtSave(RT_DRIVE_KEY, RT_DRIVE); }
@@ -2681,6 +2717,7 @@ function rtSaveDrive(){ rtSave(RT_DRIVE_KEY, RT_DRIVE); }
 // ── Planning screen ──
 function buildRoutePlanner(){
   var el = $('rt-body'); if(!el) return;
+  rtSyncSaved();   // v290
   if(BACKEND_GS < 81){
     el.innerHTML = '<div class="rt-card" style="font-size:13px;color:var(--t2);line-height:1.6">Route planning switches on once the '
       + 'backend update (gs81) is live. If it has just been deployed, reload this page.</div>';
@@ -2739,7 +2776,9 @@ function buildRoutePlanner(){
     var done = !!d.done[s.key];
     h += '<div class="rt-stop"><div class="rt-num ' + (done ? 'done' : !s.found ? 'off' : '') + '">' + (done ? '✓' : i + 1) + '</div>'
       +  '<div class="rt-inf"><strong>' + esc(s.n) + (s.gift ? ' 🎁' : '') + '</strong><span>' + esc(s.a) + '</span>'
-      +  '<span>' + esc(s.it || '') + ' · ' + (s.pay === 'cash' ? 'Cash ' : 'Venmo ') + rtMoney(s.total) + '</span>'
+      +  '<span>' + esc(s.it || '') + ' · ' + (s.pay === 'cash' ? 'Cash ' : 'Venmo ') + rtMoney(s.total)
+      +  (rtPaid(s) ? ' · <b class="rt-paid" style="color:#15803d">✅ Paid</b>' : ' · <b class="rt-paid" style="color:#b45309">' + (s.pay === 'cash' ? 'collect cash' : 'not paid yet') + '</b>') + '</span>'
+      +  (rtPhone(s.phone) ? '<span><a class="rt-tel" href="tel:' + rtPhone(s.phone) + '" style="color:var(--f);font-weight:700;text-decoration:none">📞 ' + esc(s.phone) + '</a></span>' : '')
       +  (s.found && !p.moved ? '<span>🚗 ' + rtMins(s.legSec) + ' · ' + rtMiles(s.legM) + (i === 0 ? ' from the kitchen' : '') + '</span>' : '')
       +  (s.note ? '<span style="color:var(--cl);font-style:italic">' + esc(s.note) + '</span>' : '')
       +  '</div><div class="rt-mv"><button aria-label="Move up" onclick="rtMove(' + i + ',-1)"' + (i === 0 ? ' disabled' : '') + '>▲</button>'
@@ -2751,10 +2790,11 @@ function buildRoutePlanner(){
   rtRefreshStatus();
 }
 
-function planRoute(keepOrder){
+function planRoute(keepOrder, order){
   if(RT_PLANNING) return;
   var body = { type:'plan_route' };
-  if(keepOrder && RT_PLAN) body.order = RT_PLAN.stops.map(function(s){ return s.key; });
+  if(order && order.length) body.order = order;   // v290: an order saved on another device
+  else if(keepOrder && RT_PLAN) body.order = RT_PLAN.stops.map(function(s){ return s.key; });
   RT_PLANNING = true; buildRoutePlanner();
   fetch(APPS_SCRIPT_URL, { method:'POST', headers:{ 'Content-Type':'text/plain' }, body: JSON.stringify(body) })
     .then(function(r){ if(!r.ok) throw new Error('Google did not answer'); return r.json(); })
@@ -2774,8 +2814,9 @@ function rtMove(i, dir){
   var st = RT_PLAN.stops, j = i + dir;
   if(j < 0 || j >= st.length) return;
   var t = st[i]; st[i] = st[j]; st[j] = t;
-  RT_PLAN.moved = true; RT_PLAN.custom = true;
+  RT_PLAN.moved = true; RT_PLAN.custom = true; RT_PLAN.savedAt = new Date().toISOString();
   rtSave(RT_PLAN_KEY, RT_PLAN); buildRoutePlanner();
+  rtPushOrder();   // v290: so her phone gets it too
 }
 
 // ── Addresses that look wrong: Look up (v260 + gs82) ──
@@ -2794,6 +2835,7 @@ function rtAdoptPlan(d){
     var kept = RT_PLAN.stops.filter(function(s){ return RT_DRIVE.done[s.key] && !d.stops.some(function(x){ return x.key === s.key; }); });
     d.stops = kept.concat(d.stops);
   }
+  d.savedAt = d.planned;   // v290
   RT_PLAN = d; rtSave(RT_PLAN_KEY, d);
 }
 
@@ -2908,9 +2950,11 @@ function renderDrive(){
     if(rtPhone(s.phone)) h += rtTextBtn(s, 'next'); else h += '<div class="dv-step">No phone number for ' + esc(s.n) + '.</div>';
     h += '</div><a class="rt-big nav" href="' + esc(rtNavUrl(s)) + '" target="_blank" rel="noopener" onclick="rtArrive()">🧭 Navigate to ' + esc(s.n.split(' ')[0]) + '</a>';
   } else {
-    var payBox = s.pay === 'cash'
+    var payBox = rtPaid(s)   // v290: paid shows here
+      ? '<div class="dv-pay" style="background:#dcfce7;color:#166534">✅ Paid · ' + (s.pay === 'cash' ? 'cash' : 'Venmo') + ' ' + rtMoney(s.total) + '</div>'
+      : s.pay === 'cash'
       ? '<div class="dv-pay" style="background:#fef3c7;color:#92400e">💵 Collect ' + rtMoney(s.total) + ' cash</div>'
-      : '<div class="dv-pay" style="background:#e8f4ff;color:#0b5cad">💙 Venmo · ' + rtMoney(s.total) + '</div>';
+      : '<div class="dv-pay" style="background:#e8f4ff;color:#0b5cad">💙 Venmo · ' + rtMoney(s.total) + ' · not paid yet</div>';
     h += '<div class="dv-name">' + esc(s.n) + (s.gift ? ' 🎁' : '') + '</div>'
       +  '<div class="dv-addr">' + esc(s.a) + (rtAddrIssue(s) ? '<br><span style="color:#dc2626;font-size:13px">' + rtAddrIssue(s) + '.</span> '
            + rtLookBtn(s.key) : '') + '</div>'
@@ -2919,7 +2963,7 @@ function renderDrive(){
       +  payBox
       +  '<a class="rt-big nav" href="' + esc(rtNavUrl(s)) + '" target="_blank" rel="noopener">🧭 Navigate</a>'
       +  '<div class="dv-row">'
-      +  (rtPhone(s.phone) ? '<a class="rt-big alt" href="tel:' + rtPhone(s.phone) + '">📞 Call</a><a class="rt-big alt" href="' + esc(rtSmsUrl(s.phone)) + '">💬 Text</a>'
+      +  (rtPhone(s.phone) ? '<a class="rt-big alt" href="tel:' + rtPhone(s.phone) + '">📞 Call ' + esc(s.phone) + '</a><a class="rt-big alt" href="' + esc(rtSmsUrl(s.phone)) + '">💬 Text</a>'
                            : '<div class="dv-step">No phone number on this order.</div>')
       +  '</div>'
       +  '<button class="rt-big go" id="dv-done" style="padding:20px;font-size:18px" onclick="driveDelivered(this)">✓ Delivered</button>'
