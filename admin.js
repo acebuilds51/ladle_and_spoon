@@ -2,7 +2,7 @@
 // when the Admin tab opens or on a phone signed in as admin, so customers' phones never
 // download or run it. Same global scope as index.html: its functions and variables are
 // shared both ways. index.html calls into this file only after adminReady().
-var ADMIN_JS_VERSION = 'v291';
+var ADMIN_JS_VERSION = 'v292';
 
 // Phone photos are 3–6 MB. Shrink to at most 1600px and re-encode as JPEG in the browser
 // before uploading, so Cloudinary never stores a full-size original. Resolves to the
@@ -3010,12 +3010,13 @@ function renderDrive(){
     h += '<div class="dv-name">' + esc(s.n) + (s.gift ? ' 🎁' : '') + '</div>'
       +  '<div class="dv-addr">' + esc(s.a) + (rtAddrIssue(s) ? '<br><span style="color:#dc2626;font-size:13px">' + rtAddrIssue(s) + '.</span> '
            + rtLookBtn(s.key) : '') + '</div>'
+      +  (rtPhone(s.phone) ? '<div class="dv-phone" style="font-size:15px;margin:-4px 0 10px"><a href="tel:' + rtPhone(s.phone) + '" style="color:var(--f);font-weight:700;text-decoration:none">📞 ' + esc(s.phone) + '</a></div>' : '')   // v292
       +  (s.note ? '<div class="rt-warn" style="font-size:14px">📝 ' + esc(s.note) + '</div>' : '')
       +  '<div class="rt-card" style="font-size:15px;padding:12px">📦 ' + esc(s.it || '') + '</div>'
       +  payBox
       +  '<a class="rt-big nav" href="' + esc(rtNavUrl(s)) + '" target="_blank" rel="noopener">🧭 Navigate</a>'
       +  '<div class="dv-row">'
-      +  (rtPhone(s.phone) ? '<a class="rt-big alt" href="tel:' + rtPhone(s.phone) + '">📞 Call ' + esc(s.phone) + '</a><a class="rt-big alt" href="' + esc(rtSmsUrl(s.phone)) + '">💬 Text</a>'
+      +  (rtPhone(s.phone) ? '<a class="rt-big alt" href="tel:' + rtPhone(s.phone) + '">📞 Call</a><a class="rt-big alt" href="' + esc(rtSmsUrl(s.phone)) + '">💬 Text</a>'
                            : '<div class="dv-step">No phone number on this order.</div>')
       +  '</div>'
       +  '<button class="rt-big go" id="dv-done" style="padding:20px;font-size:18px" onclick="driveDelivered(this)">✓ Delivered</button>'
