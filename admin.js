@@ -2,7 +2,7 @@
 // when the Admin tab opens or on a phone signed in as admin, so customers' phones never
 // download or run it. Same global scope as index.html: its functions and variables are
 // shared both ways. index.html calls into this file only after adminReady().
-var ADMIN_JS_VERSION = 'v292';
+var ADMIN_JS_VERSION = 'v293';
 
 // Phone photos are 3–6 MB. Shrink to at most 1600px and re-encode as JPEG in the browser
 // before uploading, so Cloudinary never stores a full-size original. Resolves to the
@@ -4319,10 +4319,15 @@ function renderLinkStats(){
 // v263 (gs85): what each delivery kept after groceries and driving. Lia sends her receipts by
 // replying to the "Receipts for your … delivery" email; the route logs the miles. The server
 // works the numbers out hourly; this only shows them. Hidden until the backend sends `costs`.
+var COSTS_WEEKS = [], COSTS_PERIODS = null;
 function buildCostsCard(weeks, periods){
   var el = $('costs-card'); if(!el) return;
+  COSTS_WEEKS = weeks || []; COSTS_PERIODS = periods || null;   // v293
+  var inApp = BACKEND_GS >= 130;
   var $m = function(n){ var v = Math.round((Number(n)||0) * 100) / 100; return (v < 0 ? '-$' : '$') + Math.abs(v).toFixed(2); };
   var h = '<h3>💵 What you kept</h3>';
+  // v293 (gs130): costs are entered here; the email is only a reminder.
+  if(inApp && weeks.length) h += '<div id="costs-form"></div><button class="bp" id="costs-enter" style="margin:0 0 12px" onclick="openCostsForm()">🧾 Enter costs</button>';
   if(!weeks.length){
     h += '<p style="font-size:13px;color:var(--t2);margin:0;line-height:1.5">After Monday\'s deliveries you\'ll get an email, <strong>"Receipts for your … delivery"</strong>. '
       +  'Reply with a photo of each receipt, your supplies total and your shopping miles. Your profit for the week shows up here.</p>';
@@ -4341,7 +4346,8 @@ function buildCostsCard(weeks, periods){
         : '<span style="color:#b45309;font-size:11px">' + (w.photoNoTotal ? 'need total' : 'waiting') + '</span>';
       var drive = w.miles ? '−' + $m(w.mileCost) + '<br><span style="font-size:10px;color:var(--t3)">' + esc(w.miles) + ' mi</span>' : '<span style="color:var(--t3)">—</span>';
       var kept = w.kept === null ? '<span style="color:var(--t3)">—</span>' : '<strong style="color:' + (w.kept >= 0 ? 'var(--f)' : 'var(--cl)') + '">' + $m(w.kept) + '</strong>';
-      h += '<tr><td ' + td.replace('right','left') + '>' + esc(w.label) + '<br><span style="font-size:10px;color:var(--t3)">' + (w.orders||0) + ' orders</span></td>'
+      h += '<tr><td ' + td.replace('right','left') + '>' + esc(w.label) + '<br><span style="font-size:10px;color:var(--t3)">' + (w.orders||0) + ' orders</span>'
+        +  (inApp ? '<br><a href="#" class="costs-edit" data-week="' + esc(w.week) + '" onclick="openCostsForm(this.dataset.week);return false" style="font-size:11px;font-weight:700;color:var(--f)">' + (w.answered ? 'Edit' : 'Enter') + '</a>' : '') + '</td>'
         +  '<td ' + td + '>' + $m(w.sales) + '</td><td ' + td + '>' + groc + '</td><td ' + td + '>' + drive + '</td><td ' + td + '>' + kept + '</td></tr>';
     });
     // gs88: this month and this year, from the same numbers.
@@ -4356,13 +4362,107 @@ function buildCostsCard(weeks, periods){
     h += '</table>';
     var waiting = weeks.filter(function(w){ return !w.answered && w.orders; })[0];
     h += '<p style="font-size:12px;color:var(--t3);margin:10px 0 0;line-height:1.5">'
-      + (waiting ? '🛒 To fill in <strong>' + esc(waiting.label) + '</strong>: reply to the "Receipts for your ' + esc(waiting.label) + ' delivery" email with your receipt photos, your supplies total and your shopping miles (or "none"). '
+      + (waiting ? '🛒 To fill in <strong>' + esc(waiting.label) + '</strong>: ' + (inApp ? 'tap <strong>Enter costs</strong> above (supplies total, shopping miles, receipt photos). ' : 'reply to the "Receipts for your ' + esc(waiting.label) + ' delivery" email with your receipt photos, your supplies total and your shopping miles (or "none"). ')
                  : '')
-      + 'Delivery driving is logged by itself when you use the 🚗 Route tab; add trips to the store on the email\'s "Shopping miles" line. Miles count at the IRS rate, for taxes. '
+      + 'Delivery driving is logged by itself when you use the 🚗 Route tab; add trips to the store as "Shopping miles". Miles count at the IRS rate, for taxes. '
       + 'A summary of each month comes by email early the next month, and a year-end summary for your taxes in January, after a reminder to add anything not logged yet.</p>';
   }
   el.innerHTML = h;
   el.style.display = '';
+  // The "Enter them in the app" link in the receipts email (?costs=2026-10-19).
+  if(inApp && window.COSTS_LINK){ var wk = window.COSTS_LINK; window.COSTS_LINK = ''; openCostsForm(wk); try{ el.scrollIntoView({ behavior:'smooth' }); }catch(e){} }
+}
+
+// ── Enter costs (v293 + gs130) ──
+var CF_PHOTOS = [], CF_WEEK = '';
+function cfWeek(k){ return COSTS_WEEKS.filter(function(w){ return w.week === k; })[0]; }
+function openCostsForm(week){
+  var box = $('costs-form'); if(!box) return;
+  var waiting = COSTS_WEEKS.filter(function(w){ return !w.answered && w.orders; });
+  CF_WEEK = (week && cfWeek(week)) ? week : (waiting.length ? waiting[waiting.length - 1].week : (COSTS_WEEKS[0] || {}).week);
+  CF_PHOTOS = [];
+  var w = cfWeek(CF_WEEK) || {};
+  var inp = 'style="width:100%;padding:10px;border:1.5px solid var(--bd);border-radius:9px;font-size:16px;box-sizing:border-box"';
+  box.innerHTML = '<div style="background:#f7faf5;border:1.5px solid var(--f);border-radius:12px;padding:12px;margin-bottom:12px">'
+    + '<div style="font-weight:800;margin-bottom:8px">🧾 Costs for a delivery</div>'
+    + '<label style="font-size:12px;color:var(--t2)">Delivery</label><select id="cf-week" ' + inp + ' onchange="openCostsForm(this.value)">'
+    + COSTS_WEEKS.map(function(x){ return '<option value="' + esc(x.week) + '"' + (x.week === CF_WEEK ? ' selected' : '') + '>' + esc(x.label) + (x.answered ? ' ✓ entered' : ' · waiting') + '</option>'; }).join('') + '</select>'
+    + '<label style="font-size:12px;color:var(--t2);display:block;margin-top:10px">Supplies total ($): everything you bought for this delivery</label>'
+    + '<input id="cf-supplies" inputmode="decimal" placeholder="0.00" ' + inp + ' value="' + (w.answered && w.spent ? esc(String(w.spent)) : '') + '">'
+    + '<label style="font-size:12px;color:var(--t2);display:block;margin-top:10px">Shopping miles: round trips to the store</label>'
+    + '<input id="cf-miles" inputmode="decimal" placeholder="0" ' + inp + ' value="' + (w.shopMiles ? esc(String(w.shopMiles)) : '') + '">'
+    + '<label style="display:flex;gap:8px;align-items:center;font-size:14px;margin-top:10px"><input type="checkbox" id="cf-none"> I didn\'t buy anything</label>'
+    + '<label class="bp" style="display:block;text-align:center;margin-top:12px;background:#fff;color:var(--f);border:1.5px solid var(--f);cursor:pointer">📷 Add receipt photos'
+    + '<input type="file" id="cf-photos" accept="image/*" multiple style="display:none" onchange="cfAddPhotos(this)"></label>'
+    + '<div id="cf-plist" style="font-size:12px;color:var(--t2);margin-top:6px">' + (w.receipts ? w.receipts + ' receipt' + (w.receipts === 1 ? '' : 's') + ' already saved for this delivery.' : '') + '</div>'
+    + '<button class="bp" id="cf-save" style="margin-top:12px" onclick="cfSave()">Save</button>'
+    + '<button onclick="closeCostsForm()" style="display:block;margin:8px auto 0;background:none;border:none;color:var(--t3);font-size:13px;cursor:pointer">Cancel</button></div>';
+  var b = $('costs-enter'); if(b) b.style.display = 'none';
+}
+function closeCostsForm(){ var box = $('costs-form'); if(box) box.innerHTML = ''; var b = $('costs-enter'); if(b) b.style.display = ''; CF_PHOTOS = []; }
+function cfRenderPhotos(){
+  var el = $('cf-plist'); if(!el) return;
+  el.innerHTML = CF_PHOTOS.map(function(p, i){
+    return '<div class="cf-photo">📄 Photo ' + (i + 1) + ': ' + (p.url ? '<span style="color:#15803d">✓ saved</span>' : p.error ? '<span style="color:var(--cl)">' + esc(p.error) + '</span>' : 'uploading ' + p.done + ' of ' + (p.parts || '…')) + '</div>';
+  }).join('');
+  var s = $('cf-save'); if(s) s.disabled = CF_PHOTOS.some(function(p){ return !p.url && !p.error; });
+}
+// Shrunk on the phone (1600 px, JPEG) and sent 70 KB at a time: the front door takes 100 KB per request.
+function cfCompress(file){
+  return new Promise(function(res, rej){
+    var img = new Image(), u = URL.createObjectURL(file);
+    img.onload = function(){
+      var s = Math.min(1, 1600 / Math.max(img.width, img.height)), c = document.createElement('canvas');
+      c.width = Math.round(img.width * s); c.height = Math.round(img.height * s);
+      c.getContext('2d').drawImage(img, 0, 0, c.width, c.height);
+      URL.revokeObjectURL(u); res(c.toDataURL('image/jpeg', 0.72).split(',')[1]);
+    };
+    img.onerror = function(){ URL.revokeObjectURL(u); rej(new Error('Couldn\'t read that photo')); };
+    img.src = u;
+  });
+}
+var CF_CHUNK = 70000;
+function cfUpload(p, b64){
+  var id = Math.random().toString(36).slice(2) + Date.now().toString(36), n = Math.ceil(b64.length / CF_CHUNK);
+  p.parts = n; p.done = 0; cfRenderPhotos();
+  var step = function(i){
+    return fetch(APPS_SCRIPT_URL, { method:'POST', headers:{ 'Content-Type':'text/plain' },
+      body: JSON.stringify({ type:'mark_delivered', action:'cost_photo', week: CF_WEEK, upload: id, part: i, parts: n, data: b64.slice(i * CF_CHUNK, (i + 1) * CF_CHUNK) }) })
+      .then(function(r){ return r.json(); })
+      .then(function(d){
+        if(!d || !d.success) throw new Error((d && d.error) || 'not saved');
+        p.done = i + 1; cfRenderPhotos();
+        if(d.done) { p.url = d.url; return; }
+        if(i + 1 < n) return step(i + 1);
+        throw new Error('not saved');
+      });
+  };
+  return step(0);
+}
+function cfAddPhotos(input){
+  var files = Array.prototype.slice.call(input.files || []); input.value = '';
+  files.reduce(function(chain, f){
+    var p = { done: 0 }; CF_PHOTOS.push(p); cfRenderPhotos();
+    return chain.then(function(){ return cfCompress(f).then(function(b){ return cfUpload(p, b); }); })
+      .catch(function(e){ p.error = 'not saved (' + e.message + '). Try again.'; })
+      .then(cfRenderPhotos);
+  }, Promise.resolve());
+}
+function cfSave(){
+  var btn = $('cf-save'), none = $('cf-none').checked;
+  var body = { type:'mark_delivered', action:'costs', week: CF_WEEK, supplies: $('cf-supplies').value.trim(), miles: $('cf-miles').value.trim(), none: none,
+    photos: CF_PHOTOS.filter(function(p){ return p.url; }).map(function(p){ return p.url; }) };
+  btn.disabled = true; btn.textContent = 'Saving…';
+  fetch(APPS_SCRIPT_URL, { method:'POST', headers:{ 'Content-Type':'text/plain' }, body: JSON.stringify(body) })
+    .then(function(r){ return r.json(); })
+    .then(function(d){
+      if(!d || !d.success) throw new Error((d && d.error) || 'not saved');
+      var w = d.week || {};
+      toast('✅ ' + (w.label || 'Costs') + ' saved' + (w.kept !== null && w.kept !== undefined ? ': you kept $' + Number(w.kept).toFixed(2) : ''));
+      buildCostsCard(d.weeks || COSTS_WEEKS, d.periods || COSTS_PERIODS);
+      try{ var c = JSON.parse(sessionStorage.getItem('admin_data')||'null'); if(c){ c.costs = d.weeks; c.costPeriods = d.periods; sessionStorage.setItem('admin_data', JSON.stringify(c)); } }catch(e){}
+    })
+    .catch(function(e){ btn.disabled = false; btn.textContent = 'Save'; toast(e.message.charAt(0).toUpperCase() + e.message.slice(1)); });
 }
 
 // v280 (Tony, 2026-10-15): "add tally of Qt and Pints, salads, bakery items in orders tab for that
