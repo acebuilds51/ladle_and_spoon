@@ -2,7 +2,7 @@
 // when the Admin tab opens or on a phone signed in as admin, so customers' phones never
 // download or run it. Same global scope as index.html: its functions and variables are
 // shared both ways. index.html calls into this file only after adminReady().
-var ADMIN_JS_VERSION = 'v293';
+var ADMIN_JS_VERSION = 'v294';
 
 // Phone photos are 3–6 MB. Shrink to at most 1600px and re-encode as JPEG in the browser
 // before uploading, so Cloudinary never stores a full-size original. Resolves to the
@@ -1272,6 +1272,10 @@ function showAdminLoading(show){
 
 function applyAdminData(data){
   try {
+    // v294: the dashboard comes from the live backend; the menu copy on the website can be a
+    // version behind for up to an hour after a deploy, which hid gs130's Enter costs button.
+    var _gsD = /gs(\d+)/.exec((data && data.scriptVersion) || '');
+    if(_gsD && parseInt(_gsD[1], 10) > BACKEND_GS) BACKEND_GS = parseInt(_gsD[1], 10);
     // Update orders
     // An empty list is real too (a fresh week after Archive), so it replaces the old one.
     if(Array.isArray(data.orders)){
