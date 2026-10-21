@@ -2,7 +2,7 @@
 // when the Admin tab opens or on a phone signed in as admin, so customers' phones never
 // download or run it. Same global scope as index.html: its functions and variables are
 // shared both ways. index.html calls into this file only after adminReady().
-var ADMIN_JS_VERSION = 'v295';
+var ADMIN_JS_VERSION = 'v296';
 
 // Phone photos are 3–6 MB. Shrink to at most 1600px and re-encode as JPEG in the browser
 // before uploading, so Cloudinary never stores a full-size original. Resolves to the
@@ -683,7 +683,7 @@ function weeklyReset(btn){
   fetch(APPS_SCRIPT_URL + '?type=archive_week&dry_run=true')
     .then(function(r){ return r.json(); })
     .then(function(dry){
-      if(!dry || !dry.dry_run){ toast('⚠️ Could not check the Sheet: ' + ((dry && dry.error) || 'unknown error') + '. Nothing changed.'); unlock(); return; }
+      if(!dry || !dry.dry_run){ alert('⚠️ Could not check the Sheet: ' + ((dry && dry.error) || 'unknown error') + '.\n\nNothing changed. Try again in a minute.'); unlock(); return; }   // v296: an alert, not a toast
       if(dry.already){ alert(dry.message); unlock(); return; }
       if(typeof dry.orders !== 'number') dry.orders = (ORDERS || []).length;   // backend before gs74
       var notInvoiced = (ORDERS || []).filter(function(o){ return o.email && !o.delivered; }).length;
@@ -710,11 +710,12 @@ function weeklyReset(btn){
         ORDERS = [];
         buildMenu();
         buildOrders();
-        toast('✅ Week ' + (d.archived||'') + ' archived! Update menu in the Sheet and publish.');
+        UNARCHIVED = 0; showArchiveBanner();   // v296
+        alert('✅ Last week is archived (tab "' + (d.archived||'') + '").\n\nYou can now save and publish this week\'s menu.');
       } else if(d.already){
         alert(d.error);
       } else {
-        toast('⚠️ Archive failed: ' + (d.error||'unknown error'));
+        alert('⚠️ The archive did NOT happen: ' + (d.error||'unknown error') + '\n\nNothing changed. Try again in a minute.');   // v296
       }
     })
     .catch(function(){
@@ -722,7 +723,7 @@ function weeklyReset(btn){
       alert('Not sure the archive went through (Google did not answer clearly).\n\nBefore trying again, open the Sheet and look for a tab named for this Monday. If it is there, the week is archived.');
     });
     })
-    .catch(function(){ unlock(); toast('⚠️ Could not reach the Sheet. Nothing changed.'); });
+    .catch(function(){ unlock(); alert('⚠️ Could not reach the Sheet, so the archive did NOT happen.\n\nNothing changed. Check your connection and try again.'); });   // v296
 }
 
 function photoSlug(n){ return String(n||'').toLowerCase().replace(/\s+/g,'-').replace(/[^a-z0-9-]/g,''); }
@@ -1270,8 +1271,24 @@ function showAdminLoading(show){
   if(el) el.style.display = show ? 'block' : 'none';
 }
 
+// v296 (gs132): last week still on the Soup orders tab after Monday (the archive didn't
+// happen, Oct 2026): a banner at the top of Admin until it's done. Not on Monday itself:
+// those are the orders she's delivering that day.
+var UNARCHIVED = 0;
+function showArchiveBanner(){
+  var v = $('v-admin'); if(!v) return;
+  var b = $('archive-banner');
+  var show = UNARCHIVED > 0 && new Date().getDay() !== 1;
+  if(!show){ if(b) b.remove(); return; }
+  if(!b){ b = document.createElement('div'); b.id = 'archive-banner'; var tabs = v.querySelector('.atabs'); v.insertBefore(b, tabs || v.firstChild); }
+  b.style.cssText = 'background:#fee2e2;border:1.5px solid #dc2626;color:#7f1d1d;border-radius:12px;padding:12px 14px;margin:10px 12px;font-size:14px;line-height:1.45';
+  b.innerHTML = '<strong>⚠️ Last week isn\'t archived yet.</strong> ' + UNARCHIVED + ' order' + (UNARCHIVED === 1 ? ' is' : 's are') + ' still on the Soup orders tab. '
+    + 'Archive it before saving this week\'s menu.'
+    + '<button class="bp" id="archive-now" style="display:block;width:100%;margin-top:10px;background:#dc2626" onclick="weeklyReset(this)">Archive now</button>';
+}
 function applyAdminData(data){
   try {
+    if(typeof data.unarchived === 'number'){ UNARCHIVED = data.unarchived; showArchiveBanner(); }   // v296
     // v294: the dashboard comes from the live backend; the menu copy on the website can be a
     // version behind for up to an hour after a deploy, which hid gs130's Enter costs button.
     var _gsD = /gs(\d+)/.exec((data && data.scriptVersion) || '');
