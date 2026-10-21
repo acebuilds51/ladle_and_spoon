@@ -12,8 +12,11 @@
      tags without running JavaScript; real visitors get redirected to the app
      immediately by the script at the bottom. Exists because the main index.html
      is ~4.5MB and some scrapers give up before reaching its <head>.
-     og:url points at THIS page on purpose — if it pointed at index.html, some
-     scrapers would re-fetch that big file and hit the same problem. -->
+     No og:url on purpose. It used to name plain share.html, and Facebook files every link under
+     its og:url: share.html?src=…&w=<this week> was treated as share.html and got the preview it
+     had saved before the weekly menu pictures (the kitchen; Oct 21 2026). Without it, each week's
+     &w= link is its own page to Facebook and is read fresh. (Never point it at index.html: some
+     scrapers would fetch that big file and give up.) -->
 <meta property="og:site_name" content="Ladle &amp; Spoon">
 <meta property="og:title" content="Ladle &amp; Spoon — This Week's Menu">
 <meta property="og:description" content="This week: Chicken Pot Pie, Cheddar Cauliflower, Garden Tortellini and Beet &amp; Goat Cheese Salad. Homemade in Waterford, delivered Monday. Order by Friday 7 PM.">
@@ -23,7 +26,6 @@
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta property="og:image:alt" content="This week at Ladle &amp; Spoon: Chicken Pot Pie, Cheddar Cauliflower, Garden Tortellini, Beet &amp; Goat Cheese Salad">
-<meta property="og:url" content="https://acebuilds51.github.io/ladle_and_spoon/share.html">
 <meta property="og:type" content="website">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Ladle &amp; Spoon — This Week's Menu">
