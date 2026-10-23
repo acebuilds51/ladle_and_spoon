@@ -2,7 +2,7 @@
 // when the Admin tab opens or on a phone signed in as admin, so customers' phones never
 // download or run it. Same global scope as index.html: its functions and variables are
 // shared both ways. index.html calls into this file only after adminReady().
-var ADMIN_JS_VERSION = 'v297';
+var ADMIN_JS_VERSION = 'v298';
 
 // Phone photos are 3–6 MB. Shrink to at most 1600px and re-encode as JPEG in the browser
 // before uploading, so Cloudinary never stores a full-size original. Resolves to the
@@ -2771,14 +2771,21 @@ function rtDecodePath(str){
 function rtClearMaps(){ RT_MAPS.forEach(function(m){ try{ m.remove(); }catch(e){} }); RT_MAPS = []; }
 function rtPlaced(s){ return s && s.found && isFinite(s.lat) && isFinite(s.lng); }
 // One map: the kitchen, numbered pins in this order (cash still to collect in amber, done ✓), and
-// the road line (or straight dashed lines). opts: {color, tap: a pin scrolls to its stop}.
+// the road line (or straight dashed lines). opts: {color, title, full}.
+// v298 (Tony, 2026-10-23: "very difficult to read on my PC ... if I click any of the maps they don't
+// expand, and there is no way to zoom"): the maps on the Route tab are previews, kept to a
+// readable width; a tap opens the map full screen with zoom buttons, pinch and drag, the scroll
+// wheel, and a pin shows that stop's name and address.
+var RT_MAP_ARGS = {};
 function rtDrawMap(id, stops, path, opts){
   opts = opts || {};
+  if(!opts.full) RT_MAP_ARGS[id] = { stops: stops, path: path, opts: opts };
   rtLeaflet(function(){
     var el = document.getElementById(id); if(!el || el._rtMap || !RT_PLAN) return;
-    var L = window.L, d = RT_DRIVE || { done:{} }, home = RT_PLAN.home, color = opts.color || '#1B3D1C';
-    var map = L.map(el, { zoomControl: false, attributionControl: true, scrollWheelZoom: false });
-    el._rtMap = map; RT_MAPS.push(map);
+    var L = window.L, d = RT_DRIVE || { done:{} }, home = RT_PLAN.home, color = opts.color || '#1B3D1C', full = !!opts.full;
+    var map = L.map(el, full ? { zoomControl: true, attributionControl: true, scrollWheelZoom: true }
+      : { zoomControl: false, attributionControl: true, dragging: false, touchZoom: false, doubleClickZoom: false, scrollWheelZoom: false, boxZoom: false, keyboard: false });
+    el._rtMap = map; if(!full) RT_MAPS.push(map);   // the full-screen one stays open if the Route tab redraws
     try{ map.attributionControl.setPrefix(false); }catch(e){}   // just the OpenStreetMap credit (its licence needs that one)
     L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 19, attribution: '&copy; OpenStreetMap contributors' }).addTo(map);
     var homePt = home && isFinite(home.lat) && isFinite(home.lng) ? [home.lat, home.lng] : null, line = [], pts = [];
@@ -2792,9 +2799,10 @@ function rtDrawMap(id, stops, path, opts){
     stops.forEach(function(s, i){
       if(!rtPlaced(s)) return;
       var done = !!d.done[s.key], cls = done ? 'done' : (s.pay === 'cash' && !rtPaid(s)) ? 'cash' : '';
-      var mk = L.marker([s.lat, s.lng], { icon: L.divIcon({ className: 'rt-pin ' + cls, html: done ? '✓' : String(i + 1), iconSize: [24, 24], iconAnchor: [12, 12] }), title: (i + 1) + '. ' + s.n });
+      var mk = L.marker([s.lat, s.lng], { icon: L.divIcon({ className: 'rt-pin ' + cls, html: done ? '✓' : String(i + 1), iconSize: full ? [28, 28] : [22, 22], iconAnchor: full ? [14, 14] : [11, 11] }),
+        title: (i + 1) + '. ' + s.n, interactive: full });
       mk.addTo(map);
-      if(opts.tap) mk.on('click', function(){ rtShowStop(s.key); });
+      if(full) mk.bindPopup('<strong>' + (i + 1) + '. ' + esc(s.n) + '</strong><br>' + esc(s.a) + '<br>' + (s.pay === 'cash' && !rtPaid(s) ? 'Collect ' + rtMoney(s.total) + ' cash' : rtPaid(s) ? 'Paid' : 'Venmo, not paid yet'));
       pts.push([s.lat, s.lng]);
     });
     var all = pts.concat(line);
@@ -2802,11 +2810,31 @@ function rtDrawMap(id, stops, path, opts){
     setTimeout(function(){ try{ map.invalidateSize(); if(all.length) map.fitBounds(all, { padding: [18, 18] }); }catch(e){} }, 80);
   });
 }
-// A pin on the main map: scroll to that stop in the list and flash it.
-function rtShowStop(key){
-  var el = $('rt-stop-' + rtIdx(key)); if(!el) return;
-  try{ el.scrollIntoView({ behavior: 'smooth', block: 'center' }); }catch(e){ el.scrollIntoView(); }
-  el.classList.add('rt-flash'); setTimeout(function(){ el.classList.remove('rt-flash'); }, 1600);
+// A preview: the map, with a cover that opens it full screen on a tap.
+var RT_MAP_TITLES = {};
+function rtMapBox(id, title, small){
+  RT_MAP_TITLES[id] = title;
+  return '<div class="rt-mapwrap' + (small ? ' small' : '') + '" onclick="rtOpenMap(\'' + id + '\')">'
+    + '<div id="' + id + '" class="rt-map' + (small ? ' small' : '') + '"></div><div class="rt-map-cover"><span>⤢ Tap to enlarge</span></div></div>';
+}
+function rtOpenMap(id){
+  var a = RT_MAP_ARGS[id]; if(!a) return;
+  rtCloseMap();
+  var ov = $('rt-mapfull');
+  if(!ov){
+    ov = document.createElement('div'); ov.id = 'rt-mapfull'; document.body.appendChild(ov);
+    document.addEventListener('keydown', function(e){ if(e.key === 'Escape') rtCloseMap(); });
+  }
+  ov.innerHTML = '<div class="rt-mf-bar"><strong>' + esc(RT_MAP_TITLES[id] || 'Your route') + '</strong><button onclick="rtCloseMap()">✕ Close</button></div>'
+    + '<div id="rt-map-full" class="rt-map full"></div><div class="rt-mf-tip">Pinch or use + and − to zoom. Tap a number for that stop.</div>';
+  ov.classList.remove('hidden');
+  rtDrawMap('rt-map-full', a.stops, a.path, Object.assign({}, a.opts, { full: true }));
+}
+function rtCloseMap(){
+  var ov = $('rt-mapfull'); if(!ov) return;
+  var el = $('rt-map-full');
+  if(el && el._rtMap){ try{ el._rtMap.remove(); }catch(e){} }
+  ov.classList.add('hidden'); ov.innerHTML = '';
 }
 function rtStopsFor(keys){ return (keys || []).map(rtStop).filter(Boolean); }
 // Side by side: Google's best and hers, miles and minutes, the one with fewer miles highlighted,
@@ -2818,7 +2846,7 @@ function rtCompareMaps(p){
     return '<div class="rt-cmp-col' + (fewer ? ' fewer' : '') + (chosen ? ' chosen' : '') + '">'
       + '<div class="rt-cmp-h">' + (which === 'best' ? 'Google\'s best' : 'Your order') + '</div>'
       + (fewer ? '<div class="rt-cmp-badge">✓ Fewer miles</div>' : '<div class="rt-cmp-badge off">&nbsp;</div>')
-      + '<div id="rt-map-' + which + '" class="rt-map small"></div>'
+      + rtMapBox('rt-map-' + which, (which === 'best' ? 'Google\'s best' : 'Your order') + ' · ' + r.mi + ' mi · ' + r.min + ' min', true)
       + '<div class="rt-cmp-n"><strong>' + r.mi + ' mi</strong><span>' + r.min + ' min</span></div>'
       + (chosen ? '<div class="rt-cmp-on">✓ Using this route</div>'
                 : '<button class="rt-cmp-use" onclick="rtChoose(\'' + which + '\')">Use this route</button>')
@@ -2885,9 +2913,9 @@ function buildRoutePlanner(){
     +  new Date(p.planned).toLocaleTimeString('en-US', { hour:'numeric', minute:'2-digit' })
     +  (p.custom ? ' · your order' : ' · best order') + (p.delivered ? ' · ' + p.delivered + ' already delivered' : '') + '</div></div>';
   // v297: the route on a map before she starts.
-  h += '<div class="rt-card rt-mapcard"><div id="rt-map-main" class="rt-map"></div><div class="rt-map-note">'
+  h += '<div class="rt-card rt-mapcard">' + rtMapBox('rt-map-main', (p.custom ? 'Your order' : 'Your route') + ' · ' + rtMiles(p.totalM) + ' · ' + rtMins(p.totalSec)) + '<div class="rt-map-note">'
     +  (p.moved ? 'Straight lines show your new order. Tap “See my order vs. Google’s best” below for the roads, miles and time.'
-                : 'Kitchen and back. Tap a number to find that stop below.') + '</div></div>';
+                : 'Kitchen and back. Tap the map to open it full screen and zoom in.') + '</div></div>';
   h += p.cmp ? rtCompareMaps(p) + rtCompareCard(p, true) : rtCompareCard(p);   // v297 side by side; v291 (gs128) without
   // gs82: every address that may send her to the wrong door, each with a Look up button.
   var flagged = st.filter(function(s){ return !d.done[s.key] && rtAddrIssue(s); });
@@ -2927,7 +2955,7 @@ function buildRoutePlanner(){
   h += '</div><div style="text-align:center;margin-top:4px"><button onclick="planRoute()" style="background:none;border:none;color:var(--f);font-size:13px;font-weight:700;text-decoration:underline;cursor:pointer">'
     +  (p.custom || p.moved ? 'Back to the best order' : 'Plan again (new orders?)') + '</button></div><div class="rt-status"></div>';
   el.innerHTML = h;
-  rtDrawMap('rt-map-main', st, p.moved ? null : p.path, { tap: true });   // v297
+  rtDrawMap('rt-map-main', st, p.moved ? null : p.path, {});   // v297
   rtDrawCompareMaps(p);
   rtRefreshStatus();
 }
