@@ -2,7 +2,7 @@
 // when the Admin tab opens or on a phone signed in as admin, so customers' phones never
 // download or run it. Same global scope as index.html: its functions and variables are
 // shared both ways. index.html calls into this file only after adminReady().
-var ADMIN_JS_VERSION = 'v296';
+var ADMIN_JS_VERSION = 'v297';
 
 // Phone photos are 3–6 MB. Shrink to at most 1600px and re-encode as JPEG in the browser
 // before uploading, so Cloudinary never stores a full-size original. Resolves to the
@@ -2731,6 +2731,119 @@ function rtPushOrder(){
   }, 1500);
 }
 
+// ── Route maps (v297 + gs148) ──
+// Tony, 2026-10-23: "Is there anyway Lia can see a preview of the planned route before she starts
+// deliveries?" and "if she changes the route, can we see side by side the original route, plus the
+// one she reordered to, the mileage for each ... with a button that allows her to select?"
+// Leaflet with OpenStreetMap tiles: free, no key, and only the map area is sent to them, never an
+// address. Each plan brings Google's road line (gs148); without one (an older backend, or right
+// after a ▲▼ move) the stops are joined by straight dashed lines.
+var RT_LEAFLET = 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/', RT_LEAFLET_STATE = '', RT_LEAFLET_WAIT = [], RT_MAPS = [];
+function rtLeaflet(cb){
+  if(window.L && window.L.map){ cb(); return; }
+  RT_LEAFLET_WAIT.push(cb);
+  if(RT_LEAFLET_STATE) return;
+  RT_LEAFLET_STATE = 'loading';
+  var css = document.createElement('link'); css.rel = 'stylesheet'; css.href = RT_LEAFLET + 'leaflet.css'; document.head.appendChild(css);
+  var js = document.createElement('script'); js.src = RT_LEAFLET + 'leaflet.js';
+  js.onload = function(){ RT_LEAFLET_STATE = 'ready'; var w = RT_LEAFLET_WAIT; RT_LEAFLET_WAIT = []; w.forEach(function(f){ try{ f(); }catch(e){} }); };
+  js.onerror = function(){
+    RT_LEAFLET_STATE = ''; RT_LEAFLET_WAIT = [];
+    document.querySelectorAll('.rt-map').forEach(function(el){ el.innerHTML = '<div class="rt-map-off">Map unavailable (no connection?). The list below is the route.</div>'; });
+  };
+  document.head.appendChild(js);
+}
+// Google's encoded road line -> [[lat, lng], ...]
+function rtDecodePath(str){
+  var pts = [], i = 0, lat = 0, lng = 0;
+  if(typeof str !== 'string') return pts;
+  while(i < str.length){
+    var b, shift = 0, res = 0;
+    do { b = str.charCodeAt(i++) - 63; res |= (b & 31) << shift; shift += 5; } while(b >= 32 && i < str.length);
+    lat += (res & 1) ? ~(res >> 1) : (res >> 1);
+    shift = 0; res = 0;
+    do { b = str.charCodeAt(i++) - 63; res |= (b & 31) << shift; shift += 5; } while(b >= 32 && i < str.length);
+    lng += (res & 1) ? ~(res >> 1) : (res >> 1);
+    pts.push([lat / 1e5, lng / 1e5]);
+  }
+  return pts;
+}
+function rtClearMaps(){ RT_MAPS.forEach(function(m){ try{ m.remove(); }catch(e){} }); RT_MAPS = []; }
+function rtPlaced(s){ return s && s.found && isFinite(s.lat) && isFinite(s.lng); }
+// One map: the kitchen, numbered pins in this order (cash still to collect in amber, done ✓), and
+// the road line (or straight dashed lines). opts: {color, tap: a pin scrolls to its stop}.
+function rtDrawMap(id, stops, path, opts){
+  opts = opts || {};
+  rtLeaflet(function(){
+    var el = document.getElementById(id); if(!el || el._rtMap || !RT_PLAN) return;
+    var L = window.L, d = RT_DRIVE || { done:{} }, home = RT_PLAN.home, color = opts.color || '#1B3D1C';
+    var map = L.map(el, { zoomControl: false, attributionControl: true, scrollWheelZoom: false });
+    el._rtMap = map; RT_MAPS.push(map);
+    try{ map.attributionControl.setPrefix(false); }catch(e){}   // just the OpenStreetMap credit (its licence needs that one)
+    L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 19, attribution: '&copy; OpenStreetMap contributors' }).addTo(map);
+    var homePt = home && isFinite(home.lat) && isFinite(home.lng) ? [home.lat, home.lng] : null, line = [], pts = [];
+    (path || []).forEach(function(p){ line = line.concat(rtDecodePath(p)); });
+    if(line.length >= 2) L.polyline(line, { color: color, weight: 4, opacity: 0.8 }).addTo(map);
+    else {
+      line = (homePt ? [homePt] : []).concat(stops.filter(rtPlaced).map(function(s){ return [s.lat, s.lng]; })).concat(homePt ? [homePt] : []);
+      if(line.length >= 2) L.polyline(line, { color: color, weight: 3, opacity: 0.7, dashArray: '6 6' }).addTo(map);
+    }
+    if(homePt){ L.marker(homePt, { icon: L.divIcon({ className: 'rt-pin home', html: '🏠', iconSize: [26, 26], iconAnchor: [13, 13] }), title: "Lia's Kitchen" }).addTo(map); pts.push(homePt); }
+    stops.forEach(function(s, i){
+      if(!rtPlaced(s)) return;
+      var done = !!d.done[s.key], cls = done ? 'done' : (s.pay === 'cash' && !rtPaid(s)) ? 'cash' : '';
+      var mk = L.marker([s.lat, s.lng], { icon: L.divIcon({ className: 'rt-pin ' + cls, html: done ? '✓' : String(i + 1), iconSize: [24, 24], iconAnchor: [12, 12] }), title: (i + 1) + '. ' + s.n });
+      mk.addTo(map);
+      if(opts.tap) mk.on('click', function(){ rtShowStop(s.key); });
+      pts.push([s.lat, s.lng]);
+    });
+    var all = pts.concat(line);
+    if(all.length) map.fitBounds(all, { padding: [18, 18] });
+    setTimeout(function(){ try{ map.invalidateSize(); if(all.length) map.fitBounds(all, { padding: [18, 18] }); }catch(e){} }, 80);
+  });
+}
+// A pin on the main map: scroll to that stop in the list and flash it.
+function rtShowStop(key){
+  var el = $('rt-stop-' + rtIdx(key)); if(!el) return;
+  try{ el.scrollIntoView({ behavior: 'smooth', block: 'center' }); }catch(e){ el.scrollIntoView(); }
+  el.classList.add('rt-flash'); setTimeout(function(){ el.classList.remove('rt-flash'); }, 1600);
+}
+function rtStopsFor(keys){ return (keys || []).map(rtStop).filter(Boolean); }
+// Side by side: Google's best and hers, miles and minutes, the one with fewer miles highlighted,
+// and "Use this route" under each. p.cmp is made from her plan's comparison (rtAdoptPlan).
+function rtCompareMaps(p){
+  var c = p.cmp; if(!c) return '';
+  var col = function(which){
+    var r = c[which], other = c[which === 'best' ? 'mine' : 'best'], chosen = c.chosen === which, fewer = r.mi < other.mi - 0.2;
+    return '<div class="rt-cmp-col' + (fewer ? ' fewer' : '') + (chosen ? ' chosen' : '') + '">'
+      + '<div class="rt-cmp-h">' + (which === 'best' ? 'Google\'s best' : 'Your order') + '</div>'
+      + (fewer ? '<div class="rt-cmp-badge">✓ Fewer miles</div>' : '<div class="rt-cmp-badge off">&nbsp;</div>')
+      + '<div id="rt-map-' + which + '" class="rt-map small"></div>'
+      + '<div class="rt-cmp-n"><strong>' + r.mi + ' mi</strong><span>' + r.min + ' min</span></div>'
+      + (chosen ? '<div class="rt-cmp-on">✓ Using this route</div>'
+                : '<button class="rt-cmp-use" onclick="rtChoose(\'' + which + '\')">Use this route</button>')
+      + '</div>';
+  };
+  var dmi = Math.round((c.mine.mi - c.best.mi) * 10) / 10, dmin = c.mine.min - c.best.min, sum;
+  if(Math.abs(dmi) < 0.3 && Math.abs(dmin) < 2) sum = 'About the same. Pick whichever you like.';
+  else if(dmi > 0) sum = 'Yours is <strong>' + dmi + ' more miles</strong>' + (dmin > 0 ? ' and ' + dmin + ' more minutes' : '') + (c.extraCost >= 0.5 ? ' (about ' + rtMoney(c.extraCost) + ' at the mileage rate)' : '') + '.';
+  else sum = 'Yours is <strong>' + (-dmi) + ' fewer miles</strong>' + (dmin < 0 ? ' and ' + (-dmin) + ' fewer minutes' : '') + '. Nice!';
+  return '<div class="rt-card rt-cmp-card"><div style="font-weight:800;font-size:14px;margin-bottom:8px">🧭 Google\'s best vs. your order</div>'
+    + '<div class="rt-cmp">' + col('best') + col('mine') + '</div><div class="rt-cmp-sum">' + sum + '</div></div>';
+}
+function rtDrawCompareMaps(p){
+  var c = p.cmp; if(!c) return;
+  rtDrawMap('rt-map-best', rtStopsFor(c.best.order), c.best.path, { color: '#1d4ed8' });
+  rtDrawMap('rt-map-mine', rtStopsFor(c.mine.order), c.mine.path, { color: '#b45309' });
+}
+// "Use this route": plan with that order. Google's best is sent with choose:'best', so it isn't
+// counted as her own order (gs148); hers is planned (and compared) as before.
+function rtChoose(which){
+  var c = RT_PLAN && RT_PLAN.cmp; if(!c || c.chosen === which || RT_PLANNING) return;
+  if(RT_DRIVE && !RT_DRIVE.finished){ toast('You\'re in the middle of the drive. Switch routes before you start.'); return; }
+  planRoute(true, c[which].order, which);
+}
+
 function rtDriveOpen(){ var el = $('drive'); return !!(el && !el.classList.contains('hidden')); }
 
 function rtSaveDrive(){ rtSave(RT_DRIVE_KEY, RT_DRIVE); }
@@ -2738,6 +2851,7 @@ function rtSaveDrive(){ rtSave(RT_DRIVE_KEY, RT_DRIVE); }
 // ── Planning screen ──
 function buildRoutePlanner(){
   var el = $('rt-body'); if(!el) return;
+  rtClearMaps();   // v297: the maps are drawn again below
   rtSyncSaved();   // v290
   if(BACKEND_GS < 81){
     el.innerHTML = '<div class="rt-card" style="font-size:13px;color:var(--t2);line-height:1.6">Route planning switches on once the '
@@ -2770,7 +2884,11 @@ function buildRoutePlanner(){
     +  '</div><div style="font-size:11px;color:var(--t3);margin-top:6px">Kitchen and back · planned '
     +  new Date(p.planned).toLocaleTimeString('en-US', { hour:'numeric', minute:'2-digit' })
     +  (p.custom ? ' · your order' : ' · best order') + (p.delivered ? ' · ' + p.delivered + ' already delivered' : '') + '</div></div>';
-  h += rtCompareCard(p);   // v291 (gs128)
+  // v297: the route on a map before she starts.
+  h += '<div class="rt-card rt-mapcard"><div id="rt-map-main" class="rt-map"></div><div class="rt-map-note">'
+    +  (p.moved ? 'Straight lines show your new order. Tap “See my order vs. Google’s best” below for the roads, miles and time.'
+                : 'Kitchen and back. Tap a number to find that stop below.') + '</div></div>';
+  h += p.cmp ? rtCompareMaps(p) + rtCompareCard(p, true) : rtCompareCard(p);   // v297 side by side; v291 (gs128) without
   // gs82: every address that may send her to the wrong door, each with a Look up button.
   var flagged = st.filter(function(s){ return !d.done[s.key] && rtAddrIssue(s); });
   var noAddr = (p.noAddress || []).map(function(x){ return typeof x === 'string' ? { n: x } : x; });
@@ -2792,11 +2910,11 @@ function buildRoutePlanner(){
   } else {
     h += '<button class="rt-big go" onclick="startDrive()"' + (st.length ? '' : ' disabled') + '>▶ Start delivering</button>';
   }
-  if(p.moved) h += '<button class="rt-big alt" style="margin-top:8px" onclick="planRoute(true)">Update drive times for my order</button>';
+  if(p.moved) h += '<button class="rt-big alt" style="margin-top:8px" onclick="planRoute(true)">See my order vs. Google’s best (maps, miles, time)</button>';
   h += '<div class="rt-card" style="margin-top:12px"><div style="font-size:11px;color:var(--t3);margin-bottom:4px">Use ▲ ▼ to move a stop (for example someone who needs it early).</div>';
   st.forEach(function(s, i){
     var done = !!d.done[s.key];
-    h += '<div class="rt-stop"><div class="rt-num ' + (done ? 'done' : !s.found ? 'off' : '') + '">' + (done ? '✓' : i + 1) + '</div>'
+    h += '<div class="rt-stop" id="rt-stop-' + i + '"><div class="rt-num ' + (done ? 'done' : !s.found ? 'off' : '') + '">' + (done ? '✓' : i + 1) + '</div>'
       +  '<div class="rt-inf"><strong>' + esc(s.n) + (s.gift ? ' 🎁' : '') + '</strong><span>' + esc(s.a) + '</span>'
       +  '<span>' + esc(s.it || '') + ' · ' + (s.pay === 'cash' ? 'Cash ' : 'Venmo ') + rtMoney(s.total)
       +  (rtPaid(s) ? ' · <b class="rt-paid" style="color:#15803d">✅ Paid</b>' : ' · <b class="rt-paid" style="color:#b45309">' + (s.pay === 'cash' ? 'collect cash' : 'not paid yet') + '</b>') + '</span>'
@@ -2809,22 +2927,26 @@ function buildRoutePlanner(){
   h += '</div><div style="text-align:center;margin-top:4px"><button onclick="planRoute()" style="background:none;border:none;color:var(--f);font-size:13px;font-weight:700;text-decoration:underline;cursor:pointer">'
     +  (p.custom || p.moved ? 'Back to the best order' : 'Plan again (new orders?)') + '</button></div><div class="rt-status"></div>';
   el.innerHTML = h;
+  rtDrawMap('rt-map-main', st, p.moved ? null : p.path, { tap: true });   // v297
+  rtDrawCompareMaps(p);
   rtRefreshStatus();
 }
 
-function planRoute(keepOrder, order){
+function planRoute(keepOrder, order, choose){
   if(RT_PLANNING) return;
   var body = { type:'plan_route' };
   if(order && order.length) body.order = order;   // v290: an order saved on another device
   else if(keepOrder && RT_PLAN) body.order = RT_PLAN.stops.map(function(s){ return s.key; });
+  if(choose === 'best') body.choose = 'best';     // v297 (gs148): Google's best, picked from the side-by-side maps
   RT_PLANNING = true; buildRoutePlanner();
   fetch(APPS_SCRIPT_URL, { method:'POST', headers:{ 'Content-Type':'text/plain' }, body: JSON.stringify(body) })
     .then(function(r){ if(!r.ok) throw new Error('Google did not answer'); return r.json(); })
     .then(function(d){
       if(!d || !d.success) throw new Error((d && d.error) || 'no answer');
-      rtAdoptPlan(d);
+      rtAdoptPlan(d, choose);
       RT_PLANNING = false; buildRoutePlanner();
-      toast('🧭 ' + d.stops.length + ' stops planned · ' + rtMins(d.totalSec) + ' driving');
+      toast(choose ? '🧭 Using ' + (choose === 'best' ? 'Google\'s best' : 'your order') + ' · ' + rtMiles(d.totalM) + ', ' + rtMins(d.totalSec)
+                   : '🧭 ' + d.stops.length + ' stops planned · ' + rtMins(d.totalSec) + ' driving');
     })
     .catch(function(e){
       RT_PLANNING = false; buildRoutePlanner();
@@ -2837,7 +2959,7 @@ function rtMove(i, dir){
   if(j < 0 || j >= st.length) return;
   var t = st[i]; st[i] = st[j]; st[j] = t;
   RT_PLAN.moved = true; RT_PLAN.custom = true; RT_PLAN.savedAt = new Date().toISOString();
-  delete RT_PLAN.compare;   // v291: it was for the order before this move
+  delete RT_PLAN.compare; delete RT_PLAN.cmp;   // v291/v297: they were for the order before this move
   rtSave(RT_PLAN_KEY, RT_PLAN); buildRoutePlanner();
   rtPushOrder();   // v290: so her phone gets it too
 }
@@ -2853,14 +2975,17 @@ var RT_REASONS = [
   ['errand', 'A stop of my own on the way', 'No problem. Your own stops aren\'t in Google\'s plan, so extra time is expected.'],
   ['other', 'Something else', 'Thanks! Tony will take a look.']];
 var RT_REASON_TIP = '';
-function rtCompareCard(p){
+// reasonOnly (v297): the side-by-side maps already show the miles and minutes, so this card only
+// asks why (when hers costs enough to ask).
+function rtCompareCard(p, reasonOnly){
   var c = p.compare; if(!c) return '';
+  if(reasonOnly && (!c.ask || (p.cmp && p.cmp.chosen !== 'mine'))) return '';
   var cost = c.extraCost >= 0.5 ? ' (about ' + rtMoney(c.extraCost) + ' at the mileage rate)' : '';
-  if(c.extraMin <= -2) return '<div class="rt-card rt-compare" style="font-size:13px">🎉 Your order is <strong>' + (-c.extraMin) + ' min quicker</strong> than Google\'s best (' + c.bestMin + ' min). Nice!</div>';
-  if(!c.ask) return '<div class="rt-card rt-compare" style="font-size:13px;color:var(--t2)">👍 Your order is about as quick as Google\'s best (' + (c.extraMin > 0 ? '+' + c.extraMin + ' min' : 'same time') + ').</div>';
-  var h = '<div class="rt-card rt-compare" style="border:1.5px solid #f59e0b"><div style="font-weight:800;font-size:14px;margin-bottom:6px">🧭 Your order vs. Google\'s best</div>'
-    + '<div style="font-size:13px;color:var(--t2);line-height:1.5">Yours: <strong>' + c.mineMin + ' min, ' + c.mineMi + ' mi</strong> · Best: ' + c.bestMin + ' min, ' + c.bestMi + ' mi<br>'
-    + 'That\'s <strong>' + c.extraMin + ' more minutes and ' + c.extraMi + ' more miles</strong>' + cost + '.</div>';
+  if(!reasonOnly && c.extraMin <= -2) return '<div class="rt-card rt-compare" style="font-size:13px">🎉 Your order is <strong>' + (-c.extraMin) + ' min quicker</strong> than Google\'s best (' + c.bestMin + ' min). Nice!</div>';
+  if(!reasonOnly && !c.ask) return '<div class="rt-card rt-compare" style="font-size:13px;color:var(--t2)">👍 Your order is about as quick as Google\'s best (' + (c.extraMin > 0 ? '+' + c.extraMin + ' min' : 'same time') + ').</div>';
+  var h = '<div class="rt-card rt-compare" style="border:1.5px solid #f59e0b"><div style="font-weight:800;font-size:14px;margin-bottom:6px">' + (reasonOnly ? '🤔 Why your order?' : '🧭 Your order vs. Google\'s best') + '</div>'
+    + (reasonOnly ? '' : '<div style="font-size:13px;color:var(--t2);line-height:1.5">Yours: <strong>' + c.mineMin + ' min, ' + c.mineMi + ' mi</strong> · Best: ' + c.bestMin + ' min, ' + c.bestMi + ' mi<br>'
+    + 'That\'s <strong>' + c.extraMin + ' more minutes and ' + c.extraMi + ' more miles</strong>' + cost + '.</div>');
   if(c.moved && c.moved.length){
     h += '<div style="font-size:13px;margin-top:8px">You moved: ' + c.moved.map(function(m){ return '<strong>' + esc(m.n) + '</strong> (' + rtOrd(m.from) + ' → ' + rtOrd(m.to) + ')'; }).join(', ') + '</div>';
     var early = c.moved.filter(function(m){ return m.early && m.to < m.from; })[0];
@@ -2903,10 +3028,19 @@ function rtAddrIssue(s){
 
 // A new plan in the middle of a drive leaves out the stops already delivered; keep them
 // at the front so "Stop 3 of 12" still counts the whole day.
-function rtAdoptPlan(d){
+function rtAdoptPlan(d, choose){
   if(RT_DRIVE && !RT_DRIVE.finished && RT_PLAN){
     var kept = RT_PLAN.stops.filter(function(s){ return RT_DRIVE.done[s.key] && !d.stops.some(function(x){ return x.key === s.key; }); });
     d.stops = kept.concat(d.stops);
+  }
+  // v297 (gs148): her order and Google's best, for the side-by-side maps. Picking Google's best
+  // keeps the comparison, so she can still switch back to hers.
+  if(d.compare && d.compare.bestOrder){
+    d.cmp = { chosen: 'mine', extraCost: d.compare.extraCost,
+      mine: { order: d.stops.filter(function(s){ return s.found; }).map(function(s){ return s.key; }), path: d.path || [], mi: d.compare.mineMi, min: d.compare.mineMin },
+      best: { order: d.compare.bestOrder, path: d.compare.bestPath || [], mi: d.compare.bestMi, min: d.compare.bestMin } };
+  } else if(choose === 'best' && RT_PLAN && RT_PLAN.cmp){
+    d.cmp = RT_PLAN.cmp; d.cmp.chosen = 'best';
   }
   d.savedAt = d.planned;   // v290
   RT_PLAN = d; rtSave(RT_PLAN_KEY, d);
