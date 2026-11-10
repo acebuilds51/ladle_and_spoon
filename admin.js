@@ -2,7 +2,7 @@
 // when the Admin tab opens or on a phone signed in as admin, so customers' phones never
 // download or run it. Same global scope as index.html: its functions and variables are
 // shared both ways. index.html calls into this file only after adminReady().
-var ADMIN_JS_VERSION = 'v300';
+var ADMIN_JS_VERSION = 'v301';
 
 // Phone photos are 3–6 MB. Shrink to at most 1600px and re-encode as JPEG in the browser
 // before uploading, so Cloudinary never stores a full-size original. Resolves to the
@@ -259,14 +259,28 @@ function shareLabel(tag){
 
 function savedShareLinks(){ try{ return JSON.parse(localStorage.getItem('ls_share_links') || '[]'); }catch(e){ return []; } }
 
+// v301 (Tony, 2026-11-10: "can we fix all her links that she gets for FB?"). A link is shown with
+// the picture Facebook and Messages saved the first time they saw it, so the same link every week
+// kept showing an old menu. &w= is the code of the picture share.html carries now (its file name),
+// read from the live page, so each new picture makes a new link.
+var SHARE_W = '';
+function loadShareW(){
+  return fetch(SHARE_BASE + '?x=' + Date.now(), { cache: 'no-store' })
+    .then(function(r){ return r.text(); })
+    .then(function(t){ var m = /og\/menu-\d{4}-\d\d-\d\d-([a-z0-9]{1,12})\.jpg/.exec(t || ''); SHARE_W = m ? m[1] : ''; return SHARE_W; })
+    .catch(function(){ return SHARE_W; });
+}
+function shareUrl(tag){ return SHARE_BASE + '?src=' + tag + (SHARE_W ? '&w=' + SHARE_W : ''); }
+
 function buildShareLink(){
   var where = ($('lb-where') || {}).value || 'fbg', name = (($('lb-name') || {}).value || '').trim(), out = $('lb-out');
   if(!out) return;
+  if(!SHARE_W && !buildShareLink.asked){ buildShareLink.asked = true; loadShareW().then(function(w){ if(w) buildShareLink(); }); }
   var needsName = where === 'fbg' || where === 'flyer' || where === 'other';
   var inp = $('lb-name');
   if(inp) inp.placeholder = where === 'fbg' ? 'Group name (e.g. Waterford Happenings)' : where === 'flyer' ? 'Where it went (e.g. Otter Ave)' : where === 'other' ? 'Name it (e.g. Church bulletin)' : 'Optional: which post (e.g. Halloween menu)';
   if(needsName && !name){ out.innerHTML = '<div style="font-size:12px;color:var(--t3)">Type the ' + (where === 'fbg' ? 'group\'s name' : 'name') + ' to make its link.</div>'; return; }
-  var tag = shareTag(where, name), url = SHARE_BASE + '?src=' + tag;
+  var tag = shareTag(where, name), url = shareUrl(tag);
   out.innerHTML = '<div style="background:var(--cr);border-radius:10px;padding:10px;font-size:13px;word-break:break-all"><strong>' + esc(shareLabel(tag)) + '</strong><br>'
     + '<span id="lb-url">' + esc(url) + '</span></div>'
     + '<button class="bp" style="margin-top:8px" onclick="copyShareLink(\'' + tag + '\')">📋 Copy link</button>';
@@ -274,7 +288,7 @@ function buildShareLink(){
 }
 
 function copyShareLink(tag){
-  var url = SHARE_BASE + '?src=' + tag;
+  var url = shareUrl(tag);
   var list = savedShareLinks().filter(function(x){ return x.tag !== tag; });
   list.unshift({ tag: tag, at: Date.now() }); list = list.slice(0, 30);
   try{ localStorage.setItem('ls_share_links', JSON.stringify(list)); }catch(e){}
@@ -286,6 +300,7 @@ function copyShareLink(tag){
 
 function renderSavedShareLinks(){
   var el = $('lb-saved'); if(!el) return;
+  if(!SHARE_W && !renderSavedShareLinks.asked){ renderSavedShareLinks.asked = true; loadShareW(); }
   var list = savedShareLinks();
   el.innerHTML = list.length ? '<div style="font-size:11px;font-weight:800;color:var(--t3);letter-spacing:.5px;margin-bottom:6px">LINKS YOU\'VE MADE</div>'
     + list.map(function(x){ return '<div style="display:flex;gap:8px;align-items:center;padding:6px 0;border-bottom:1px solid var(--bd);font-size:13px">'
