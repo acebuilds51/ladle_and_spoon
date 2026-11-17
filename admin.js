@@ -2,7 +2,7 @@
 // when the Admin tab opens or on a phone signed in as admin, so customers' phones never
 // download or run it. Same global scope as index.html: its functions and variables are
 // shared both ways. index.html calls into this file only after adminReady().
-var ADMIN_JS_VERSION = 'v301';
+var ADMIN_JS_VERSION = 'v302';
 
 // Phone photos are 3–6 MB. Shrink to at most 1600px and re-encode as JPEG in the browser
 // before uploading, so Cloudinary never stores a full-size original. Resolves to the
@@ -2430,7 +2430,12 @@ function buildOrders(){
       +'<div style="margin-top:4px">'+deviceBadge+(loyaltyBadge?' '+loyaltyBadge:'')+'</div>'
       +breakdown
       +'<div class="oft">'
-      +'<span class="oad">📍 '+esc(o.addr||o.address||'')+'</span>'
+      +'<span class="oad">📍 '+esc(o.addr||o.address||'')
+        // v302 (gs159): deliver somewhere else (a request, or what Lia knows), so the route is right.
+        +(o.key && BACKEND_GS >= 159 && !isDone
+          ? ' <button class="ord-addr" onclick="changeAddr('+oi+')" style="margin-left:4px;padding:1px 7px;border-radius:6px;border:1px solid var(--bd);background:#fff;color:var(--f);font-size:10px;font-weight:700;cursor:pointer">Change</button>'
+          : '')
+      +'</span>'
       +'<span class="otl">'+totalStr+'</span>'
       +'</div>'
       +(comment?'<div style="font-size:11px;color:var(--t3);margin-top:4px;font-style:italic">Note: '+esc(comment)+'</div>':'')
@@ -2646,6 +2651,58 @@ function togglePaid(btn, idx){
       else { btn.disabled = false; buildOrders(); toast('Could not save: ' + ((d && d.error) || 'unknown error')); }
     })
     .catch(function(){ btn.disabled = false; buildOrders(); toast('Network error: not saved'); });
+}
+// v302 (gs159, Tony 2026-11-17): Lia delivers to a different address than the order says (the
+// customer asked, or she knows better). The order on the Sheet takes the new address, so the
+// route, map and invoice use it; "future orders" also changes the customer's saved address.
+function changeAddr(idx){
+  var o = ORDER_VIEW[idx] || {};
+  if(!o.key){ toast('That order is not on the Sheet yet. Reload the Orders tab.'); return; }
+  var name = o.n || o.name || 'this customer', ov = $('addr-ov');
+  if(!ov){ ov = document.createElement('div'); ov.id = 'addr-ov'; document.body.appendChild(ov); }
+  ov.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:9999;display:flex;align-items:center;justify-content:center;padding:16px';
+  ov.innerHTML = '<div style="background:#fff;border-radius:14px;padding:16px;width:100%;max-width:420px;box-sizing:border-box">'
+    + '<div style="font-size:16px;font-weight:800;color:var(--f);margin-bottom:4px">📍 Deliver ' + esc(name) + '\'s order to</div>'
+    + '<div style="font-size:12px;color:var(--t3);margin-bottom:8px">Ordered to: ' + esc(o.addr || o.address || '(no address)') + '</div>'
+    + '<input id="addr-new" maxlength="200" placeholder="Street, town, ZIP" style="width:100%;padding:10px;border:1.5px solid var(--bd);border-radius:8px;font-size:15px;box-sizing:border-box">'
+    + '<label style="display:flex;gap:8px;align-items:flex-start;font-size:13px;margin:10px 0;line-height:1.4"><input type="checkbox" id="addr-remember" style="margin-top:2px"> Use this address for their future orders too</label>'
+    + '<div id="addr-msg" style="font-size:12px;color:#b45309;min-height:0;margin-bottom:6px"></div>'
+    + '<div style="display:flex;gap:8px"><button id="addr-cancel" style="flex:1;padding:10px;border-radius:8px;border:1.5px solid var(--bd);background:#fff;font-weight:700;cursor:pointer">Cancel</button>'
+    + '<button id="addr-save" style="flex:1;padding:10px;border-radius:8px;border:none;background:var(--f);color:#fff;font-weight:700;cursor:pointer">Save</button></div></div>';
+  var inp = $('addr-new'); inp.value = o.addr || o.address || ''; inp.focus(); inp.select();
+  $('addr-cancel').onclick = function(){ ov.remove(); };
+  $('addr-save').onclick = function(){ saveAddr(o); };
+}
+function saveAddr(o){
+  var addr = (($('addr-new') || {}).value || '').trim(), remember = !!($('addr-remember') || {}).checked, btn = $('addr-save');
+  if(addr.length < 5){ $('addr-msg').textContent = 'Type the new address first.'; return; }
+  btn.disabled = true; btn.textContent = 'Saving…';
+  fetch(APPS_SCRIPT_URL, { method:'POST', headers:{'Content-Type':'text/plain'},
+    body: JSON.stringify({ type:'plan_route', action:'change_address', key:o.key, address:addr, remember:remember }) })
+    .then(function(r){ return r.json(); })
+    .then(function(d){
+      if(!d || !d.success) throw new Error((d && d.error) || 'not saved');
+      rememberAddr(o.key, d.address, d.note);
+      var ov = $('addr-ov'); if(ov) ov.remove();
+      buildOrders();
+      var who = o.n || o.name || 'the order';
+      if(d.far) alert('📍 Saved. Heads up: ' + d.address + ' is ' + d.miles + ' miles out, outside your ' + 7 + '-mile delivery area.');
+      else if(!d.found) toast('📍 Saved. Google could not find that address, so check it on the Route tab.');
+      else toast('📍 ' + who + ' now goes to ' + d.address + (d.remembered ? ' (and future orders)' : ''));
+      // The route picks the new spot up: re-plan it, keeping her stop order if she set one.
+      if(typeof RT_PLAN !== 'undefined' && RT_PLAN && (RT_PLAN.stops || []).some(function(s){ return s.key === o.key; })){
+        planRoute(!!(RT_PLAN.custom || RT_PLAN.moved || (RT_DRIVE && !RT_DRIVE.finished)));
+      }
+    })
+    .catch(function(e){ btn.disabled = false; btn.textContent = 'Save'; var m = $('addr-msg'); if(m) m.textContent = 'Could not save: ' + e.message; });
+}
+function rememberAddr(key, addr, note){
+  function upd(c){ if(c && c.key === key){ c.addr = addr; if(note != null){ c.note = note; c.notes = note; } } }
+  (ORDERS||[]).forEach(upd);
+  try{
+    var cached = JSON.parse(sessionStorage.getItem('admin_data')||'null');
+    if(cached && Array.isArray(cached.orders)){ cached.orders.forEach(upd); sessionStorage.setItem('admin_data', JSON.stringify(cached)); }
+  }catch(e){}
 }
 function rememberPaid(key, paid){
   (ORDERS||[]).forEach(function(c){ if(c.key === key) c.paid = paid; });
