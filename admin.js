@@ -2,7 +2,7 @@
 // when the Admin tab opens or on a phone signed in as admin, so customers' phones never
 // download or run it. Same global scope as index.html: its functions and variables are
 // shared both ways. index.html calls into this file only after adminReady().
-var ADMIN_JS_VERSION = 'v302';
+var ADMIN_JS_VERSION = 'v303';
 
 // Phone photos are 3–6 MB. Shrink to at most 1600px and re-encode as JPEG in the browser
 // before uploading, so Cloudinary never stores a full-size original. Resolves to the
@@ -2543,8 +2543,46 @@ function markDelivered(btn, idx, resend){
 // path, same confirmation, loyalty and invoice as an order from the app).
 var LIA_CUSTOMERS = [];
 var LO = null;   // { ci: chosen customer, qty: {'item|size': n}, pay, note }
+// v303 (gs165, Tony 2026-11-23: "give Lia an opportunity to add orders after the menu shuts
+// down"): "Add an order" works any time, for anyone: her listed customers, any customer on file
+// (search by name, phone or street) or someone new. With gs165 it goes through plan_route
+// add_order, so an order she adds after the cutoff skips the "approve?" hold.
+function liaPeople(){
+  var seen = {}, out = [];
+  (LIA_CUSTOMERS || []).forEach(function(c){ seen[(c.email || '').toLowerCase()] = 1; out.push(c); });
+  (typeof CUSTS !== 'undefined' ? CUSTS : []).forEach(function(c){
+    var em = (c.email || '').toLowerCase();
+    if(!c.n || !em || em.indexOf('@') < 0 || seen[em]) return;
+    seen[em] = 1; out.push({ name: c.n, email: c.email, ownEmail: true, phone: c.phone || '', address: c.addr || '', pay: 'venmo', note: '' });
+  });
+  return out.sort(function(a, b){ return a.name.localeCompare(b.name); });
+}
+function liaMatches(){
+  var q = (LO.q || '').trim().toLowerCase(), digits = q.replace(/\D/g, '');
+  if(!q) return [];
+  return LO.people.map(function(p, i){ return { p: p, i: i }; }).filter(function(x){
+    var p = x.p;
+    return p.name.toLowerCase().indexOf(q) >= 0 || (p.address || '').toLowerCase().indexOf(q) >= 0
+      || (digits.length >= 3 && (p.phone || '').replace(/\D/g, '').indexOf(digits) >= 0);
+  }).slice(0, 8);
+}
+function liaSearch(v){
+  LO.q = v;
+  var box = $('lia-matches'); if(!box) return;
+  var m = liaMatches();
+  box.innerHTML = m.map(function(x){
+    return '<button class="lia-match" onclick="liaPick(' + x.i + ')" style="display:block;width:100%;text-align:left;padding:10px 12px;margin:0 0 6px;border:1.5px solid var(--bd);border-radius:10px;background:#fff;cursor:pointer">'
+      + '<b>' + esc(x.p.name) + '</b><br><span style="font-size:12px;color:var(--t3)">' + esc(x.p.address || 'No address on file') + '</span></button>';
+  }).join('') + (LO.q.trim() && !m.length ? '<div style="font-size:13px;color:var(--t3);margin-bottom:8px">No one by that name. Tap &ldquo;Someone new&rdquo;.</div>' : '');
+}
+function liaNew(){ LO.ci = -1; LO.isNew = true; LO.nf = { name: LO.q || '', phone: '', address: '', email: '' }; LO.qty = {}; LO.pay = 'venmo'; LO.note = ''; renderLiaOrder(); }
+function liaClear(){ LO.ci = -1; LO.isNew = false; LO.q = ''; LO.qty = {}; renderLiaOrder(); }
+function liaChosen(){
+  if(LO.isNew) return { name: (LO.nf.name || '').trim(), email: (LO.nf.email || '').trim(), ownEmail: !!(LO.nf.email || '').trim(), phone: (LO.nf.phone || '').trim(), address: (LO.nf.address || '').trim(), isNew: true };
+  return LO.people[LO.ci] || null;
+}
 function openLiaOrder(){
-  LO = { ci: -1, qty: {}, pay: 'venmo', note: '' };
+  LO = { ci: -1, qty: {}, pay: 'venmo', note: '', q: '', isNew: false, nf: {}, people: liaPeople() };
   var el = $('lia-ord');
   if(!el){
     el = document.createElement('div'); el.id = 'lia-ord';
@@ -2566,20 +2604,37 @@ function liaOrderLines(){
 }
 function renderLiaOrder(){
   var el = $('lia-ord'); if(!el || !LO) return;
-  var c = LIA_CUSTOMERS[LO.ci], items = liaOrderItems();
+  var c = liaChosen(), items = liaOrderItems();
+  var inp = 'width:100%;box-sizing:border-box;padding:12px;font-size:16px;border-radius:10px;border:1.5px solid var(--bd);background:#fff;margin-bottom:8px';
   var h = '<div style="max-width:560px;margin:0 auto;padding:16px 16px 40px">'
-    + '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px"><div class="st">Order for a customer</div>'
+    + '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px"><div class="st">Add an order</div>'
     + '<button onclick="closeLiaOrder()" style="background:#fff;border:1.5px solid var(--bd);border-radius:9px;padding:6px 12px;font-weight:700;cursor:pointer">✕ Close</button></div>';
-  if(!LIA_CUSTOMERS.length){
-    el.innerHTML = h + '<div class="ccrd"><p style="margin:0;font-size:14px;line-height:1.6">No customers here yet. Tony adds them in the Sheet&rsquo;s <b>&ldquo;Lia&rsquo;s customers&rdquo;</b> tab (name, phone, address, Venmo or cash). They show up here within the hour.</p></div></div>';
+  if(typeof orderingClosed === 'function' && orderingClosed() && BACKEND_GS >= 165)
+    h += '<div class="ccrd" id="lia-closed-note" style="font-size:13px;line-height:1.5;background:#fffbeb">The menu is closed for customers. Orders you add here still go in for Monday, with no approval needed.</div>';
+  if(!c && !LO.isNew){
+    h += '<input id="lia-search" placeholder="Search a name, phone or street" value="' + esc(LO.q) + '" oninput="liaSearch(this.value)" autocomplete="off" style="' + inp + '">'
+      + '<div id="lia-matches"></div>'
+      + '<button class="lia-new" onclick="liaNew()" style="width:100%;padding:11px;border-radius:10px;border:1.5px dashed var(--f);background:#fff;color:var(--f);font-weight:700;cursor:pointer;margin-bottom:12px">➕ Someone new</button>'
+      + ((LIA_CUSTOMERS || []).length ? '<div style="font-size:12px;font-weight:700;color:var(--t3);margin:6px 0">Your regular list</div>'
+          + LO.people.map(function(p, i){ return p.ownEmail === false || (LIA_CUSTOMERS || []).indexOf(p) >= 0
+              ? '<button onclick="liaPick(' + i + ')" style="padding:8px 12px;margin:0 6px 6px 0;border:1.5px solid var(--bd);border-radius:18px;background:#fff;cursor:pointer;font-weight:600">' + esc(p.name) + '</button>' : ''; }).join('') : '');
+    el.innerHTML = h + '</div>';
+    liaSearch(LO.q);
+    var s = $('lia-search'); if(s && LO.q) s.focus();
     return;
   }
-  h += '<select onchange="liaPick(this.value)" style="width:100%;padding:13px;font-size:16px;border-radius:12px;border:1.5px solid var(--bd);background:#fff;margin-bottom:12px">'
-    + '<option value="-1">Choose a customer…</option>'
-    + LIA_CUSTOMERS.map(function(x, i){ return '<option value="' + i + '"' + (i === LO.ci ? ' selected' : '') + '>' + esc(x.name) + '</option>'; }).join('') + '</select>';
-  if(c){
-    h += '<div class="ccrd" style="font-size:13px;line-height:1.6"><b style="font-size:15px">' + esc(c.name) + '</b><br>📍 ' + esc(c.address || 'No address in the tab') + (c.phone ? '<br>📞 ' + esc(c.phone) : '')
+  if(LO.isNew){
+    h += '<div class="ccrd"><div style="display:flex;justify-content:space-between;margin-bottom:8px"><b>Someone new</b><a href="javascript:void(0)" onclick="liaClear()" style="font-size:13px">Search instead</a></div>'
+      + ['name|Name', 'phone|Phone', 'address|Street, town and ZIP', 'email|Email (optional)'].map(function(f){
+          var k = f.split('|')[0];
+          return '<input id="lia-nf-' + k + '" placeholder="' + f.split('|')[1] + '" value="' + esc(LO.nf[k] || '') + '" oninput="LO.nf.' + k + '=this.value" style="' + inp + '">';
+        }).join('')
+      + '<div style="font-size:12px;color:var(--t3)">No email? Their confirmation and invoice come to your inbox.</div></div>';
+  } else if(c){
+    h += '<div class="ccrd" style="font-size:13px;line-height:1.6"><div style="display:flex;justify-content:space-between"><b style="font-size:15px">' + esc(c.name) + '</b><a href="javascript:void(0)" onclick="liaClear()" style="font-size:13px">Change</a></div>📍 ' + esc(c.address || 'No address on file') + (c.phone ? '<br>📞 ' + esc(c.phone) : '')
       + '<br>' + (c.ownEmail ? '✉️ ' + esc(c.email) : '<span style="color:var(--t3)">No email: their confirmation and invoice come to your inbox.</span>') + '</div>';
+  }
+  if(c){
     if(!items.length){
       h += '<div class="ccrd" style="font-size:14px">There&rsquo;s no menu this week yet. Save and publish the menu first.</div>';
     } else {
@@ -2605,25 +2660,40 @@ function renderLiaOrder(){
   el.innerHTML = h + '</div>';
 }
 function liaPick(v){
-  LO.ci = +v; LO.qty = {};
-  var c = LIA_CUSTOMERS[LO.ci];
+  LO.ci = +v; LO.qty = {}; LO.isNew = false;
+  var c = LO.people[LO.ci];
   if(c){ LO.pay = c.pay || 'venmo'; LO.note = c.note || ''; }
   renderLiaOrder();
 }
 function liaQty(k, d){ LO.qty[k] = Math.max(0, (LO.qty[k] || 0) + d); renderLiaOrder(); }
 function liaPay(p){ LO.pay = p; renderLiaOrder(); }
 function placeLiaOrder(btn){
-  var c = LIA_CUSTOMERS[LO.ci], lines = liaOrderLines();
+  var c = liaChosen(), lines = liaOrderLines();
   if(!c || !lines.length){ toast('Add at least one dish'); return; }
-  if(!c.address){ toast('No address for ' + c.name + ' in the "Lia\'s customers" tab'); return; }
+  if(!c.name){ toast('Type their name'); return; }
+  if(!c.address || c.address.length < 5){ toast('No address for ' + c.name + '. Type it in first.'); return; }
   var food = lines.reduce(function(s, l){ return s + l.qty * l.price; }, 0);
   if(!confirm('Place this order for ' + c.name + '?\n\n' + lines.map(function(l){ return l.qty + ' × ' + l.name + ' (' + l.size + ')'; }).join('\n')
     + '\n\nFood $' + food.toFixed(2) + ' + delivery · ' + (LO.pay === 'cash' ? 'Cash' : 'Venmo'))) return;
-  var orderData = { type: 'order', id: '#L' + Date.now().toString().slice(-6), timestamp: new Date().toISOString(), source: 'app',
-    name: c.name, email: c.email, phone: c.phone, address: c.address, isNew: false, payment: LO.pay, notes: LO.note,
+  var id = '#L' + Date.now().toString().slice(-6);
+  var orderData = { type: 'order', id: id, timestamp: new Date().toISOString(), source: 'app',
+    name: c.name, email: c.email, phone: c.phone, address: c.address, isNew: !!c.isNew, payment: LO.pay, notes: LO.note,
     total: food + 5, deliveryFee: 5, srcChannel: 'lia', installed: false, platform: 'admin', items: lines };
   btn.disabled = true; btn.textContent = 'Sending…';
-  sendOrderWithRetry(orderData).then(function(){
+  // gs165+: plan_route add_order (no "approve?" hold for her own orders). The same id on a retry,
+  // so a repeat is recognised and not added twice.
+  var send = BACKEND_GS >= 165 ? function(){
+    var body = { type: 'plan_route', action: 'add_order', order: { id: id, name: c.name, email: c.isNew || c.ownEmail ? c.email : '', phone: c.phone, address: c.address,
+      payment: LO.pay, notes: LO.note, items: lines, isNew: !!c.isNew } };
+    function attempt(n){
+      return fetch(APPS_SCRIPT_URL, { method:'POST', headers:{ 'Content-Type':'text/plain' }, body: JSON.stringify(body) })
+        .then(function(r){ if(!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
+        .then(function(d){ if(!d || !d.success) { var e = new Error((d && d.error) || 'not accepted'); e.final = true; throw e; } return d; })
+        .catch(function(e){ if(e.final || n >= 2) throw e; return new Promise(function(res){ setTimeout(res, 3000); }).then(function(){ return attempt(n + 1); }); });
+    }
+    return attempt(0);
+  } : function(){ return sendOrderWithRetry(orderData); };
+  send().then(function(){
     toast('✅ Order placed for ' + c.name);
     closeLiaOrder();
     try{ sessionStorage.removeItem('admin_data_time'); }catch(e){}
@@ -3391,6 +3461,12 @@ function rtRetryJob(id){
   rtSave(RT_JOBS_KEY, RT_JOBS); rtRunJobs(); rtRefreshStatus();
 }
 
+// v303: she can clear one she has dealt with another way (e.g. resent from the Orders tab).
+function rtDismissJob(id){
+  RT_JOBS = RT_JOBS.filter(function(j){ return j.id !== id; });
+  rtSave(RT_JOBS_KEY, RT_JOBS); rtRefreshStatus();
+}
+
 function rtRefreshStatus(){
   var inv = RT_JOBS.filter(function(j){ return j.body.type === 'mark_delivered'; });
   var txt = [].concat.apply([], RT_JOBS.filter(function(j){ return j.body.type === 'route_text' && j.state === 'done'; }).map(function(j){ return j.texts || []; }));
@@ -3410,7 +3486,8 @@ function rtRefreshStatus(){
   }
   failed.forEach(function(j){
     h += '<div class="rt-warn" style="margin-top:8px">' + (j.body.type === 'mark_delivered' ? 'Invoice for ' + esc(j.label || j.body.email) : 'Texts')
-      + ' didn\'t go: ' + esc(j.error || '') + ' <button onclick="rtRetryJob(\'' + j.id + '\')" style="margin-left:6px;border:none;background:var(--f);color:#fff;border-radius:7px;padding:4px 10px;font-weight:700;cursor:pointer">Retry</button></div>';
+      + ' didn\'t go: ' + esc(j.error || '') + ' <button onclick="rtRetryJob(\'' + j.id + '\')" style="margin-left:6px;border:none;background:var(--f);color:#fff;border-radius:7px;padding:4px 10px;font-weight:700;cursor:pointer">Retry</button>'
+      + '<button class="rt-dismiss" onclick="rtDismissJob(\'' + j.id + '\')" style="margin-left:6px;border:1px solid var(--bd);background:#fff;border-radius:7px;padding:4px 10px;font-weight:700;cursor:pointer">Dismiss</button></div>';
   });
   document.querySelectorAll('.rt-status').forEach(function(el){ el.innerHTML = h; });
 }
